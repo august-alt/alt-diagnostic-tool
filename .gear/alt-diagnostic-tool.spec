@@ -38,6 +38,8 @@ ALT Linux diagnostic tool template.
 %doc README.md
 %doc INSTALL.md
 
+%_bindir/alt-diagnostic-tool
+
 %changelog
 * Wed Dec 07 2022 Vladimir Rubanov <august@altlinux.org> 0.1.0-alt1
 - Initial build
