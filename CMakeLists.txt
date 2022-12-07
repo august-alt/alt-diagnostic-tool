@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(ALT Diagnostic tool)
+project("ALT Diagnostic tool")
 
 if(UNIX)
   include(GNUInstallDirs)
