@@ -18,24 +18,31 @@
 **
 ***********************************************************************************************************************/
 
-#include "adtwizard.h"
+#ifndef FINISHWIZARDPAGE_H
+#define FINISHWIZARDPAGE_H
 
-#include <QApplication>
+#include <QWizardPage>
 
-int main(int argc, char **argv)
+namespace Ui
 {
-    QApplication app(argc, argv);
-
-    // NOTE: set app variables which will be used to
-    // construct settings path
-    app.setOrganizationName(QCoreApplication::translate("main", "BaseALT Ltd."));
-    app.setOrganizationDomain("basealt.ru");
-    app.setApplicationName("ALT Diagnostic tool");
-    app.setApplicationVersion("0.1.0");
-
-    ADTWizard wizard;
-
-    wizard.show();
-
-    return app.exec();
+class FinishWizardPage;
 }
+
+class FinishWizardPage : public QWizardPage
+{
+    Q_OBJECT
+
+public:
+    FinishWizardPage(QWidget *parent = nullptr);
+
+private:
+    Ui::FinishWizardPage *ui;
+
+private:
+    FinishWizardPage(const FinishWizardPage &) = delete;            // copy ctor
+    FinishWizardPage(FinishWizardPage &&)      = delete;            // move ctor
+    FinishWizardPage &operator=(const FinishWizardPage &) = delete; // copy assignment
+    FinishWizardPage &operator=(FinishWizardPage &&) = delete;      // move assignment
+};
+
+#endif // FINISHWIZARDPAGE_H

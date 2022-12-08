@@ -16,12 +16,48 @@ macro(add_adt_executable name)
 
 endmacro(add_adt_executable)
 
-find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Core Gui REQUIRED)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+
+set(HEADERS
+    introwizardpage.h
+    checkwizardpage.h
+    repairwizardpage.h
+    finishwizardpage.h
+
+    adtwizard.h
+)
 
 set(SOURCES
+    introwizardpage.cpp
+    checkwizardpage.cpp
+    repairwizardpage.cpp
+    finishwizardpage.cpp
+
+    adtwizard.cpp
     main.cpp
 )
 
-add_adt_executable(alt-diagnostic-tool ${SOURCES})
+set(UI_FORMS
 
-target_link_libraries(alt-diagnostic-tool Qt5::Core Qt5::Widgets)
+    introwizardpage.ui
+    checkwizardpage.ui
+    repairwizardpage.ui
+    finishwizardpage.ui
+)
+set(RESOURCES
+    resources.qrc
+)
+
+qt5_wrap_ui(UI_SOURCES ${UI_FORMS})
+
+qt5_add_resources (RCC_SOURCES ${RESOURCES})
+
+add_adt_executable(alt-diagnostic-tool ${SOURCES} ${HEADERS} ${UI_SOURCES} ${RCC_SOURCES})
+
+target_link_libraries(alt-diagnostic-tool Qt5::Widgets Qt5::Core Qt5::Gui)
