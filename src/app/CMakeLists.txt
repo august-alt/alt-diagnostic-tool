@@ -25,25 +25,30 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 set(HEADERS
-    intropagewidget.h
-    checkpagewidget.h
-    repairpagewidget.h
-    finishpagewidget.h
+    introwizardpage.h
+    checkwizardpage.h
+    repairwizardpage.h
+    finishwizardpage.h
+
+    adtwizard.h
 )
 
 set(SOURCES
-    intropagewidget.cpp
-    checkpagewidget.cpp
-    repairpagewidget.cpp
-    finishpagewidget.cpp
+    introwizardpage.cpp
+    checkwizardpage.cpp
+    repairwizardpage.cpp
+    finishwizardpage.cpp
+
+    adtwizard.cpp
     main.cpp
 )
 
 set(UI_FORMS
-    intropagewidget.ui
-    checkpagewidget.ui
-    repairpagewidget.ui
-    finishpagewidget.ui
+
+    introwizardpage.ui
+    checkwizardpage.ui
+    repairwizardpage.ui
+    finishwizardpage.ui
 )
 set(RESOURCES
     resources.qrc

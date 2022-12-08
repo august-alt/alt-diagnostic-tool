@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>RepairPageWidget</class>
- <widget class="QWidget" name="RepairPageWidget">
+ <class>FinishWizardPage</class>
+ <widget class="QWizardPage" name="FinishWizardPage">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>WizardPage</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -29,7 +29,7 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="0" column="0" colspan="2">
+   <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -38,7 +38,7 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="1" column="0">
+      <item row="0" column="0">
        <widget class="QLabel" name="topLabel">
         <property name="font">
          <font>
@@ -47,36 +47,29 @@
          </font>
         </property>
         <property name="text">
-         <string>Устранение неполадок и помощь в предотвращении проблем с компьютером.</string>
+         <string>Диагностика Завершена!</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="2">
+      <item row="1" column="0">
        <widget class="QLabel" name="statusLabel">
         <property name="text">
-         <string>Идёт применение пакета исправлений - ПИ_7.12</string>
+         <string>Нажмите &quot;Сохранить&quot; что бы поместить результаты дигностики на съёмный носитель.</string>
         </property>
        </widget>
       </item>
-      <item row="6" column="0" colspan="2">
+      <item row="2" column="0">
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>548</width>
-          <height>267</height>
+          <width>558</width>
+          <height>293</height>
          </size>
         </property>
        </spacer>
-      </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QProgressBar" name="repairProgressBar">
-        <property name="value">
-         <number>24</number>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FinishPageWidget</class>
- <widget class="QWidget" name="FinishPageWidget">
+ <class>IntroWizardPage</class>
+ <widget class="QWizardPage" name="IntroWizardPage">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>WizardPage</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -29,7 +29,7 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="0" column="0" colspan="2">
+   <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -38,8 +38,23 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
+      <property name="leftMargin">
+       <number>9</number>
+      </property>
+      <property name="topMargin">
+       <number>9</number>
+      </property>
+      <property name="rightMargin">
+       <number>9</number>
+      </property>
+      <property name="bottomMargin">
+       <number>9</number>
+      </property>
+      <property name="spacing">
+       <number>6</number>
+      </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="topLabel">
+       <widget class="QLabel" name="top_label">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -47,14 +62,17 @@
          </font>
         </property>
         <property name="text">
-         <string>Диагностика Завершена!</string>
+         <string>Добро пожаловать в мастер обнаружения и исправления проблем.</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="statusLabel">
+       <widget class="QLabel" name="logo_label">
         <property name="text">
-         <string>Нажмите &quot;Сохранить&quot; что бы поместить результаты дигностики на съёмный носитель.</string>
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="resources.qrc">:/logo.png</pixmap>
         </property>
        </widget>
       </item>
@@ -65,8 +83,8 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>558</width>
-          <height>293</height>
+          <width>20</width>
+          <height>40</height>
          </size>
         </property>
        </spacer>
@@ -76,6 +94,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

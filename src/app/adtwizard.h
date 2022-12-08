@@ -18,24 +18,26 @@
 **
 ***********************************************************************************************************************/
 
-#include "adtwizard.h"
+#ifndef ADTWIZARD_H
+#define ADTWIZARD_H
 
-#include <QApplication>
+#include <QWizard>
 
-int main(int argc, char **argv)
+class ADTWizard : public QWizard
 {
-    QApplication app(argc, argv);
+public:
+    Q_OBJECT
 
-    // NOTE: set app variables which will be used to
-    // construct settings path
-    app.setOrganizationName(QCoreApplication::translate("main", "BaseALT Ltd."));
-    app.setOrganizationDomain("basealt.ru");
-    app.setApplicationName("ALT Diagnostic tool");
-    app.setApplicationVersion("0.1.0");
+public:
+    enum
+    {
+        Intro_Page,
+        Check_Page,
+        Repair_Page,
+        Finish_Page
+    };
 
-    ADTWizard wizard;
+    ADTWizard(QWidget *parent = nullptr);
+};
 
-    wizard.show();
-
-    return app.exec();
-}
+#endif // ADTWIZARD_H

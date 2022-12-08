@@ -18,24 +18,31 @@
 **
 ***********************************************************************************************************************/
 
-#include "adtwizard.h"
+#ifndef REPAIRWIZARDPAGE_H
+#define REPAIRWIZARDPAGE_H
 
-#include <QApplication>
+#include <QWizardPage>
 
-int main(int argc, char **argv)
+namespace Ui
 {
-    QApplication app(argc, argv);
-
-    // NOTE: set app variables which will be used to
-    // construct settings path
-    app.setOrganizationName(QCoreApplication::translate("main", "BaseALT Ltd."));
-    app.setOrganizationDomain("basealt.ru");
-    app.setApplicationName("ALT Diagnostic tool");
-    app.setApplicationVersion("0.1.0");
-
-    ADTWizard wizard;
-
-    wizard.show();
-
-    return app.exec();
+class RepairWizardPage;
 }
+
+class RepairWizardPage : public QWizardPage
+{
+    Q_OBJECT
+
+public:
+    RepairWizardPage(QWidget *parent = nullptr);
+
+private:
+    Ui::RepairWizardPage *ui;
+
+private:
+    RepairWizardPage(const RepairWizardPage &) = delete;            // copy ctor
+    RepairWizardPage(RepairWizardPage &&)      = delete;            // move ctor
+    RepairWizardPage &operator=(const RepairWizardPage &) = delete; // copy assignment
+    RepairWizardPage &operator=(RepairWizardPage &&) = delete;      // move assignment
+};
+
+#endif // REPAIRWIZARDPAGE_H

@@ -18,24 +18,31 @@
 **
 ***********************************************************************************************************************/
 
-#include "adtwizard.h"
+#ifndef CHECKWIZARDPAGE_H
+#define CHECKWIZARDPAGE_H
 
-#include <QApplication>
+#include <QWizardPage>
 
-int main(int argc, char **argv)
+namespace Ui
 {
-    QApplication app(argc, argv);
-
-    // NOTE: set app variables which will be used to
-    // construct settings path
-    app.setOrganizationName(QCoreApplication::translate("main", "BaseALT Ltd."));
-    app.setOrganizationDomain("basealt.ru");
-    app.setApplicationName("ALT Diagnostic tool");
-    app.setApplicationVersion("0.1.0");
-
-    ADTWizard wizard;
-
-    wizard.show();
-
-    return app.exec();
+class CheckWizardPage;
 }
+
+class CheckWizardPage : public QWizardPage
+{
+    Q_OBJECT
+
+public:
+    CheckWizardPage(QWidget *parent = nullptr);
+
+private:
+    Ui::CheckWizardPage *ui;
+
+private:
+    CheckWizardPage(const CheckWizardPage &) = delete;            // copy ctor
+    CheckWizardPage(CheckWizardPage &&)      = delete;            // move ctor
+    CheckWizardPage &operator=(const CheckWizardPage &) = delete; // copy assignment
+    CheckWizardPage &operator=(CheckWizardPage &&) = delete;      // move assignment
+};
+
+#endif // CHECKWIZARDPAGE_H

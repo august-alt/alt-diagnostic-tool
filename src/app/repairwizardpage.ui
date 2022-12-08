@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>IntroPageWidget</class>
- <widget class="QWidget" name="IntroPageWidget">
+ <class>RepairWizardPage</class>
+ <widget class="QWizardPage" name="RepairWizardPage">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>WizardPage</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
@@ -29,7 +29,7 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="0" column="0" colspan="2">
+   <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -38,8 +38,23 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="top_label">
+      <property name="leftMargin">
+       <number>9</number>
+      </property>
+      <property name="topMargin">
+       <number>9</number>
+      </property>
+      <property name="rightMargin">
+       <number>9</number>
+      </property>
+      <property name="bottomMargin">
+       <number>9</number>
+      </property>
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <item row="1" column="0">
+       <widget class="QLabel" name="topLabel">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -47,40 +62,42 @@
          </font>
         </property>
         <property name="text">
-         <string>Добро пожаловать в мастер обнаружения и исправления проблем.</string>
+         <string>Устранение неполадок и помощь в предотвращении проблем с компьютером.</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="logo_label">
+      <item row="3" column="0" colspan="2">
+       <widget class="QLabel" name="statusLabel">
         <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="resources.qrc">:/logo.png</pixmap>
+         <string>Идёт применение пакета исправлений - ПИ_7.12</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="6" column="0" colspan="2">
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
-          <height>40</height>
+          <width>548</width>
+          <height>267</height>
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QProgressBar" name="repairProgressBar">
+        <property name="value">
+         <number>24</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
