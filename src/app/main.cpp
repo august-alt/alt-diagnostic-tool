@@ -20,7 +20,11 @@
 
 #include "adtwizard.h"
 
+#include "../core/adtexecutable.h"
+
 #include <QApplication>
+#include <QFile>
+#include <QJsonDocument>
 
 int main(int argc, char **argv)
 {

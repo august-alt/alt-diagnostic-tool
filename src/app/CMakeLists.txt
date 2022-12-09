@@ -60,4 +60,4 @@ qt5_add_resources (RCC_SOURCES ${RESOURCES})
 
 add_adt_executable(alt-diagnostic-tool ${SOURCES} ${HEADERS} ${UI_SOURCES} ${RCC_SOURCES})
 
-target_link_libraries(alt-diagnostic-tool Qt5::Widgets Qt5::Core Qt5::Gui)
+target_link_libraries(alt-diagnostic-tool Qt5::Widgets Qt5::Core Qt5::Gui adtcore)
