@@ -21,9 +21,25 @@
 #include "checkwizardpage.h"
 #include "ui_checkwizardpage.h"
 
+#include <QDebug>
+
 CheckWizardPage::CheckWizardPage(QWidget *parent)
     : QWizardPage(parent)
     , ui(new Ui::CheckWizardPage)
 {
     ui->setupUi(this);
+}
+
+void CheckWizardPage::showEvent(QShowEvent *event)
+{
+    if (isOpening)
+    {
+        return;
+    }
+    isOpening = true;
+
+    QWizardPage::showEvent(event);
+
+    //doChecks();
+    qWarning() << "SHOW!";
 }

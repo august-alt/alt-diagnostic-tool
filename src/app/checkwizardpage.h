@@ -37,6 +37,10 @@ public:
 
 private:
     Ui::CheckWizardPage *ui;
+    bool isOpening = false;
+
+private:
+    void showEvent(QShowEvent *event);
 
 private:
     CheckWizardPage(const CheckWizardPage &) = delete;            // copy ctor
