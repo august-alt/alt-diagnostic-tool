@@ -20,8 +20,6 @@
 
 #include "adtwizard.h"
 
-#include "../core/adtexecutable.h"
-
 #include <QApplication>
 #include <QFile>
 #include <QJsonDocument>

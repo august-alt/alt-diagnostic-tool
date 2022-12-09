@@ -9,13 +9,15 @@ set (HEADERS
     adtcheck.h
     adtresolver.h
 
-    adtbaseexecutor.h
+    adtjsonconverter.h
 )
 
 set (SOURCES
     adtexecutable.cpp
     adtcheck.cpp
     adtresolver.cpp
+
+    adtjsonconverter.cpp
 )
 
 ADD_LIBRARY(adtcore STATIC ${SOURCES} ${HEADERS})
