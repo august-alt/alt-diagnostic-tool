@@ -19,13 +19,15 @@
 ***********************************************************************************************************************/
 
 #include "checkwizardpage.h"
+#include "../core/diagnostictool.h"
 #include "ui_checkwizardpage.h"
 
 #include <QDebug>
 
-CheckWizardPage::CheckWizardPage(QWidget *parent)
+CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     : QWizardPage(parent)
     , ui(new Ui::CheckWizardPage)
+    , diagnosticTool(diagTool)
 {
     ui->setupUi(this);
 }
@@ -40,6 +42,6 @@ void CheckWizardPage::showEvent(QShowEvent *event)
 
     QWizardPage::showEvent(event);
 
-    //doChecks();
+    //Do check's here
     qWarning() << "SHOW!";
 }

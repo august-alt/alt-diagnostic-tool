@@ -21,9 +21,10 @@
 #include "repairwizardpage.h"
 #include "ui_repairwizardpage.h"
 
-RepairWizardPage::RepairWizardPage(QWidget *parent)
+RepairWizardPage::RepairWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     : QWizardPage(parent)
     , ui(new Ui::RepairWizardPage)
+    , diagnosticTool(diagTool)
 {
     ui->setupUi(this);
 }

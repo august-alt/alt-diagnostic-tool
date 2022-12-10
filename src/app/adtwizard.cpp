@@ -24,13 +24,39 @@
 #include "introwizardpage.h"
 #include "repairwizardpage.h"
 
-ADTWizard::ADTWizard(QWidget *parent)
+#include <QDebug>
+#include <QFile>
+#include <QJsonDocument>
+
+ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
     : QWizard(parent)
+    , diagnosticTool(nullptr)
 {
+    auto doc = LoadJSonFile(jsonFile);
+
+    diagnosticTool = std::make_unique<DiagnosticTool>(*doc.get());
+
     setPage(Intro_Page, new IntroWizardPage);
-    setPage(Check_Page, new CheckWizardPage);
-    setPage(Repair_Page, new RepairWizardPage);
+    setPage(Check_Page, new CheckWizardPage(diagnosticTool.get()));
+    setPage(Repair_Page, new RepairWizardPage(diagnosticTool.get()));
     setPage(Finish_Page, new FinishWizardPage);
 
     setStartId(Intro_Page);
+}
+
+std::unique_ptr<QJsonDocument> ADTWizard::LoadJSonFile(QString file)
+{
+    QFile jsonFile(file);
+
+    if (!jsonFile.open(QIODevice::ReadOnly))
+    {
+        qWarning() << "Can't open json file!";
+        return nullptr;
+    }
+
+    QByteArray fileData = jsonFile.readAll();
+
+    jsonFile.close();
+
+    return std::make_unique<QJsonDocument>(QJsonDocument::fromJson(fileData));
 }

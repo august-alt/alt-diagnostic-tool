@@ -3,9 +3,8 @@
 #include <QMetaProperty>
 #include <QObject>
 
-QJsonObject ADTJsonConverter::propertyToJson(QObject *obj, QString objectName)
+QJsonObject ADTJsonConverter::propertyToJson(QObject *obj)
 {
-    QJsonObject object;
     QJsonObject json;
 
     for (int i = 1; i < obj->metaObject()->propertyCount(); i++)
@@ -17,19 +16,15 @@ QJsonObject ADTJsonConverter::propertyToJson(QObject *obj, QString objectName)
         json[propName] = obj->property(propName).toString();
     }
 
-    object[objectName] = json;
-
-    return object;
+    return json;
 }
 
-void ADTJsonConverter::JSonToObject(QObject *obj, QJsonObject *json, QString objectName)
+void ADTJsonConverter::JSonToObject(QObject *obj, QJsonObject *json)
 {
     QVariantMap map = json->toVariantMap();
 
-    auto fieldMap = map[objectName].toJsonObject().toVariantMap();
-
-    for (auto key : fieldMap.keys())
+    for (auto key : map.keys())
     {
-        obj->setProperty(key.toStdString().c_str(), fieldMap.value(key));
+        obj->setProperty(key.toStdString().c_str(), map.value(key));
     }
 }

@@ -21,6 +21,8 @@
 #ifndef REPAIRWIZARDPAGE_H
 #define REPAIRWIZARDPAGE_H
 
+#include "../core/diagnostictool.h"
+
 #include <QWizardPage>
 
 namespace Ui
@@ -33,10 +35,12 @@ class RepairWizardPage : public QWizardPage
     Q_OBJECT
 
 public:
-    RepairWizardPage(QWidget *parent = nullptr);
+    RepairWizardPage(DiagnosticTool *diagTool, QWidget *parent = nullptr);
 
 private:
     Ui::RepairWizardPage *ui;
+
+    DiagnosticTool *diagnosticTool;
 
 private:
     RepairWizardPage(const RepairWizardPage &) = delete;            // copy ctor

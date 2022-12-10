@@ -21,6 +21,8 @@
 #ifndef CHECKWIZARDPAGE_H
 #define CHECKWIZARDPAGE_H
 
+#include "../core/diagnostictool.h"
+
 #include <QWizardPage>
 
 namespace Ui
@@ -33,11 +35,14 @@ class CheckWizardPage : public QWizardPage
     Q_OBJECT
 
 public:
-    CheckWizardPage(QWidget *parent = nullptr);
+    CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent = nullptr);
 
 private:
     Ui::CheckWizardPage *ui;
+
     bool isOpening = false;
+
+    DiagnosticTool *diagnosticTool;
 
 private:
     void showEvent(QShowEvent *event);

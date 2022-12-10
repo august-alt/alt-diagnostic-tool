@@ -10,6 +10,9 @@ set (HEADERS
     adtresolver.h
 
     adtjsonconverter.h
+
+    diagnostictool.h
+    diagnostictoolprivate.h
 )
 
 set (SOURCES
@@ -18,6 +21,8 @@ set (SOURCES
     adtresolver.cpp
 
     adtjsonconverter.cpp
+    diagnostictool.cpp
+    diagnostictoolprivate.cpp
 )
 
 ADD_LIBRARY(adtcore STATIC ${SOURCES} ${HEADERS})

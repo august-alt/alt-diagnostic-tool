@@ -21,6 +21,9 @@
 #ifndef ADTWIZARD_H
 #define ADTWIZARD_H
 
+#include "../core/diagnostictool.h"
+
+#include <memory.h>
 #include <QWizard>
 
 class ADTWizard : public QWizard
@@ -37,7 +40,13 @@ public:
         Finish_Page
     };
 
-    ADTWizard(QWidget *parent = nullptr);
+    ADTWizard(QString jsonFile, QWidget *parent = nullptr);
+
+private:
+    std::unique_ptr<DiagnosticTool> diagnosticTool;
+
+private:
+    std::unique_ptr<QJsonDocument> LoadJSonFile(QString file);
 };
 
 #endif // ADTWIZARD_H

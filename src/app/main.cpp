@@ -35,7 +35,7 @@ int main(int argc, char **argv)
     app.setApplicationName("ALT Diagnostic tool");
     app.setApplicationVersion("0.1.0");
 
-    ADTWizard wizard;
+    ADTWizard wizard("data.json");
 
     wizard.show();
 
