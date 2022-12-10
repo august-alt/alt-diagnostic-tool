@@ -21,10 +21,56 @@
 #include "repairwizardpage.h"
 #include "ui_repairwizardpage.h"
 
+#include <QThread>
+
 RepairWizardPage::RepairWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     : QWizardPage(parent)
     , ui(new Ui::RepairWizardPage)
     , diagnosticTool(diagTool)
 {
     ui->setupUi(this);
+
+    ui->repairProgressBar->setMinimum(0);
+    ui->repairProgressBar->setMaximum(100);
+    ui->repairProgressBar->setValue(0);
+}
+
+void RepairWizardPage::showEvent(QShowEvent *event)
+{
+    if (isOpening)
+    {
+        return;
+    }
+    isOpening = true;
+
+    QWizardPage::showEvent(event);
+
+    runResolvers();
+}
+
+void RepairWizardPage::runResolvers()
+{
+    QThread *workingThread = new QThread();
+
+    diagnosticTool->moveToThread(workingThread);
+
+    connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runResolvers()));
+
+    connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
+
+    connect(diagnosticTool, SIGNAL(messageChanged(QString)), this, SLOT(messageChanged(QString)));
+
+    connect(diagnosticTool, SIGNAL(progressChanged(int)), this, SLOT(progressChanged(int)));
+
+    workingThread->start();
+}
+
+void RepairWizardPage::progressChanged(int progress)
+{
+    ui->repairProgressBar->setValue(progress);
+}
+
+void RepairWizardPage::messageChanged(QString message)
+{
+    ui->statusLabel->setText("Running resolver number: " + message);
 }

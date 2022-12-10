@@ -47,6 +47,13 @@ private:
 private:
     void showEvent(QShowEvent *event);
 
+    void runChecks();
+
+private slots:
+    void progressChanged(int progress);
+
+    void messageChanged(QString message);
+
 private:
     CheckWizardPage(const CheckWizardPage &) = delete;            // copy ctor
     CheckWizardPage(CheckWizardPage &&)      = delete;            // move ctor

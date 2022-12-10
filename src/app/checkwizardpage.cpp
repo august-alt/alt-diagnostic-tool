@@ -23,6 +23,7 @@
 #include "ui_checkwizardpage.h"
 
 #include <QDebug>
+#include <QThread>
 
 CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     : QWizardPage(parent)
@@ -30,6 +31,10 @@ CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     , diagnosticTool(diagTool)
 {
     ui->setupUi(this);
+
+    ui->mainProgressBar->setMinimum(0);
+    ui->mainProgressBar->setMaximum(100);
+    ui->mainProgressBar->setValue(0);
 }
 
 void CheckWizardPage::showEvent(QShowEvent *event)
@@ -42,6 +47,32 @@ void CheckWizardPage::showEvent(QShowEvent *event)
 
     QWizardPage::showEvent(event);
 
-    //Do check's here
-    qWarning() << "SHOW!";
+    runChecks();
+}
+
+void CheckWizardPage::runChecks()
+{
+    QThread *workingThread = new QThread();
+
+    diagnosticTool->moveToThread(workingThread);
+
+    connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
+
+    connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
+
+    connect(diagnosticTool, SIGNAL(messageChanged(QString)), this, SLOT(messageChanged(QString)));
+
+    connect(diagnosticTool, SIGNAL(progressChanged(int)), this, SLOT(progressChanged(int)));
+
+    workingThread->start();
+}
+
+void CheckWizardPage::progressChanged(int progress)
+{
+    ui->mainProgressBar->setValue(progress);
+}
+
+void CheckWizardPage::messageChanged(QString message)
+{
+    ui->currentStatusLabel->setText("Running check number: " + message);
 }

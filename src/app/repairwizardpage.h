@@ -40,7 +40,19 @@ public:
 private:
     Ui::RepairWizardPage *ui;
 
+    bool isOpening = false;
+
     DiagnosticTool *diagnosticTool;
+
+private:
+    void showEvent(QShowEvent *event);
+
+    void runResolvers();
+
+private slots:
+    void progressChanged(int progress);
+
+    void messageChanged(QString message);
 
 private:
     RepairWizardPage(const RepairWizardPage &) = delete;            // copy ctor
