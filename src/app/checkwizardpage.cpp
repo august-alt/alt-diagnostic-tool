@@ -21,6 +21,7 @@
 #include "checkwizardpage.h"
 #include "../core/diagnostictool.h"
 #include "ui_checkwizardpage.h"
+#include <adtwizard.h>
 
 #include <QDebug>
 #include <QThread>
@@ -99,4 +100,12 @@ void CheckWizardPage::enableNextButton()
     isCompleteChecks = true;
 
     emit completeChanged();
+}
+
+void CheckWizardPage::cancelButtonPressed(int currentPage)
+{
+    if (currentPage == ADTWizard::Check_Page)
+    {
+        qWarning() << "checkpage cancelled operation";
+    }
 }

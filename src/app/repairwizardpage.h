@@ -62,6 +62,8 @@ private slots:
 
     void enableNextButton();
 
+    void cancelButtonPressed(int currentPage);
+
 private:
     RepairWizardPage(const RepairWizardPage &) = delete;            // copy ctor
     RepairWizardPage(RepairWizardPage &&)      = delete;            // move ctor

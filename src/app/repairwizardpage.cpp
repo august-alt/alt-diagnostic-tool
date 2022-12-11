@@ -19,6 +19,7 @@
 ***********************************************************************************************************************/
 
 #include "repairwizardpage.h"
+#include "adtwizard.h"
 #include "ui_repairwizardpage.h"
 
 #include <QThread>
@@ -97,4 +98,12 @@ void RepairWizardPage::enableNextButton()
     isCompleteResolvers = true;
 
     emit completeChanged();
+}
+
+void RepairWizardPage::cancelButtonPressed(int currentPage)
+{
+    if (currentPage == ADTWizard::Repair_Page)
+    {
+        qWarning() << "repairpage cancelled operation";
+    }
 }

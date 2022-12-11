@@ -23,6 +23,11 @@
 
 #include "../core/diagnostictool.h"
 
+#include "checkwizardpage.h"
+#include "finishwizardpage.h"
+#include "introwizardpage.h"
+#include "repairwizardpage.h"
+
 #include <memory.h>
 #include <QWizard>
 
@@ -42,8 +47,19 @@ public:
 
     ADTWizard(QString jsonFile, QWidget *parent = nullptr);
 
+private slots:
+    void cancelButtonPressed();
+
+signals:
+    void cancelPressed(int currentPage);
+
 private:
     std::unique_ptr<DiagnosticTool> diagnosticTool;
+
+    std::unique_ptr<IntroWizardPage> introPage;
+    std::unique_ptr<CheckWizardPage> checkPage;
+    std::unique_ptr<RepairWizardPage> repairPage;
+    std::unique_ptr<FinishWizardPage> finishPage;
 
 private:
     std::unique_ptr<QJsonDocument> LoadJSonFile(QString file);

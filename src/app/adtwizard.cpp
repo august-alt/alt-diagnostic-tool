@@ -19,29 +19,48 @@
 ***********************************************************************************************************************/
 
 #include "adtwizard.h"
-#include "checkwizardpage.h"
-#include "finishwizardpage.h"
-#include "introwizardpage.h"
-#include "repairwizardpage.h"
 
 #include <QDebug>
 #include <QFile>
 #include <QJsonDocument>
+#include <QPushButton>
 
 ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
     : QWizard(parent)
     , diagnosticTool(nullptr)
+    , introPage(nullptr)
+    , checkPage(nullptr)
+    , repairPage(nullptr)
+    , finishPage(nullptr)
 {
     auto doc = LoadJSonFile(jsonFile);
 
     diagnosticTool = std::make_unique<DiagnosticTool>(*doc.get());
 
-    setPage(Intro_Page, new IntroWizardPage);
-    setPage(Check_Page, new CheckWizardPage(diagnosticTool.get()));
-    setPage(Repair_Page, new RepairWizardPage(diagnosticTool.get()));
-    setPage(Finish_Page, new FinishWizardPage);
+    introPage  = std::make_unique<IntroWizardPage>();
+    checkPage  = std::make_unique<CheckWizardPage>(diagnosticTool.get());
+    repairPage = std::make_unique<RepairWizardPage>(diagnosticTool.get());
+    finishPage = std::make_unique<FinishWizardPage>();
+
+    setPage(Intro_Page, introPage.get());
+    setPage(Check_Page, checkPage.get());
+    setPage(Repair_Page, repairPage.get());
+    setPage(Finish_Page, finishPage.get());
 
     setStartId(Intro_Page);
+
+    disconnect(button(QWizard::CancelButton), SIGNAL(clicked()), this, SLOT(reject()));
+    connect(button(QWizard::CancelButton), SIGNAL(clicked()), this, SLOT(cancelButtonPressed()));
+
+    connect(this, SIGNAL(cancelPressed(int)), checkPage.get(), SLOT(cancelButtonPressed(int)));
+    connect(this, SIGNAL(cancelPressed(int)), repairPage.get(), SLOT(cancelButtonPressed(int)));
+}
+
+void ADTWizard::cancelButtonPressed()
+{
+    emit cancelPressed(currentId());
+
+    emit reject();
 }
 
 std::unique_ptr<QJsonDocument> ADTWizard::LoadJSonFile(QString file)
