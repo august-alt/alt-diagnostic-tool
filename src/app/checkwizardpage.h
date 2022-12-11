@@ -37,12 +37,16 @@ class CheckWizardPage : public QWizardPage
 public:
     CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent = nullptr);
 
+    virtual bool isComplete() const override;
+
 private:
     Ui::CheckWizardPage *ui;
 
     bool isOpening = false;
 
     DiagnosticTool *diagnosticTool;
+
+    bool isCompleteChecks;
 
 private:
     void showEvent(QShowEvent *event);
@@ -53,6 +57,10 @@ private slots:
     void progressChanged(int progress);
 
     void messageChanged(QString message);
+
+    void disableNextButton();
+
+    void enableNextButton();
 
 private:
     CheckWizardPage(const CheckWizardPage &) = delete;            // copy ctor

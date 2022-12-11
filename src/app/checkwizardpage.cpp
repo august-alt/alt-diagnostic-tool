@@ -29,12 +29,18 @@ CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     : QWizardPage(parent)
     , ui(new Ui::CheckWizardPage)
     , diagnosticTool(diagTool)
+    , isCompleteChecks(false)
 {
     ui->setupUi(this);
 
     ui->mainProgressBar->setMinimum(0);
     ui->mainProgressBar->setMaximum(100);
     ui->mainProgressBar->setValue(0);
+}
+
+bool CheckWizardPage::isComplete() const
+{
+    return isCompleteChecks;
 }
 
 void CheckWizardPage::showEvent(QShowEvent *event)
@@ -56,6 +62,10 @@ void CheckWizardPage::runChecks()
 
     diagnosticTool->moveToThread(workingThread);
 
+    connect(diagnosticTool, SIGNAL(begin()), this, SLOT(disableNextButton()));
+
+    connect(diagnosticTool, SIGNAL(finish()), this, SLOT(enableNextButton()));
+
     connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
 
     connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
@@ -75,4 +85,18 @@ void CheckWizardPage::progressChanged(int progress)
 void CheckWizardPage::messageChanged(QString message)
 {
     ui->currentStatusLabel->setText("Running check number: " + message);
+}
+
+void CheckWizardPage::disableNextButton()
+{
+    isCompleteChecks = false;
+
+    emit completeChanged();
+}
+
+void CheckWizardPage::enableNextButton()
+{
+    isCompleteChecks = true;
+
+    emit completeChanged();
 }

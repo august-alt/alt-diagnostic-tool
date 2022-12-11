@@ -37,12 +37,16 @@ class RepairWizardPage : public QWizardPage
 public:
     RepairWizardPage(DiagnosticTool *diagTool, QWidget *parent = nullptr);
 
+    virtual bool isComplete() const override;
+
 private:
     Ui::RepairWizardPage *ui;
 
     bool isOpening = false;
 
     DiagnosticTool *diagnosticTool;
+
+    bool isCompleteResolvers;
 
 private:
     void showEvent(QShowEvent *event);
@@ -53,6 +57,10 @@ private slots:
     void progressChanged(int progress);
 
     void messageChanged(QString message);
+
+    void disableNextButton();
+
+    void enableNextButton();
 
 private:
     RepairWizardPage(const RepairWizardPage &) = delete;            // copy ctor

@@ -11,6 +11,8 @@ DiagnosticTool::DiagnosticTool(QJsonDocument &document)
 
 void DiagnosticTool::runChecks()
 {
+    emit begin();
+
     int checkSize = d->checks.get()->size();
 
     int percentByOneCheck = 100 / checkSize;
@@ -31,10 +33,14 @@ void DiagnosticTool::runChecks()
     emit progressChanged(100);
 
     this->moveToThread(QApplication::instance()->thread());
+
+    emit finish();
 }
 
 void DiagnosticTool::runResolvers()
 {
+    emit begin();
+
     int resolversSize = d->resolvers.get()->size();
 
     int percentByOneResolver = 100 / resolversSize;
@@ -55,6 +61,8 @@ void DiagnosticTool::runResolvers()
     emit progressChanged(100);
 
     this->moveToThread(QApplication::instance()->thread());
+
+    emit finish();
 }
 
 void DiagnosticTool::cancelTask(bool stop) {}

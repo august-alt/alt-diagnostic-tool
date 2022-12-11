@@ -27,12 +27,18 @@ RepairWizardPage::RepairWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     : QWizardPage(parent)
     , ui(new Ui::RepairWizardPage)
     , diagnosticTool(diagTool)
+    , isCompleteResolvers(false)
 {
     ui->setupUi(this);
 
     ui->repairProgressBar->setMinimum(0);
     ui->repairProgressBar->setMaximum(100);
     ui->repairProgressBar->setValue(0);
+}
+
+bool RepairWizardPage::isComplete() const
+{
+    return isCompleteResolvers;
 }
 
 void RepairWizardPage::showEvent(QShowEvent *event)
@@ -54,6 +60,10 @@ void RepairWizardPage::runResolvers()
 
     diagnosticTool->moveToThread(workingThread);
 
+    connect(diagnosticTool, SIGNAL(begin()), this, SLOT(disableNextButton()));
+
+    connect(diagnosticTool, SIGNAL(finish()), this, SLOT(enableNextButton()));
+
     connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runResolvers()));
 
     connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
@@ -73,4 +83,18 @@ void RepairWizardPage::progressChanged(int progress)
 void RepairWizardPage::messageChanged(QString message)
 {
     ui->statusLabel->setText("Running resolver number: " + message);
+}
+
+void RepairWizardPage::disableNextButton()
+{
+    isCompleteResolvers = false;
+
+    emit completeChanged();
+}
+
+void RepairWizardPage::enableNextButton()
+{
+    isCompleteResolvers = true;
+
+    emit completeChanged();
 }

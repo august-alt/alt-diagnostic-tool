@@ -24,6 +24,9 @@ private:
 signals:
     void progressChanged(int progress);
     void messageChanged(QString);
+
+    void begin();
+    void finish();
 };
 
 #endif // DIAGNOSTICTOOL_H
