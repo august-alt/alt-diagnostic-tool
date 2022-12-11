@@ -51,10 +51,10 @@ void DiagnosticTool::runChecks()
 
         QThread::sleep(1); //job simulation
 
-        emit progressChanged(progress + (i + 1) * percentByOneCheck);
+        emit onProgressUpdate(progress + (i + 1) * percentByOneCheck);
     }
 
-    emit progressChanged(100);
+    emit onProgressUpdate(100);
 
     this->moveToThread(QApplication::instance()->thread());
 
@@ -84,10 +84,10 @@ void DiagnosticTool::runResolvers()
 
         QThread::sleep(1); //job simulation
 
-        emit progressChanged(progress + (i + 1) * percentByOneResolver);
+        emit onProgressUpdate(progress + (i + 1) * percentByOneResolver);
     }
 
-    emit progressChanged(100);
+    emit onProgressUpdate(100);
 
     this->moveToThread(QApplication::instance()->thread());
 
@@ -99,4 +99,14 @@ void DiagnosticTool::runResolvers()
 void DiagnosticTool::cancelTask()
 {
     stopFlag = true;
+}
+
+unsigned int DiagnosticTool::getAmountOfChecks()
+{
+    return d->checks.get()->size();
+}
+
+unsigned int DiagnosticTool::getAmountOfResolvers()
+{
+    return d->resolvers.get()->size();
 }

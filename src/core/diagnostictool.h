@@ -32,7 +32,11 @@ public:
 
 public:
     DiagnosticTool(QJsonDocument &document);
+
     void cancelTask();
+
+    unsigned int getAmountOfChecks();
+    unsigned int getAmountOfResolvers();
 
 public slots:
     void runChecks();
@@ -44,8 +48,9 @@ private:
     volatile bool stopFlag;
 
 signals:
-    void progressChanged(int progress);
+    void onProgressUpdate(int progress);
     void messageChanged(QString);
+    void onError();
 
     void begin();
     void finish();

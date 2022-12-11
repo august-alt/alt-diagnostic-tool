@@ -66,7 +66,7 @@ void RepairWizardPage::runResolvers()
 
     connect(diagnosticTool, SIGNAL(messageChanged(QString)), this, SLOT(messageChanged(QString)));
 
-    connect(diagnosticTool, SIGNAL(progressChanged(int)), this, SLOT(progressChanged(int)));
+    connect(diagnosticTool, SIGNAL(onProgressUpdate(int)), this, SLOT(onProgressUpdate(int)));
 
     connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runResolvers()));
 
