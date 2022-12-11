@@ -48,6 +48,8 @@ private:
 
     bool isCompleteResolvers;
 
+    QThread *workingThread;
+
 private:
     void showEvent(QShowEvent *event);
 

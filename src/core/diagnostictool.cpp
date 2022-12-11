@@ -7,6 +7,7 @@
 
 DiagnosticTool::DiagnosticTool(QJsonDocument &document)
     : d(std::make_unique<DiagnosticToolPrivate>(document))
+    , stopFlag(false)
 {}
 
 void DiagnosticTool::runChecks()
@@ -21,11 +22,14 @@ void DiagnosticTool::runChecks()
 
     for (int i = 0; i < checkSize; i++)
     {
+        if (stopFlag)
+            break;
+
         ADTExecutable *currentTask = d->checks.get()->at(i).get();
 
         emit messageChanged(currentTask->m_name);
 
-        QThread::sleep(3);
+        QThread::sleep(1); //job simulation
 
         emit progressChanged(progress + (i + 1) * percentByOneCheck);
     }
@@ -35,6 +39,8 @@ void DiagnosticTool::runChecks()
     this->moveToThread(QApplication::instance()->thread());
 
     emit finish();
+
+    QThread::currentThread()->quit();
 }
 
 void DiagnosticTool::runResolvers()
@@ -49,11 +55,14 @@ void DiagnosticTool::runResolvers()
 
     for (int i = 0; i < resolversSize; i++)
     {
+        if (stopFlag)
+            break;
+
         ADTExecutable *currentTask = d->resolvers.get()->at(i).get();
 
         emit messageChanged(currentTask->m_name);
 
-        QThread::sleep(3);
+        QThread::sleep(1); //job simulation
 
         emit progressChanged(progress + (i + 1) * percentByOneResolver);
     }
@@ -63,6 +72,11 @@ void DiagnosticTool::runResolvers()
     this->moveToThread(QApplication::instance()->thread());
 
     emit finish();
+
+    QThread::currentThread()->quit();
 }
 
-void DiagnosticTool::cancelTask(bool stop) {}
+void DiagnosticTool::cancelTask()
+{
+    stopFlag = true;
+}

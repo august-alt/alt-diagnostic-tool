@@ -29,6 +29,7 @@ RepairWizardPage::RepairWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     , ui(new Ui::RepairWizardPage)
     , diagnosticTool(diagTool)
     , isCompleteResolvers(false)
+    , workingThread(nullptr)
 {
     ui->setupUi(this);
 
@@ -57,21 +58,21 @@ void RepairWizardPage::showEvent(QShowEvent *event)
 
 void RepairWizardPage::runResolvers()
 {
-    QThread *workingThread = new QThread();
-
-    diagnosticTool->moveToThread(workingThread);
+    workingThread = new QThread();
 
     connect(diagnosticTool, SIGNAL(begin()), this, SLOT(disableNextButton()));
 
     connect(diagnosticTool, SIGNAL(finish()), this, SLOT(enableNextButton()));
 
+    connect(diagnosticTool, SIGNAL(messageChanged(QString)), this, SLOT(messageChanged(QString)));
+
+    connect(diagnosticTool, SIGNAL(progressChanged(int)), this, SLOT(progressChanged(int)));
+
     connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runResolvers()));
 
     connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
 
-    connect(diagnosticTool, SIGNAL(messageChanged(QString)), this, SLOT(messageChanged(QString)));
-
-    connect(diagnosticTool, SIGNAL(progressChanged(int)), this, SLOT(progressChanged(int)));
+    diagnosticTool->moveToThread(workingThread);
 
     workingThread->start();
 }
@@ -104,6 +105,8 @@ void RepairWizardPage::cancelButtonPressed(int currentPage)
 {
     if (currentPage == ADTWizard::Repair_Page)
     {
-        qWarning() << "repairpage cancelled operation";
+        diagnosticTool->cancelTask();
+
+        workingThread->wait();
     }
 }

@@ -12,14 +12,16 @@ public:
 
 public:
     DiagnosticTool(QJsonDocument &document);
+    void cancelTask();
 
 public slots:
     void runChecks();
     void runResolvers();
-    void cancelTask(bool stop);
 
 private:
     std::unique_ptr<DiagnosticToolPrivate> d;
+
+    volatile bool stopFlag;
 
 signals:
     void progressChanged(int progress);

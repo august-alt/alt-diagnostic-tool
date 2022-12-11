@@ -23,6 +23,7 @@
 
 #include "../core/diagnostictool.h"
 
+#include <QThread>
 #include <QWizardPage>
 
 namespace Ui
@@ -42,11 +43,13 @@ public:
 private:
     Ui::CheckWizardPage *ui;
 
-    bool isOpening = false;
-
     DiagnosticTool *diagnosticTool;
 
+    bool isOpening = false;
+
     bool isCompleteChecks;
+
+    QThread *workingThread;
 
 private:
     void showEvent(QShowEvent *event);
