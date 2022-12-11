@@ -40,6 +40,8 @@ public:
 
     virtual bool isComplete() const override;
 
+    virtual int nextId() const override;
+
 private:
     Ui::CheckWizardPage *ui;
 

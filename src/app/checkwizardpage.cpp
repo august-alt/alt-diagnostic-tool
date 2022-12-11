@@ -44,6 +44,20 @@ bool CheckWizardPage::isComplete() const
     return isCompleteChecks;
 }
 
+int CheckWizardPage::nextId() const
+{
+    if (ui->runRepairRadioButton->isChecked())
+    {
+        return ADTWizard::Repair_Page;
+    }
+    if (ui->finishRadioButton->isChecked())
+    {
+        return ADTWizard::Finish_Page;
+    }
+
+    return ADTWizard::Check_Page;
+}
+
 void CheckWizardPage::showEvent(QShowEvent *event)
 {
     if (isOpening)
