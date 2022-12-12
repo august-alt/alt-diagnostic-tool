@@ -13,6 +13,7 @@ set (HEADERS
 
     diagnostictool.h
     diagnostictoolprivate.h
+    alteratorexecutordbusinterface.h
 )
 
 set (SOURCES
