@@ -77,7 +77,7 @@ void RepairWizardPage::runResolvers()
     workingThread->start();
 }
 
-void RepairWizardPage::progressChanged(int progress)
+void RepairWizardPage::onProgressUpdate(int progress)
 {
     ui->repairProgressBar->setValue(progress);
 }

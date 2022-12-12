@@ -92,7 +92,7 @@ void CheckWizardPage::runChecks()
     workingThread->start();
 }
 
-void CheckWizardPage::progressChanged(int progress)
+void CheckWizardPage::onProgressUpdate(int progress)
 {
     ui->mainProgressBar->setValue(progress);
 }

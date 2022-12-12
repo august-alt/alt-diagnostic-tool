@@ -59,7 +59,7 @@ private:
     void runChecks();
 
 private slots:
-    void progressChanged(int progress);
+    void onProgressUpdate(int progress);
 
     void messageChanged(QString message);
 
