@@ -21,6 +21,8 @@
 #include "adtwizard.h"
 
 #include <QApplication>
+#include <QFile>
+#include <QJsonDocument>
 
 int main(int argc, char **argv)
 {

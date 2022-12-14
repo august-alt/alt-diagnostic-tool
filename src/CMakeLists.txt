@@ -12,3 +12,4 @@ if (CMAKE_COMPILER_IS_GNUCXX AND NOT WIN32)
 endif()
 
 add_subdirectory(app)
+add_subdirectory(core)
