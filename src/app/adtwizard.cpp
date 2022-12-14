@@ -35,11 +35,11 @@ ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
 {
     auto doc = LoadJSonFile(jsonFile);
 
-    diagnosticTool = std::make_unique<DiagnosticTool>(*doc.get());
+    diagnosticTool.reset(new DiagnosticTool(*doc.get()));
 
     introPage  = std::make_unique<IntroWizardPage>();
-    checkPage  = std::make_unique<CheckWizardPage>(diagnosticTool.get());
-    repairPage = std::make_unique<RepairWizardPage>(diagnosticTool.get());
+    checkPage  = std::make_unique<CheckWizardPage>(diagnosticTool.data());
+    repairPage = std::make_unique<RepairWizardPage>(diagnosticTool.data());
     finishPage = std::make_unique<FinishWizardPage>();
 
     setPage(Intro_Page, introPage.get());

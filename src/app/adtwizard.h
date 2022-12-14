@@ -29,6 +29,7 @@
 #include "repairwizardpage.h"
 
 #include <memory.h>
+#include <QScopedPointer>
 #include <QWizard>
 
 class ADTWizard : public QWizard
@@ -54,7 +55,7 @@ signals:
     void cancelPressed(int currentPage);
 
 private:
-    std::unique_ptr<DiagnosticTool> diagnosticTool;
+    QScopedPointer<DiagnosticTool> diagnosticTool;
 
     std::unique_ptr<IntroWizardPage> introPage;
     std::unique_ptr<CheckWizardPage> checkPage;
