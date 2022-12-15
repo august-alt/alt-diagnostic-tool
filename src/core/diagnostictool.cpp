@@ -36,6 +36,9 @@ void DiagnosticTool::runChecks()
 
     int checkSize = d->checks.get()->size();
 
+    if (checkSize == 0)
+        return;
+
     int percentByOneCheck = 100 / checkSize;
 
     int progress = 0;
@@ -68,6 +71,9 @@ void DiagnosticTool::runResolvers()
     emit begin();
 
     int resolversSize = d->resolvers.get()->size();
+
+    if (resolversSize == 0)
+        return;
 
     int percentByOneResolver = 100 / resolversSize;
 

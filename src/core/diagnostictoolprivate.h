@@ -39,7 +39,6 @@ public:
 
 private:
     void parseExecutors(QJsonDocument *doc);
-    //void saveExecutors(QJsonObject *doc);
 };
 
 #endif // DIAGNOSTICTOOLPRIVATE_H

@@ -28,7 +28,6 @@
 #include "introwizardpage.h"
 #include "repairwizardpage.h"
 
-#include <memory.h>
 #include <QScopedPointer>
 #include <QWizard>
 
@@ -57,13 +56,13 @@ signals:
 private:
     QScopedPointer<DiagnosticTool> diagnosticTool;
 
-    std::unique_ptr<IntroWizardPage> introPage;
-    std::unique_ptr<CheckWizardPage> checkPage;
-    std::unique_ptr<RepairWizardPage> repairPage;
-    std::unique_ptr<FinishWizardPage> finishPage;
+    QScopedPointer<IntroWizardPage> introPage;
+    QScopedPointer<CheckWizardPage> checkPage;
+    QScopedPointer<RepairWizardPage> repairPage;
+    QScopedPointer<FinishWizardPage> finishPage;
 
 private:
-    std::unique_ptr<QJsonDocument> LoadJSonFile(QString file);
+    QJsonDocument LoadJSonFile(QString file);
 };
 
 #endif // ADTWIZARD_H

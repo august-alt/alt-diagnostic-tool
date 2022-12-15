@@ -33,19 +33,19 @@ ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
     , repairPage(nullptr)
     , finishPage(nullptr)
 {
-    auto doc = LoadJSonFile(jsonFile);
+    QJsonDocument doc = LoadJSonFile(jsonFile);
 
-    diagnosticTool.reset(new DiagnosticTool(*doc.get()));
+    diagnosticTool.reset(new DiagnosticTool(doc));
 
-    introPage  = std::make_unique<IntroWizardPage>();
-    checkPage  = std::make_unique<CheckWizardPage>(diagnosticTool.data());
-    repairPage = std::make_unique<RepairWizardPage>(diagnosticTool.data());
-    finishPage = std::make_unique<FinishWizardPage>();
+    introPage.reset(new IntroWizardPage);
+    checkPage.reset(new CheckWizardPage(diagnosticTool.data()));
+    repairPage.reset(new RepairWizardPage(diagnosticTool.data()));
+    finishPage.reset(new FinishWizardPage);
 
-    setPage(Intro_Page, introPage.get());
-    setPage(Check_Page, checkPage.get());
-    setPage(Repair_Page, repairPage.get());
-    setPage(Finish_Page, finishPage.get());
+    setPage(Intro_Page, introPage.data());
+    setPage(Check_Page, checkPage.data());
+    setPage(Repair_Page, repairPage.data());
+    setPage(Finish_Page, finishPage.data());
 
     setStartId(Intro_Page);
 
@@ -63,19 +63,23 @@ void ADTWizard::cancelButtonPressed()
     emit reject();
 }
 
-std::unique_ptr<QJsonDocument> ADTWizard::LoadJSonFile(QString file)
+QJsonDocument ADTWizard::LoadJSonFile(QString file)
 {
     QFile jsonFile(file);
+
+    QJsonDocument doc;
 
     if (!jsonFile.open(QIODevice::ReadOnly))
     {
         qWarning() << "Can't open json file!";
-        return nullptr;
+        return doc;
     }
 
     QByteArray fileData = jsonFile.readAll();
 
     jsonFile.close();
 
-    return std::make_unique<QJsonDocument>(QJsonDocument::fromJson(fileData));
+    doc = (QJsonDocument::fromJson(fileData));
+
+    return doc;
 }
