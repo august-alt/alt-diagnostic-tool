@@ -18,8 +18,8 @@
 **
 ***********************************************************************************************************************/
 
-#ifndef __ADJCONVERTER_H
-#define __ADJCONVERTER_H
+#ifndef ADJCONVERTER_H
+#define ADJCONVERTER_H
 
 #include <QObject>
 #include <qjsonobject.h>
