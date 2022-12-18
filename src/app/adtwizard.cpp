@@ -25,6 +25,10 @@
 #include <QJsonDocument>
 #include <QPushButton>
 
+#include <QtDBus/QDBusConnectionInterface>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusReply>
+
 ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
     : QWizard(parent)
     , diagnosticTool(nullptr)
@@ -61,6 +65,27 @@ void ADTWizard::cancelButtonPressed()
     emit cancelPressed(currentId());
 
     emit reject();
+}
+
+QDomDocument ADTWizard::getIntrospection(QDBusConnection &bus, QString &service, QString &path)
+{
+    QDomDocument doc;
+
+    QDBusInterface iface(service, path, "org.freedesktop.DBus.Introspectable", bus);
+
+    QDBusReply<QString> reply = iface.call("Introspect");
+
+    if (!reply.isValid())
+    {
+        qWarning() << "Can't get introspect, "
+                   << " service: " << service << " path " << path;
+
+        return doc;
+    }
+
+    doc.setContent(reply);
+
+    return doc;
 }
 
 QJsonDocument ADTWizard::LoadJSonFile(QString file)

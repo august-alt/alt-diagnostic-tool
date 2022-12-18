@@ -17,6 +17,8 @@ macro(add_adt_executable name)
 endmacro(add_adt_executable)
 
 find_package(Qt5 COMPONENTS Widgets Core Gui REQUIRED)
+find_package(Qt5 REQUIRED COMPONENTS DBus)
+find_package(Qt5 REQUIRED COMPONENTS Xml)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -60,4 +62,4 @@ qt5_add_resources (RCC_SOURCES ${RESOURCES})
 
 add_adt_executable(alt-diagnostic-tool ${SOURCES} ${HEADERS} ${UI_SOURCES} ${RCC_SOURCES})
 
-target_link_libraries(alt-diagnostic-tool Qt5::Widgets Qt5::Core Qt5::Gui adtcore)
+target_link_libraries(alt-diagnostic-tool Qt5::Widgets Qt5::Core Qt5::DBus Qt5::Xml Qt5::Gui adtcore)

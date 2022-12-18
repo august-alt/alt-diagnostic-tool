@@ -30,6 +30,8 @@
 
 #include <QScopedPointer>
 #include <QWizard>
+#include <QtDBus/QDBusConnection>
+#include <QtXml/QDomDocument>
 
 class ADTWizard : public QWizard
 {
@@ -60,6 +62,8 @@ private:
     QScopedPointer<CheckWizardPage> checkPage;
     QScopedPointer<RepairWizardPage> repairPage;
     QScopedPointer<FinishWizardPage> finishPage;
+
+    QDomDocument getIntrospection(QDBusConnection &bus, QString &service, QString &path);
 
 private:
     QJsonDocument LoadJSonFile(QString file);
