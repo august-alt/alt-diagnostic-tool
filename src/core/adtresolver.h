@@ -23,9 +23,6 @@
 
 #include "adtexecutable.h"
 
-#include <vector>
-#include <QMap>
-
 class ADTResolver : public ADTExecutable
 {};
 

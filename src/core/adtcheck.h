@@ -24,7 +24,6 @@
 #include "adtexecutable.h"
 
 #include <vector>
-#include <QMap>
 
 class ADTCheck : public ADTExecutable
 {

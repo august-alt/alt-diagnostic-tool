@@ -37,14 +37,12 @@ ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
     , repairPage(nullptr)
     , finishPage(nullptr)
 {
-    QJsonDocument doc = LoadJSonFile(jsonFile);
+    diagnosticTool.reset(new DiagnosticTool(LoadJSonFile(jsonFile)));
 
-    diagnosticTool.reset(new DiagnosticTool(doc));
-
-    introPage.reset(new IntroWizardPage);
+    introPage.reset(new IntroWizardPage());
     checkPage.reset(new CheckWizardPage(diagnosticTool.data()));
     repairPage.reset(new RepairWizardPage(diagnosticTool.data()));
-    finishPage.reset(new FinishWizardPage);
+    finishPage.reset(new FinishWizardPage());
 
     setPage(Intro_Page, introPage.data());
     setPage(Check_Page, checkPage.data());

@@ -24,6 +24,7 @@
 #include "diagnostictoolprivate.h"
 
 #include <QJsonDocument>
+#include <QScopedPointer>
 
 class DiagnosticTool : public QObject
 {
@@ -31,7 +32,7 @@ public:
     Q_OBJECT
 
 public:
-    DiagnosticTool(QJsonDocument &document);
+    DiagnosticTool(QJsonDocument document);
 
     void cancelTask();
 
@@ -43,7 +44,7 @@ public slots:
     void runResolvers();
 
 private:
-    std::unique_ptr<DiagnosticToolPrivate> d;
+    QScopedPointer<DiagnosticToolPrivate> d;
 
     volatile bool stopFlag;
 

@@ -25,16 +25,18 @@
 
 #include <QtWidgets/QApplication>
 
-DiagnosticTool::DiagnosticTool(QJsonDocument &document)
-    : d(std::make_unique<DiagnosticToolPrivate>(document))
+DiagnosticTool::DiagnosticTool(QJsonDocument document)
+    : d(nullptr)
     , stopFlag(false)
-{}
+{
+    d.reset(new DiagnosticToolPrivate(document));
+}
 
 void DiagnosticTool::runChecks()
 {
     emit begin();
 
-    int checkSize = d->checks.get()->size();
+    int checkSize = d->checks->size();
 
     if (checkSize == 0)
         return;
@@ -48,7 +50,7 @@ void DiagnosticTool::runChecks()
         if (stopFlag)
             break;
 
-        ADTExecutable *currentTask = d->checks.get()->at(i).get();
+        ADTExecutable *currentTask = d->checks->at(i).get();
 
         emit messageChanged(currentTask->m_name);
 
@@ -70,7 +72,7 @@ void DiagnosticTool::runResolvers()
 {
     emit begin();
 
-    int resolversSize = d->resolvers.get()->size();
+    int resolversSize = d->resolvers->size();
 
     if (resolversSize == 0)
         return;
@@ -82,9 +84,11 @@ void DiagnosticTool::runResolvers()
     for (int i = 0; i < resolversSize; i++)
     {
         if (stopFlag)
+        {
             break;
+        }
 
-        ADTExecutable *currentTask = d->resolvers.get()->at(i).get();
+        ADTExecutable *currentTask = d->resolvers->at(i).get();
 
         emit messageChanged(currentTask->m_name);
 
@@ -109,10 +113,10 @@ void DiagnosticTool::cancelTask()
 
 unsigned int DiagnosticTool::getAmountOfChecks()
 {
-    return d->checks.get()->size();
+    return d->checks->size();
 }
 
 unsigned int DiagnosticTool::getAmountOfResolvers()
 {
-    return d->resolvers.get()->size();
+    return d->resolvers->size();
 }

@@ -62,7 +62,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Добро пожаловать в мастер обнаружения и исправления проблем.</string>
+         <string>Welcome to the Problem Detection and Correction Wizard.</string>
         </property>
        </widget>
       </item>
