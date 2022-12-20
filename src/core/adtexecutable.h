@@ -41,8 +41,15 @@ public:
     QString m_command;
     QString m_args;
 
+    QString m_stdout;
+    QString m_stderr;
+
 public:
     ADTExecutable();
+
+public slots:
+    void getStdout(QString out);
+    void getStderr(QString err);
 };
 
 #endif //ADTEXECUTABLE_H

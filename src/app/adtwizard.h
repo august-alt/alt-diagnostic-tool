@@ -65,8 +65,6 @@ private:
 
 private:
     QJsonDocument LoadJSonFile(QString file);
-
-    QDomDocument getIntrospection(QDBusConnection &bus, QString &service, QString &path);
 };
 
 #endif // ADTWIZARD_H

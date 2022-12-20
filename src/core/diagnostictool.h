@@ -43,6 +43,8 @@ public slots:
     void runChecks();
     void runResolvers();
 
+    void executeCommand(ADTExecutable *task);
+
 private:
     QScopedPointer<DiagnosticToolPrivate> d;
 

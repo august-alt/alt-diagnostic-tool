@@ -65,27 +65,6 @@ void ADTWizard::cancelButtonPressed()
     emit reject();
 }
 
-QDomDocument ADTWizard::getIntrospection(QDBusConnection &bus, QString &service, QString &path)
-{
-    QDomDocument doc;
-
-    QDBusInterface iface(service, path, "org.freedesktop.DBus.Introspectable", bus);
-
-    QDBusReply<QString> reply = iface.call("Introspect");
-
-    if (!reply.isValid())
-    {
-        qWarning() << "Can't get introspect, "
-                   << " service: " << service << " path " << path;
-
-        return doc;
-    }
-
-    doc.setContent(reply);
-
-    return doc;
-}
-
 QJsonDocument ADTWizard::LoadJSonFile(QString file)
 {
     QFile jsonFile(file);

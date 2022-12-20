@@ -39,7 +39,7 @@ void DiagnosticToolPrivate::parseExecutors(QJsonDocument *doc)
 
     if (object.contains("checks") && object["checks"].isArray())
     {
-        checks.get()->clear();
+        checks->clear();
 
         QJsonArray checksArray = object["checks"].toArray();
 
@@ -47,14 +47,14 @@ void DiagnosticToolPrivate::parseExecutors(QJsonDocument *doc)
         {
             auto check      = std::make_unique<ADTExecutable>();
             QJsonObject obj = checksArray[i].toObject();
-            ADTJsonConverter::JSonToObject(check.get(), &obj);
-            checks.get()->emplace_back(std::move(check));
+            ADTJsonConverter::JSonToObject(*check.get(), &obj);
+            checks->emplace_back(std::move(check));
         }
     }
 
     if (object.contains("resolvers") && object["resolvers"].isArray())
     {
-        resolvers.get()->clear();
+        resolvers->clear();
 
         QJsonArray resolversArray = object["resolvers"].toArray();
 
@@ -62,8 +62,8 @@ void DiagnosticToolPrivate::parseExecutors(QJsonDocument *doc)
         {
             auto resolver   = std::make_unique<ADTExecutable>();
             QJsonObject obj = resolversArray[i].toObject();
-            ADTJsonConverter::JSonToObject(resolver.get(), &obj);
-            resolvers.get()->emplace_back(std::move(resolver));
+            ADTJsonConverter::JSonToObject(*resolver.get(), &obj);
+            resolvers->emplace_back(std::move(resolver));
         }
     }
 }

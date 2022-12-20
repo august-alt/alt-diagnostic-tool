@@ -1,4 +1,4 @@
-find_package(Qt5 REQUIRED COMPONENTS Core)
+find_package(Qt5 REQUIRED COMPONENTS Core DBus)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -27,4 +27,4 @@ set (SOURCES
 )
 
 ADD_LIBRARY(adtcore STATIC ${SOURCES} ${HEADERS})
-target_link_libraries(adtcore PRIVATE Qt5::Core)
+target_link_libraries(adtcore PRIVATE Qt5::Core Qt5::DBus)

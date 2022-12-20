@@ -27,9 +27,9 @@
 class ADTJsonConverter
 {
 public:
-    static QJsonObject propertyToJson(QObject *obj);
+    static QJsonObject propertyToJson(const QObject &obj);
 
-    static void JSonToObject(QObject *obj, QJsonObject *json);
+    static void JSonToObject(QObject &obj, QJsonObject *json);
 };
 
 #endif //__ADJCONVERTER_H
