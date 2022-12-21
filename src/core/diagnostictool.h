@@ -25,6 +25,9 @@
 
 #include <QJsonDocument>
 #include <QScopedPointer>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusConnectionInterface>
+#include <QtDBus/QDBusInterface>
 
 class DiagnosticTool : public QObject
 {
@@ -43,12 +46,15 @@ public slots:
     void runChecks();
     void runResolvers();
 
-    void executeCommand(ADTExecutable *task);
+    void executeCommand(std::unique_ptr<ADTExecutable> &task);
 
 private:
     QScopedPointer<DiagnosticToolPrivate> d;
 
     volatile bool stopFlag;
+
+    std::unique_ptr<QDBusConnection> dbus;
+    std::unique_ptr<QDBusInterface> dbusInterface;
 
 signals:
     void onProgressUpdate(int progress);

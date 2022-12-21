@@ -26,15 +26,18 @@
 
 #include <QtWidgets/QApplication>
 
-#include <QtDBus/QDBusConnection>
-#include <QtDBus/QDBusConnectionInterface>
-#include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusReply>
 
 DiagnosticTool::DiagnosticTool(QJsonDocument document)
     : d(nullptr)
     , stopFlag(false)
+    , dbus(std::make_unique<QDBusConnection>(QDBusConnection::systemBus()))
+    , dbusInterface(std::make_unique<QDBusInterface>("ru.basealt.alterator",
+                                                     "/ru/basealt/alterator/executor",
+                                                     "ru.basealt.alterator.executor",
+                                                     *dbus.get()))
+
 {
     d.reset(new DiagnosticToolPrivate(document));
 }
@@ -52,19 +55,23 @@ void DiagnosticTool::runChecks()
 
     int progress = 0;
 
-    for (int i = 0; i < checkSize; i++)
+    auto &checks = (*d->checks.get());
+
+    for (auto &check : checks)
     {
         if (stopFlag)
         {
             break;
         }
 
-        emit messageChanged(d->checks->at(i).get()->m_name);
+        emit messageChanged(check.get()->m_name);
 
-        executeCommand(d->checks->at(i).get());
+        executeCommand(check);
         QThread::sleep(1); //delay, in order to see the progress
 
-        emit onProgressUpdate(progress + (i + 1) * percentByOneCheck);
+        progress = progress + percentByOneCheck;
+
+        emit onProgressUpdate(progress);
     }
 
     emit onProgressUpdate(100);
@@ -89,19 +96,23 @@ void DiagnosticTool::runResolvers()
 
     int progress = 0;
 
-    for (int i = 0; i < resolversSize; i++)
+    auto &resolvers = (*d->resolvers.get());
+
+    for (auto &resolver : resolvers)
     {
         if (stopFlag)
         {
             break;
         }
 
-        emit messageChanged(d->resolvers->at(i).get()->m_name);
+        emit messageChanged(resolver.get()->m_name);
 
-        executeCommand(d->resolvers->at(i).get());
+        executeCommand(resolver);
         QThread::sleep(1); //delay, in order to see the progress
 
-        emit onProgressUpdate(progress + (i + 1) * percentByOneResolver);
+        progress = progress + percentByOneResolver;
+
+        emit onProgressUpdate(progress);
     }
 
     emit onProgressUpdate(100);
@@ -113,44 +124,37 @@ void DiagnosticTool::runResolvers()
     QThread::currentThread()->quit();
 }
 
-void DiagnosticTool::executeCommand(ADTExecutable *task)
+void DiagnosticTool::executeCommand(std::unique_ptr<ADTExecutable> &task)
 {
-    QDBusConnection dbus = QDBusConnection::systemBus();
-
     //There is no backend at the moment, so we use the test command and signals
 
-    QDBusInterface iface("ru.basealt.alterator",
-                         "/ru/basealt/alterator/executor",
-                         "ru.basealt.alterator.executor",
-                         dbus);
+    dbusInterface->connection().connect(QLatin1String("ru.basealt.alterator"),
+                                        QLatin1String("/ru/basealt/alterator/executor"),
+                                        QLatin1String("ru.basealt.alterator.executor"),
+                                        QLatin1String("executor_stdout"),
+                                        task.get(),
+                                        SLOT(getStdout(QString)));
+    dbusInterface->connection().connect("ru.basealt.alterator",
+                                        "/ru/basealt/alterator/executor",
+                                        "ru.basealt.alterator.executor",
+                                        "executor_stderr",
+                                        task.get(),
+                                        SLOT(getStderr(QString)));
 
-    iface.connection().connect(QLatin1String("ru.basealt.alterator"),
-                               QLatin1String("/ru/basealt/alterator/executor"),
-                               QLatin1String("ru.basealt.alterator.executor"),
-                               QLatin1String("executor_stdout"),
-                               task,
-                               SLOT(getStdout(QString)));
-    iface.connection().connect("ru.basealt.alterator",
-                               "/ru/basealt/alterator/executor",
-                               "ru.basealt.alterator.executor",
-                               "executor_stderr",
-                               task,
-                               SLOT(getStderr(QString)));
+    QDBusReply<int> reply = dbusInterface->call("test1", "\"dev\"");
 
-    QDBusReply<int> reply = iface.call("test1", "\"dev\"");
-
-    iface.connection().disconnect("ru.basealt",
-                                  "/ru/basealt/alterator/executor",
-                                  "ru.basealt.alterator.executor",
-                                  "executor_stdout",
-                                  task,
-                                  SLOT(getStdout(QString)));
-    iface.connection().disconnect("ru.basealt",
-                                  "/ru/basealt/alterator/executor",
-                                  "ru.basealt.alterator.executor",
-                                  "executor_stderr",
-                                  task,
-                                  SLOT(getStderr(QString)));
+    dbusInterface->connection().disconnect("ru.basealt",
+                                           "/ru/basealt/alterator/executor",
+                                           "ru.basealt.alterator.executor",
+                                           "executor_stdout",
+                                           task.get(),
+                                           SLOT(getStdout(QString)));
+    dbusInterface->connection().disconnect("ru.basealt",
+                                           "/ru/basealt/alterator/executor",
+                                           "ru.basealt.alterator.executor",
+                                           "executor_stderr",
+                                           task.get(),
+                                           SLOT(getStderr(QString)));
 }
 
 void DiagnosticTool::cancelTask()

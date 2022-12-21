@@ -48,7 +48,7 @@ void DiagnosticToolPrivate::parseExecutors(QJsonDocument *doc)
             auto check      = std::make_unique<ADTExecutable>();
             QJsonObject obj = checksArray[i].toObject();
             ADTJsonConverter::JSonToObject(*check.get(), &obj);
-            checks->emplace_back(std::move(check));
+            checks->push_back(std::move(check));
         }
     }
 
@@ -63,7 +63,7 @@ void DiagnosticToolPrivate::parseExecutors(QJsonDocument *doc)
             auto resolver   = std::make_unique<ADTExecutable>();
             QJsonObject obj = resolversArray[i].toObject();
             ADTJsonConverter::JSonToObject(*resolver.get(), &obj);
-            resolvers->emplace_back(std::move(resolver));
+            resolvers->push_back(std::move(resolver));
         }
     }
 }

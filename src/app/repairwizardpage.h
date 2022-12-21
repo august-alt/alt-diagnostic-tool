@@ -51,7 +51,7 @@ private:
     QThread *workingThread;
 
 private:
-    void showEvent(QShowEvent *event);
+    void showEvent(QShowEvent *event) override;
 
     void runResolvers();
 
