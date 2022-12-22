@@ -107,6 +107,9 @@ void RepairWizardPage::cancelButtonPressed(int currentPage)
     {
         diagnosticTool->cancelTask();
 
-        workingThread->wait();
+        if (!isCompleteResolvers)
+        {
+            workingThread->wait();
+        }
     }
 }

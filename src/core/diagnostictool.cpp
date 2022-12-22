@@ -49,7 +49,16 @@ void DiagnosticTool::runChecks()
     int checkSize = d->checks->size();
 
     if (checkSize == 0)
+    {
+        emit onProgressUpdate(100);
+
+        this->moveToThread(QApplication::instance()->thread());
+
+        emit finish();
+
+        QThread::currentThread()->quit();
         return;
+    }
 
     int percentByOneCheck = 100 / checkSize;
 
@@ -90,7 +99,16 @@ void DiagnosticTool::runResolvers()
     int resolversSize = d->resolvers->size();
 
     if (resolversSize == 0)
+    {
+        emit onProgressUpdate(100);
+
+        this->moveToThread(QApplication::instance()->thread());
+
+        emit finish();
+
+        QThread::currentThread()->quit();
         return;
+    }
 
     int percentByOneResolver = 100 / resolversSize;
 

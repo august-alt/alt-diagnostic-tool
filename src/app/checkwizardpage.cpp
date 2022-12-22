@@ -122,6 +122,9 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
     {
         diagnosticTool->cancelTask();
 
-        workingThread->wait();
+        if (!isCompleteChecks)
+        {
+            workingThread->wait();
+        }
     }
 }
