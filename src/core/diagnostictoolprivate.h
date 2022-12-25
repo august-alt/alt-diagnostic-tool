@@ -18,12 +18,27 @@
 **
 ***********************************************************************************************************************/
 
-#ifndef ADTRESOLVER_H
-#define ADTRESOLVER_H
+#ifndef DIAGNOSTICTOOLPRIVATE_H
+#define DIAGNOSTICTOOLPRIVATE_H
 
-#include "adtexecutable.h"
+#include "adtcheck.h"
+#include "adtresolver.h"
 
-class ADTResolver : public ADTExecutable
-{};
+#include <memory>
 
-#endif // ADTRESOLVER_H
+class DiagnosticToolPrivate
+{
+public:
+    DiagnosticToolPrivate(QJsonDocument &document);
+
+public:
+    std::unique_ptr<std::vector<std::unique_ptr<ADTExecutable>>> checks;
+    std::unique_ptr<std::vector<std::unique_ptr<ADTExecutable>>> resolvers;
+
+    std::unique_ptr<QJsonDocument> currentDocument;
+
+private:
+    void parseExecutors(QJsonDocument *doc);
+};
+
+#endif // DIAGNOSTICTOOLPRIVATE_H

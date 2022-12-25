@@ -19,18 +19,69 @@
 ***********************************************************************************************************************/
 
 #include "adtwizard.h"
-#include "checkwizardpage.h"
-#include "finishwizardpage.h"
-#include "introwizardpage.h"
-#include "repairwizardpage.h"
 
-ADTWizard::ADTWizard(QWidget *parent)
+#include <QDebug>
+#include <QFile>
+#include <QJsonDocument>
+#include <QPushButton>
+
+#include <QtDBus/QDBusConnectionInterface>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusReply>
+
+ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
     : QWizard(parent)
+    , diagnosticTool(nullptr)
+    , introPage(nullptr)
+    , checkPage(nullptr)
+    , repairPage(nullptr)
+    , finishPage(nullptr)
 {
-    setPage(Intro_Page, new IntroWizardPage);
-    setPage(Check_Page, new CheckWizardPage);
-    setPage(Repair_Page, new RepairWizardPage);
-    setPage(Finish_Page, new FinishWizardPage);
+    diagnosticTool.reset(new DiagnosticTool(LoadJSonFile(jsonFile)));
+
+    introPage.reset(new IntroWizardPage());
+    checkPage.reset(new CheckWizardPage(diagnosticTool.data()));
+    repairPage.reset(new RepairWizardPage(diagnosticTool.data()));
+    finishPage.reset(new FinishWizardPage());
+
+    setPage(Intro_Page, introPage.data());
+    setPage(Check_Page, checkPage.data());
+    setPage(Repair_Page, repairPage.data());
+    setPage(Finish_Page, finishPage.data());
 
     setStartId(Intro_Page);
+
+    disconnect(button(QWizard::CancelButton), SIGNAL(clicked()), this, SLOT(reject()));
+    connect(button(QWizard::CancelButton), SIGNAL(clicked()), this, SLOT(cancelButtonPressed()));
+
+    connect(this, SIGNAL(cancelPressed(int)), checkPage.get(), SLOT(cancelButtonPressed(int)));
+    connect(this, SIGNAL(cancelPressed(int)), repairPage.get(), SLOT(cancelButtonPressed(int)));
+}
+
+void ADTWizard::cancelButtonPressed()
+{
+    emit cancelPressed(currentId());
+
+    emit reject();
+}
+
+QJsonDocument ADTWizard::LoadJSonFile(QString file)
+{
+    QFile jsonFile(file);
+
+    QJsonDocument doc;
+
+    if (!jsonFile.open(QIODevice::ReadOnly))
+    {
+        qWarning() << "Can't open json file!";
+        return doc;
+    }
+
+    QByteArray fileData = jsonFile.readAll();
+
+    jsonFile.close();
+
+    doc = (QJsonDocument::fromJson(fileData));
+
+    return doc;
 }

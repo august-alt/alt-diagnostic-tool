@@ -18,12 +18,17 @@
 **
 ***********************************************************************************************************************/
 
-#ifndef ADTRESOLVER_H
-#define ADTRESOLVER_H
+#ifndef ALTERATOREXECUTORDBUSINTERFACE_H
+#define ALTERATOREXECUTORDBUSINTERFACE_H
 
-#include "adtexecutable.h"
+#include <QString>
 
-class ADTResolver : public ADTExecutable
-{};
+class AlteratorExecutorDBusInterface
+{
+public:
+    virtual void execute(QString command, QString arguments) = 0;
 
-#endif // ADTRESOLVER_H
+    virtual ~AlteratorExecutorDBusInterface();
+};
+
+#endif // ALTERATOREXECUTORDBUSINTERFACE_H

@@ -47,14 +47,14 @@
          </font>
         </property>
         <property name="text">
-         <string>Диагностика Завершена!</string>
+         <string>Diagnostics completed!</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="statusLabel">
         <property name="text">
-         <string>Нажмите &quot;Сохранить&quot; что бы поместить результаты дигностики на съёмный носитель.</string>
+         <string>Click &quot;Save&quot; to save the results to removable media.</string>
         </property>
        </widget>
       </item>

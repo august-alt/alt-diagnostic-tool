@@ -1,4 +1,4 @@
-find_package(Qt5 REQUIRED COMPONENTS Core)
+find_package(Qt5 REQUIRED COMPONENTS Core DBus)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -10,6 +10,10 @@ set (HEADERS
     adtresolver.h
 
     adtjsonconverter.h
+
+    diagnostictool.h
+    diagnostictoolprivate.h
+    alteratorexecutordbusinterface.h
 )
 
 set (SOURCES
@@ -18,7 +22,9 @@ set (SOURCES
     adtresolver.cpp
 
     adtjsonconverter.cpp
+    diagnostictool.cpp
+    diagnostictoolprivate.cpp
 )
 
 ADD_LIBRARY(adtcore STATIC ${SOURCES} ${HEADERS})
-target_link_libraries(adtcore PRIVATE Qt5::Core)
+target_link_libraries(adtcore PRIVATE Qt5::Core Qt5::DBus)

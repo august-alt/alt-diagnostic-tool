@@ -21,6 +21,8 @@
 #ifndef REPAIRWIZARDPAGE_H
 #define REPAIRWIZARDPAGE_H
 
+#include "../core/diagnostictool.h"
+
 #include <QWizardPage>
 
 namespace Ui
@@ -33,10 +35,36 @@ class RepairWizardPage : public QWizardPage
     Q_OBJECT
 
 public:
-    RepairWizardPage(QWidget *parent = nullptr);
+    RepairWizardPage(DiagnosticTool *diagTool, QWidget *parent = nullptr);
+
+    virtual bool isComplete() const override;
 
 private:
     Ui::RepairWizardPage *ui;
+
+    bool isOpening = false;
+
+    DiagnosticTool *diagnosticTool;
+
+    bool isCompleteResolvers;
+
+    QThread *workingThread;
+
+private:
+    void showEvent(QShowEvent *event) override;
+
+    void runResolvers();
+
+private slots:
+    void onProgressUpdate(int progress);
+
+    void messageChanged(QString message);
+
+    void disableNextButton();
+
+    void enableNextButton();
+
+    void cancelButtonPressed(int currentPage);
 
 private:
     RepairWizardPage(const RepairWizardPage &) = delete;            // copy ctor

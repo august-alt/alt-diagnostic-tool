@@ -62,14 +62,14 @@
          </font>
         </property>
         <property name="text">
-         <string>Устранение неполадок и помощь в предотвращении проблем с компьютером.</string>
+         <string>Troubleshoot and help prevent computer problems.</string>
         </property>
        </widget>
       </item>
       <item row="3" column="0" colspan="2">
        <widget class="QLabel" name="statusLabel">
         <property name="text">
-         <string>Идёт применение пакета исправлений - ПИ_7.12</string>
+         <string>RP_7.12 patch package is being applied</string>
         </property>
        </widget>
       </item>
@@ -89,7 +89,7 @@
       <item row="2" column="0" colspan="2">
        <widget class="QProgressBar" name="repairProgressBar">
         <property name="value">
-         <number>24</number>
+         <number>0</number>
         </property>
        </widget>
       </item>

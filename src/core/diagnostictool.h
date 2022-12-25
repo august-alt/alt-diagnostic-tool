@@ -18,12 +18,51 @@
 **
 ***********************************************************************************************************************/
 
-#ifndef ADTRESOLVER_H
-#define ADTRESOLVER_H
+#ifndef DIAGNOSTICTOOL_H
+#define DIAGNOSTICTOOL_H
 
-#include "adtexecutable.h"
+#include "diagnostictoolprivate.h"
 
-class ADTResolver : public ADTExecutable
-{};
+#include <QJsonDocument>
+#include <QScopedPointer>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusConnectionInterface>
+#include <QtDBus/QDBusInterface>
 
-#endif // ADTRESOLVER_H
+class DiagnosticTool : public QObject
+{
+public:
+    Q_OBJECT
+
+public:
+    DiagnosticTool(QJsonDocument document);
+
+    void cancelTask();
+
+    unsigned int getAmountOfChecks();
+    unsigned int getAmountOfResolvers();
+
+public slots:
+    void runChecks();
+    void runResolvers();
+
+    void executeCommand(std::unique_ptr<ADTExecutable> &task);
+
+private:
+    QScopedPointer<DiagnosticToolPrivate> d;
+
+    volatile bool stopFlag;
+
+    std::unique_ptr<QDBusConnection> dbus;
+    std::unique_ptr<QDBusInterface> dbusInterface;
+
+signals:
+    void onProgressUpdate(int progress);
+    void messageChanged(QString);
+    void onError();
+
+    void begin();
+    void finish();
+};
+
+#endif // DIAGNOSTICTOOL_H

@@ -21,6 +21,9 @@
 #ifndef CHECKWIZARDPAGE_H
 #define CHECKWIZARDPAGE_H
 
+#include "../core/diagnostictool.h"
+
+#include <QThread>
 #include <QWizardPage>
 
 namespace Ui
@@ -33,10 +36,38 @@ class CheckWizardPage : public QWizardPage
     Q_OBJECT
 
 public:
-    CheckWizardPage(QWidget *parent = nullptr);
+    CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent = nullptr);
+
+    virtual bool isComplete() const override;
+
+    virtual int nextId() const override;
 
 private:
     Ui::CheckWizardPage *ui;
+
+    DiagnosticTool *diagnosticTool;
+
+    bool isOpening = false;
+
+    bool isCompleteChecks;
+
+    QThread *workingThread;
+
+private:
+    void showEvent(QShowEvent *event) override;
+
+    void runChecks();
+
+private slots:
+    void onProgressUpdate(int progress);
+
+    void messageChanged(QString message);
+
+    void disableNextButton();
+
+    void enableNextButton();
+
+    void cancelButtonPressed(int currentPage);
 
 private:
     CheckWizardPage(const CheckWizardPage &) = delete;            // copy ctor

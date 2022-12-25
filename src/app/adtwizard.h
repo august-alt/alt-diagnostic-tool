@@ -21,7 +21,17 @@
 #ifndef ADTWIZARD_H
 #define ADTWIZARD_H
 
+#include "../core/diagnostictool.h"
+
+#include "checkwizardpage.h"
+#include "finishwizardpage.h"
+#include "introwizardpage.h"
+#include "repairwizardpage.h"
+
+#include <QScopedPointer>
 #include <QWizard>
+#include <QtDBus/QDBusConnection>
+#include <QtXml/QDomDocument>
 
 class ADTWizard : public QWizard
 {
@@ -37,7 +47,24 @@ public:
         Finish_Page
     };
 
-    ADTWizard(QWidget *parent = nullptr);
+    ADTWizard(QString jsonFile, QWidget *parent = nullptr);
+
+private slots:
+    void cancelButtonPressed();
+
+signals:
+    void cancelPressed(int currentPage);
+
+private:
+    QScopedPointer<DiagnosticTool> diagnosticTool;
+
+    QScopedPointer<IntroWizardPage> introPage;
+    QScopedPointer<CheckWizardPage> checkPage;
+    QScopedPointer<RepairWizardPage> repairPage;
+    QScopedPointer<FinishWizardPage> finishPage;
+
+private:
+    QJsonDocument LoadJSonFile(QString file);
 };
 
 #endif // ADTWIZARD_H
