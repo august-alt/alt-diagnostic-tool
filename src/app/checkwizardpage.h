@@ -69,6 +69,8 @@ private slots:
 
     void cancelButtonPressed(int currentPage);
 
+    void on_detailsPushButton_clicked();
+
 private:
     CheckWizardPage(const CheckWizardPage &) = delete;            // copy ctor
     CheckWizardPage(CheckWizardPage &&)      = delete;            // move ctor

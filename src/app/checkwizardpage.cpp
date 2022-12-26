@@ -37,6 +37,8 @@ CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     ui->mainProgressBar->setMinimum(0);
     ui->mainProgressBar->setMaximum(100);
     ui->mainProgressBar->setValue(0);
+
+    ui->detailsScrollArea->setVisible(false);
 }
 
 bool CheckWizardPage::isComplete() const
@@ -126,5 +128,17 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
         {
             workingThread->wait();
         }
+    }
+}
+
+void CheckWizardPage::on_detailsPushButton_clicked()
+{
+    if (ui->detailsScrollArea->isVisible())
+    {
+        ui->detailsScrollArea->setVisible(false);
+    }
+    else
+    {
+        ui->detailsScrollArea->setVisible(true);
     }
 }

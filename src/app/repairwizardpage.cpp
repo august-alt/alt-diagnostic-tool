@@ -36,6 +36,8 @@ RepairWizardPage::RepairWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     ui->repairProgressBar->setMinimum(0);
     ui->repairProgressBar->setMaximum(100);
     ui->repairProgressBar->setValue(0);
+
+    ui->detailsScrollArea->setVisible(false);
 }
 
 bool RepairWizardPage::isComplete() const
@@ -111,5 +113,17 @@ void RepairWizardPage::cancelButtonPressed(int currentPage)
         {
             workingThread->wait();
         }
+    }
+}
+
+void RepairWizardPage::on_detailsPushButton_clicked()
+{
+    if (ui->detailsScrollArea->isVisible())
+    {
+        ui->detailsScrollArea->setVisible(false);
+    }
+    else
+    {
+        ui->detailsScrollArea->setVisible(true);
     }
 }
