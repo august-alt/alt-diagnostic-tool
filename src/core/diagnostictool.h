@@ -45,6 +45,7 @@ public:
 public slots:
     void runChecks();
     void runResolvers();
+    void appendNextLogLine(QString line);
 
     void executeCommand(std::unique_ptr<ADTExecutable> &task);
 
@@ -56,10 +57,16 @@ private:
     std::unique_ptr<QDBusConnection> dbus;
     std::unique_ptr<QDBusInterface> dbusInterface;
 
+private:
+    void connectSignals(std::unique_ptr<ADTExecutable> &task);
+
+    void disconnectSignals(std::unique_ptr<ADTExecutable> &task);
+
 signals:
     void onProgressUpdate(int progress);
     void messageChanged(QString);
     void onError();
+    void getNextLogLine(QString line);
 
     void begin();
     void finish();

@@ -68,6 +68,8 @@ private slots:
 
     void on_detailsPushButton_clicked();
 
+    void appendNextLogLine(QString line);
+
 private:
     RepairWizardPage(const RepairWizardPage &) = delete;            // copy ctor
     RepairWizardPage(RepairWizardPage &&)      = delete;            // move ctor

@@ -20,10 +20,10 @@
 
 #include "checkwizardpage.h"
 #include "../core/diagnostictool.h"
+#include "adtwizard.h"
 #include "ui_checkwizardpage.h"
-#include <adtwizard.h>
 
-#include <QDebug>
+#include <QThread>
 
 CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     : QWizardPage(parent)
@@ -85,6 +85,8 @@ void CheckWizardPage::runChecks()
 
     connect(diagnosticTool, SIGNAL(onProgressUpdate(int)), this, SLOT(onProgressUpdate(int)));
 
+    connect(diagnosticTool, SIGNAL(getNextLogLine(QString)), this, SLOT(appendNextLogLine(QString)));
+
     connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
 
     connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
@@ -141,4 +143,9 @@ void CheckWizardPage::on_detailsPushButton_clicked()
     {
         ui->detailsScrollArea->setVisible(true);
     }
+}
+
+void CheckWizardPage::appendNextLogLine(QString line)
+{
+    ui->detailsTextEdit->setText(ui->detailsTextEdit->toPlainText().append(line));
 }

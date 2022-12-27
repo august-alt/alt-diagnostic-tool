@@ -19,6 +19,7 @@
 ***********************************************************************************************************************/
 
 #include "repairwizardpage.h"
+#include "../core/diagnostictool.h"
 #include "adtwizard.h"
 #include "ui_repairwizardpage.h"
 
@@ -69,6 +70,8 @@ void RepairWizardPage::runResolvers()
     connect(diagnosticTool, SIGNAL(messageChanged(QString)), this, SLOT(messageChanged(QString)));
 
     connect(diagnosticTool, SIGNAL(onProgressUpdate(int)), this, SLOT(onProgressUpdate(int)));
+
+    connect(diagnosticTool, SIGNAL(getNextLogLine(QString)), this, SLOT(appendNextLogLine(QString)));
 
     connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runResolvers()));
 
@@ -126,4 +129,9 @@ void RepairWizardPage::on_detailsPushButton_clicked()
     {
         ui->detailsScrollArea->setVisible(true);
     }
+}
+
+void RepairWizardPage::appendNextLogLine(QString line)
+{
+    ui->detailsTextEdit->setText(ui->detailsTextEdit->toPlainText().append(line));
 }

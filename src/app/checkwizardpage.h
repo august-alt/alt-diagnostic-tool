@@ -23,7 +23,6 @@
 
 #include "../core/diagnostictool.h"
 
-#include <QThread>
 #include <QWizardPage>
 
 namespace Ui
@@ -70,6 +69,8 @@ private slots:
     void cancelButtonPressed(int currentPage);
 
     void on_detailsPushButton_clicked();
+
+    void appendNextLogLine(QString line);
 
 private:
     CheckWizardPage(const CheckWizardPage &) = delete;            // copy ctor
