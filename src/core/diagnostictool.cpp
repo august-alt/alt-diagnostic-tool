@@ -76,7 +76,7 @@ void DiagnosticTool::runChecks()
         emit messageChanged(check.get()->m_name);
 
         executeCommand(check);
-        QThread::sleep(1); //delay, in order to see the progress
+        //QThread::sleep(1); //delay, in order to see the progress
 
         progress = progress + percentByOneCheck;
 
@@ -126,7 +126,7 @@ void DiagnosticTool::runResolvers()
         emit messageChanged(resolver.get()->m_name);
 
         executeCommand(resolver);
-        QThread::sleep(1); //delay, in order to see the progress
+        //QThread::sleep(1); //delay, in order to see the progress
 
         progress = progress + percentByOneResolver;
 
@@ -153,11 +153,11 @@ void DiagnosticTool::executeCommand(std::unique_ptr<ADTExecutable> &task)
 
     connectSignals(task);
 
-    emit getNextLogLine("Starting check: " + task.get()->m_name);
+    emit getNextLogLine("Starting: " + task.get()->m_name + "\n");
 
     QDBusReply<int> reply = dbusInterface->call("test1", "\"dev\"");
 
-    emit getNextLogLine("Complete check: " + task.get()->m_name);
+    emit getNextLogLine("Complete: " + task.get()->m_name + "\n");
 
     disconnectSignals(task);
 }
