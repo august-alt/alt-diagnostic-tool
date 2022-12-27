@@ -177,19 +177,21 @@ void DiagnosticTool::connectSignals(std::unique_ptr<ADTExecutable> &task)
                                         task.get(),
                                         SLOT(getStderr(QString)));
 
-    dbusInterface->connection().connect("ru.basealt.alterator",
-                                        "/ru/basealt/alterator/executor",
-                                        "ru.basealt.alterator.executor",
-                                        "executor_stdout",
-                                        this,
-                                        SLOT(appendNextLogLine(QString)));
+    //Uncomment if you want the commands's logs to be included in the general logs
+    //    dbusInterface->connection().connect("ru.basealt.alterator",
+    //                                        "/ru/basealt/alterator/executor",
+    //                                        "ru.basealt.alterator.executor",
+    //                                        "executor_stdout",
+    //                                        this,
+    //                                        SLOT(appendNextLogLine(QString)));
 
-    dbusInterface->connection().connect("ru.basealt.alterator",
-                                        "/ru/basealt/alterator/executor",
-                                        "ru.basealt.alterator.executor",
-                                        "executor_stderr",
-                                        this,
-                                        SLOT(appendNextLogLine(QString)));
+    //Uncomment if you want the commands's logs to be included in the general logs
+    //    dbusInterface->connection().connect("ru.basealt.alterator",
+    //                                        "/ru/basealt/alterator/executor",
+    //                                        "ru.basealt.alterator.executor",
+    //                                        "executor_stderr",
+    //                                        this,
+    //                                        SLOT(appendNextLogLine(QString)));
 }
 
 void DiagnosticTool::disconnectSignals(std::unique_ptr<ADTExecutable> &task)
@@ -207,19 +209,21 @@ void DiagnosticTool::disconnectSignals(std::unique_ptr<ADTExecutable> &task)
                                            task.get(),
                                            SLOT(getStderr(QString)));
 
-    dbusInterface->connection().disconnect("ru.basealt.alterator",
-                                           "/ru/basealt/alterator/executor",
-                                           "ru.basealt.alterator.executor",
-                                           "executor_stdout",
-                                           this,
-                                           SLOT(appendNextLogLine(QString)));
+    //Uncomment if you want the commands's logs to be included in the general logs
+    //    dbusInterface->connection().disconnect("ru.basealt.alterator",
+    //                                           "/ru/basealt/alterator/executor",
+    //                                           "ru.basealt.alterator.executor",
+    //                                           "executor_stdout",
+    //                                           this,
+    //                                           SLOT(appendNextLogLine(QString)));
 
-    dbusInterface->connection().disconnect("ru.basealt.alterator",
-                                           "/ru/basealt/alterator/executor",
-                                           "ru.basealt.alterator.executor",
-                                           "executor_stderr",
-                                           this,
-                                           SLOT(appendNextLogLine(QString)));
+    //Uncomment if you want the commands's logs to be included in the general logs
+    //    dbusInterface->connection().disconnect("ru.basealt.alterator",
+    //                                           "/ru/basealt/alterator/executor",
+    //                                           "ru.basealt.alterator.executor",
+    //                                           "executor_stderr",
+    //                                           this,
+    //                                           SLOT(appendNextLogLine(QString)));
 }
 
 void DiagnosticTool::cancelTask()
