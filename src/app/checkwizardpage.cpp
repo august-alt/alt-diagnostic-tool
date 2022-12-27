@@ -24,6 +24,7 @@
 #include <adtwizard.h>
 
 #include <QDebug>
+#include <QStyle>
 
 CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     : QWizardPage(parent)
@@ -31,8 +32,22 @@ CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     , diagnosticTool(diagTool)
     , isCompleteChecks(false)
     , workingThread(nullptr)
+    , currentIconLabel(nullptr)
+    , currentTextLabel(nullptr)
+    , summuryLayout(nullptr)
+    , detailsLayout(nullptr)
+    , detailsText(nullptr)
 {
     ui->setupUi(this);
+
+    summuryLayout = new QVBoxLayout();
+    detailsLayout = new QVBoxLayout();
+
+    detailsText = new QPlainTextEdit();
+    detailsLayout->addWidget(detailsText);
+
+    ui->summaryScrollAreaWidgetContents->setLayout(summuryLayout);
+    ui->detailsScrollAreaWidgetContents->setLayout(detailsLayout);
 
     ui->mainProgressBar->setMinimum(0);
     ui->mainProgressBar->setMaximum(100);
@@ -83,6 +98,15 @@ void CheckWizardPage::runChecks()
 
     connect(diagnosticTool, SIGNAL(onProgressUpdate(int)), this, SLOT(onProgressUpdate(int)));
 
+    connect(diagnosticTool,
+            SIGNAL(beginTask(ADTExecutable *)),
+            this,
+            SLOT(beginCheck(ADTExecutable *)));
+    connect(diagnosticTool,
+            SIGNAL(finishTask(ADTExecutable *)),
+            this,
+            SLOT(finishCheck(ADTExecutable *)));
+
     connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
 
     connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
@@ -90,6 +114,60 @@ void CheckWizardPage::runChecks()
     diagnosticTool->moveToThread(workingThread);
 
     workingThread->start();
+}
+
+void CheckWizardPage::addBeginCheckSummaryLogs(ADTExecutable *check)
+{
+    QHBoxLayout *hLayout = new QHBoxLayout();
+
+    currentIconLabel = new QLabel();
+    currentTextLabel = new QLabel();
+
+    QIcon icon = style()->standardIcon(QStyle::SP_BrowserReload);
+    currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
+
+    currentTextLabel->setText("Running " + check->m_name + " check...");
+
+    hLayout->addWidget(currentIconLabel);
+    hLayout->addWidget(currentTextLabel);
+
+    summuryLayout->addLayout(hLayout);
+}
+
+void CheckWizardPage::addFinishCheckSummaryLogs(ADTExecutable *check)
+{
+    if (currentIconLabel == nullptr || currentTextLabel == nullptr)
+    {
+        return;
+    }
+
+    QIcon icon = style()->standardIcon(QStyle::SP_DialogApplyButton);
+    currentTextLabel->setText("Check " + check->m_name + " completed");
+
+    if (check->m_exit_code != 0)
+    {
+        icon = style()->standardIcon(QStyle::SP_DialogCloseButton);
+        currentTextLabel->setText("Check " + check->m_name + " failed");
+    }
+
+    currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
+}
+
+void CheckWizardPage::addBeginCheckDetailsLogs(ADTExecutable *check)
+{
+    detailsText->appendPlainText("Checking " + check->m_name);
+}
+
+void CheckWizardPage::addFinishCheckDetailsLogs(ADTExecutable *check)
+{
+    QString line("Finish " + check->m_name);
+
+    if (check->m_exit_code != 0)
+    {
+        line = QString("Failed " + check->m_name);
+    }
+
+    detailsText->appendPlainText(line);
 }
 
 void CheckWizardPage::onProgressUpdate(int progress)
@@ -126,5 +204,29 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
         {
             workingThread->wait();
         }
+    }
+}
+
+void CheckWizardPage::beginCheck(ADTExecutable *check)
+{
+    addBeginCheckSummaryLogs(check);
+    addBeginCheckDetailsLogs(check);
+}
+
+void CheckWizardPage::finishCheck(ADTExecutable *check)
+{
+    addFinishCheckSummaryLogs(check);
+    addFinishCheckDetailsLogs(check);
+}
+
+void CheckWizardPage::on_detailsPushButton_clicked()
+{
+    if (ui->stackedWidget->currentIndex() == 0)
+    {
+        ui->stackedWidget->setCurrentIndex(1);
+    }
+    else
+    {
+        ui->stackedWidget->setCurrentIndex(0);
     }
 }

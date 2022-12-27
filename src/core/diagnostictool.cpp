@@ -146,6 +146,21 @@ void DiagnosticTool::executeCommand(std::unique_ptr<ADTExecutable> &task)
 {
     //There is no backend at the moment, so we use the test command and signals
 
+    connectExecutableSignals(task);
+
+    emit beginTask(task.get());
+
+    QDBusReply<int> reply = dbusInterface->call("test1", "\"dev12121\"");
+
+    task.get()->m_exit_code = reply.value();
+
+    emit finishTask(task.get());
+
+    disconnectExecutableSignals(task);
+}
+
+void DiagnosticTool::connectExecutableSignals(std::unique_ptr<ADTExecutable> &task)
+{
     dbusInterface->connection().connect(QLatin1String("ru.basealt.alterator"),
                                         QLatin1String("/ru/basealt/alterator/executor"),
                                         QLatin1String("ru.basealt.alterator.executor"),
@@ -158,9 +173,10 @@ void DiagnosticTool::executeCommand(std::unique_ptr<ADTExecutable> &task)
                                         "executor_stderr",
                                         task.get(),
                                         SLOT(getStderr(QString)));
+}
 
-    QDBusReply<int> reply = dbusInterface->call("test1", "\"dev\"");
-
+void DiagnosticTool::disconnectExecutableSignals(std::unique_ptr<ADTExecutable> &task)
+{
     dbusInterface->connection().disconnect("ru.basealt",
                                            "/ru/basealt/alterator/executor",
                                            "ru.basealt.alterator.executor",

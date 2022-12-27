@@ -56,10 +56,17 @@ private:
     std::unique_ptr<QDBusConnection> dbus;
     std::unique_ptr<QDBusInterface> dbusInterface;
 
+private:
+    void connectExecutableSignals(std::unique_ptr<ADTExecutable> &task);
+    void disconnectExecutableSignals(std::unique_ptr<ADTExecutable> &task);
+
 signals:
     void onProgressUpdate(int progress);
     void messageChanged(QString);
     void onError();
+
+    void beginTask(ADTExecutable *task);
+    void finishTask(ADTExecutable *task);
 
     void begin();
     void finish();
