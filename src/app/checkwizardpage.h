@@ -87,6 +87,8 @@ private slots:
     void beginCheck(ADTExecutable *check);
     void finishCheck(ADTExecutable *check);
 
+    void getStdoutAndStderr(QString out);
+
     void on_detailsPushButton_clicked();
 
 private:

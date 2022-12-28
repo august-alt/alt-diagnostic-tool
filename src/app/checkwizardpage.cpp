@@ -107,6 +107,9 @@ void CheckWizardPage::runChecks()
             this,
             SLOT(finishCheck(ADTExecutable *)));
 
+    connect(diagnosticTool, SIGNAL(gotStdout(QString)), this, SLOT(getStdoutAndStderr(QString)));
+    connect(diagnosticTool, SIGNAL(gotStderr(QString)), this, SLOT(getStdoutAndStderr(QString)));
+
     connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
 
     connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
@@ -217,6 +220,11 @@ void CheckWizardPage::finishCheck(ADTExecutable *check)
 {
     addFinishCheckSummaryLogs(check);
     addFinishCheckDetailsLogs(check);
+}
+
+void CheckWizardPage::getStdoutAndStderr(QString out)
+{
+    detailsText->appendPlainText(out);
 }
 
 void CheckWizardPage::on_detailsPushButton_clicked()
