@@ -58,7 +58,7 @@ private:
 
     QLabel *currentIconLabel;
     QLabel *currentTextLabel;
-    QVBoxLayout *summuryLayout;
+    QVBoxLayout *summaryLayout;
     QVBoxLayout *detailsLayout;
     QPlainTextEdit *detailsText;
 

@@ -34,19 +34,21 @@ CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     , workingThread(nullptr)
     , currentIconLabel(nullptr)
     , currentTextLabel(nullptr)
-    , summuryLayout(nullptr)
+    , summaryLayout(nullptr)
     , detailsLayout(nullptr)
     , detailsText(nullptr)
 {
     ui->setupUi(this);
 
-    summuryLayout = new QVBoxLayout();
+    summaryLayout = new QVBoxLayout();
     detailsLayout = new QVBoxLayout();
+
+    summaryLayout->addStretch(10);
 
     detailsText = new QPlainTextEdit();
     detailsLayout->addWidget(detailsText);
 
-    ui->summaryScrollAreaWidgetContents->setLayout(summuryLayout);
+    ui->summaryScrollAreaWidgetContents->setLayout(summaryLayout);
     ui->detailsScrollAreaWidgetContents->setLayout(detailsLayout);
 
     ui->mainProgressBar->setMinimum(0);
@@ -133,8 +135,9 @@ void CheckWizardPage::addBeginCheckSummaryLogs(ADTExecutable *check)
 
     hLayout->addWidget(currentIconLabel);
     hLayout->addWidget(currentTextLabel);
+    hLayout->addStretch(10);
 
-    summuryLayout->addLayout(hLayout);
+    summaryLayout->insertLayout(0, hLayout);
 }
 
 void CheckWizardPage::addFinishCheckSummaryLogs(ADTExecutable *check)
