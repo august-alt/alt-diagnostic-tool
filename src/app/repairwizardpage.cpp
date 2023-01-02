@@ -22,6 +22,7 @@
 #include "adtwizard.h"
 #include "ui_repairwizardpage.h"
 
+#include <QStyle>
 #include <QThread>
 
 RepairWizardPage::RepairWizardPage(DiagnosticTool *diagTool, QWidget *parent)
@@ -30,8 +31,24 @@ RepairWizardPage::RepairWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     , diagnosticTool(diagTool)
     , isCompleteResolvers(false)
     , workingThread(nullptr)
+    , currentIconLabel(nullptr)
+    , currentTextLabel(nullptr)
+    , summaryLayout(nullptr)
+    , detailsLayout(nullptr)
+    , detailsText(nullptr)
 {
     ui->setupUi(this);
+
+    summaryLayout = new QVBoxLayout();
+    detailsLayout = new QVBoxLayout();
+
+    summaryLayout->addStretch(10);
+
+    detailsText = new QPlainTextEdit();
+    detailsLayout->addWidget(detailsText);
+
+    ui->summaryScrollAreaWidgetContents->setLayout(summaryLayout);
+    ui->detailsScrollAreaWidgetContents->setLayout(detailsLayout);
 
     ui->repairProgressBar->setMinimum(0);
     ui->repairProgressBar->setMaximum(100);
@@ -68,6 +85,18 @@ void RepairWizardPage::runResolvers()
 
     connect(diagnosticTool, SIGNAL(onProgressUpdate(int)), this, SLOT(onProgressUpdate(int)));
 
+    connect(diagnosticTool,
+            SIGNAL(beginTask(ADTExecutable *)),
+            this,
+            SLOT(beginResolv(ADTExecutable *)));
+    connect(diagnosticTool,
+            SIGNAL(finishTask(ADTExecutable *)),
+            this,
+            SLOT(finishResolv(ADTExecutable *)));
+
+    connect(diagnosticTool, SIGNAL(gotStdout(QString)), this, SLOT(getStdoutAndStderr(QString)));
+    connect(diagnosticTool, SIGNAL(gotStderr(QString)), this, SLOT(getStdoutAndStderr(QString)));
+
     connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runResolvers()));
 
     connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
@@ -77,6 +106,61 @@ void RepairWizardPage::runResolvers()
     workingThread->start();
 }
 
+void RepairWizardPage::addBeginResolvSummaryLogs(ADTExecutable *resolv)
+{
+    QHBoxLayout *hLayout = new QHBoxLayout();
+
+    currentIconLabel = new QLabel();
+    currentTextLabel = new QLabel();
+
+    QIcon icon = style()->standardIcon(QStyle::SP_BrowserReload);
+    currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
+
+    currentTextLabel->setText("Running " + resolv->m_name + " resolver...");
+
+    hLayout->addWidget(currentIconLabel);
+    hLayout->addWidget(currentTextLabel);
+    hLayout->addStretch(10);
+
+    summaryLayout->insertLayout(0, hLayout);
+}
+
+void RepairWizardPage::addFinishResolvSummaryLogs(ADTExecutable *resolv)
+{
+    if (currentIconLabel == nullptr || currentTextLabel == nullptr)
+    {
+        return;
+    }
+
+    QIcon icon = style()->standardIcon(QStyle::SP_DialogApplyButton);
+    currentTextLabel->setText("Resolver " + resolv->m_name + " completed");
+
+    if (resolv->m_exit_code != 0)
+    {
+        icon = style()->standardIcon(QStyle::SP_DialogCloseButton);
+        currentTextLabel->setText("Resolver " + resolv->m_name + " failed");
+    }
+
+    currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
+}
+
+void RepairWizardPage::addBeginResolvDetailsLogs(ADTExecutable *resolv)
+{
+    detailsText->appendPlainText("Resolving " + resolv->m_name);
+}
+
+void RepairWizardPage::addFinishResolvDetailsLogs(ADTExecutable *resolv)
+{
+    QString line("Finish " + resolv->m_name);
+
+    if (resolv->m_exit_code != 0)
+    {
+        line = QString("Failed " + resolv->m_name);
+    }
+
+    detailsText->appendPlainText(line);
+}
+
 void RepairWizardPage::onProgressUpdate(int progress)
 {
     ui->repairProgressBar->setValue(progress);
@@ -84,7 +168,7 @@ void RepairWizardPage::onProgressUpdate(int progress)
 
 void RepairWizardPage::messageChanged(QString message)
 {
-    ui->statusLabel->setText("Running resolver number: " + message);
+    ui->statusLabel->setText("Running resolver: " + message);
 }
 
 void RepairWizardPage::disableNextButton()
@@ -111,5 +195,34 @@ void RepairWizardPage::cancelButtonPressed(int currentPage)
         {
             workingThread->wait();
         }
+    }
+}
+
+void RepairWizardPage::beginResolv(ADTExecutable *resolv)
+{
+    addBeginResolvSummaryLogs(resolv);
+    addBeginResolvDetailsLogs(resolv);
+}
+
+void RepairWizardPage::finishResolv(ADTExecutable *resolv)
+{
+    addFinishResolvSummaryLogs(resolv);
+    addFinishResolvDetailsLogs(resolv);
+}
+
+void RepairWizardPage::getStdoutAndStderr(QString out)
+{
+    detailsText->appendPlainText(out);
+}
+
+void RepairWizardPage::on_detailPushButton_clicked()
+{
+    if (ui->stackedWidget->currentIndex() == 0)
+    {
+        ui->stackedWidget->setCurrentIndex(1);
+    }
+    else
+    {
+        ui->stackedWidget->setCurrentIndex(0);
     }
 }
