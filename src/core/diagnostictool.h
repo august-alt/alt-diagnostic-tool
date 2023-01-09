@@ -51,6 +51,9 @@ public slots:
     void getStdout(QString stdout);
     void getStderr(QString stderr);
 
+    ADTExecutable *getCheck(int id);
+    ADTExecutable *getResolv(int id);
+
 private:
     QScopedPointer<DiagnosticToolPrivate> d;
 

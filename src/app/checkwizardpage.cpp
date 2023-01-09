@@ -37,6 +37,7 @@ CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     , summaryLayout(nullptr)
     , detailsLayout(nullptr)
     , detailsText(nullptr)
+    , currentCheckDetailsButton(nullptr)
 {
     ui->setupUi(this);
 
@@ -125,8 +126,15 @@ void CheckWizardPage::addBeginCheckSummaryLogs(ADTExecutable *check)
 {
     QHBoxLayout *hLayout = new QHBoxLayout();
 
-    currentIconLabel = new QLabel();
-    currentTextLabel = new QLabel();
+    currentIconLabel          = new QLabel();
+    currentTextLabel          = new QLabel();
+    currentCheckDetailsButton = new QPushButton();
+    currentCheckDetailsButton->setText("Details");
+    currentCheckDetailsButton->setProperty("taskId", QVariant(check->m_id));
+    connect(currentCheckDetailsButton,
+            SIGNAL(clicked()),
+            this,
+            SLOT(currentCheckDetailsButton_clicked()));
 
     QIcon icon = style()->standardIcon(QStyle::SP_BrowserReload);
     currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
@@ -136,6 +144,7 @@ void CheckWizardPage::addBeginCheckSummaryLogs(ADTExecutable *check)
     hLayout->addWidget(currentIconLabel);
     hLayout->addWidget(currentTextLabel);
     hLayout->addStretch(10);
+    hLayout->addWidget(currentCheckDetailsButton);
 
     summaryLayout->insertLayout(0, hLayout);
 }
@@ -239,5 +248,26 @@ void CheckWizardPage::on_detailsPushButton_clicked()
     else
     {
         ui->stackedWidget->setCurrentIndex(0);
+    }
+}
+
+void CheckWizardPage::currentCheckDetailsButton_clicked()
+{
+    QPushButton *senderPtr = dynamic_cast<QPushButton *>(sender());
+    if (senderPtr != nullptr)
+    {
+        QString id = senderPtr->property("taskId").toString();
+
+        ADTExecutable *check = diagnosticTool->getCheck(id.toInt());
+
+        if (check != nullptr)
+        {
+            detailsText->clear();
+
+            detailsText->appendPlainText(check->m_stdout);
+            detailsText->appendPlainText(check->m_stderr);
+        }
+
+        on_detailsPushButton_clicked();
     }
 }

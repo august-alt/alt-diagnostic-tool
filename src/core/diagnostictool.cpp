@@ -169,6 +169,36 @@ void DiagnosticTool::getStderr(QString stderr)
     emit gotStderr(stderr);
 }
 
+ADTExecutable *DiagnosticTool::getCheck(int id)
+{
+    auto &checks = (*d->checks.get());
+
+    for (auto &check : checks)
+    {
+        if (check.get()->m_id == id)
+        {
+            return check.get();
+        }
+    }
+
+    return nullptr;
+}
+
+ADTExecutable *DiagnosticTool::getResolv(int id)
+{
+    auto &resolv = (*d->resolvers.get());
+
+    for (auto &resolver : resolv)
+    {
+        if (resolver.get()->m_id == id)
+        {
+            return resolver.get();
+        }
+    }
+
+    return nullptr;
+}
+
 void DiagnosticTool::connectExecutableSignals(std::unique_ptr<ADTExecutable> &task)
 {
     dbusInterface->connection().connect(QLatin1String("ru.basealt.alterator"),

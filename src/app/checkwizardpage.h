@@ -61,6 +61,7 @@ private:
     QVBoxLayout *summaryLayout;
     QVBoxLayout *detailsLayout;
     QPlainTextEdit *detailsText;
+    QPushButton *currentCheckDetailsButton;
 
 private:
     void showEvent(QShowEvent *event) override;
@@ -90,6 +91,8 @@ private slots:
     void getStdoutAndStderr(QString out);
 
     void on_detailsPushButton_clicked();
+
+    void currentCheckDetailsButton_clicked();
 
 private:
     CheckWizardPage(const CheckWizardPage &) = delete;            // copy ctor
