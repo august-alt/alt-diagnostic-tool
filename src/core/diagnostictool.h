@@ -48,9 +48,6 @@ public slots:
 
     void executeCommand(std::unique_ptr<ADTExecutable> &task);
 
-    void getStdout(QString stdout);
-    void getStderr(QString stderr);
-
     ADTExecutable *getCheck(int id);
     ADTExecutable *getResolv(int id);
 
@@ -70,9 +67,6 @@ signals:
     void onProgressUpdate(int progress);
     void messageChanged(QString);
     void onError();
-
-    void gotStdout(QString);
-    void gotStderr(QString);
 
     void beginTask(ADTExecutable *task);
     void finishTask(ADTExecutable *task);

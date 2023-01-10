@@ -126,7 +126,7 @@ void DiagnosticTool::runResolvers()
         emit messageChanged(resolver.get()->m_name);
 
         executeCommand(resolver);
-        //QThread::sleep(1); //delay, in order to see the progress
+        QThread::sleep(1); //delay, in order to see the progress
 
         progress = progress + percentByOneResolver;
 
@@ -152,21 +152,11 @@ void DiagnosticTool::executeCommand(std::unique_ptr<ADTExecutable> &task)
 
     QDBusReply<int> reply = dbusInterface->call("test1", "\"dev\"");
 
+    disconnectExecutableSignals(task);
+
     task.get()->m_exit_code = reply.value();
 
     emit finishTask(task.get());
-
-    disconnectExecutableSignals(task);
-}
-
-void DiagnosticTool::getStdout(QString stdout)
-{
-    emit gotStdout(stdout);
-}
-
-void DiagnosticTool::getStderr(QString stderr)
-{
-    emit gotStderr(stderr);
 }
 
 ADTExecutable *DiagnosticTool::getCheck(int id)
@@ -213,50 +203,22 @@ void DiagnosticTool::connectExecutableSignals(std::unique_ptr<ADTExecutable> &ta
                                         "executor_stderr",
                                         task.get(),
                                         SLOT(getStderr(QString)));
-
-    dbusInterface->connection().connect("ru.basealt.alterator",
-                                        "/ru/basealt/alterator/executor",
-                                        "ru.basealt.alterator.executor",
-                                        "executor_stdout",
-                                        this,
-                                        SLOT(getStdout(QString)));
-
-    dbusInterface->connection().connect("ru.basealt.alterator",
-                                        "/ru/basealt/alterator/executor",
-                                        "ru.basealt.alterator.executor",
-                                        "executor_stderr",
-                                        this,
-                                        SLOT(getStderr(QString)));
 }
 
 void DiagnosticTool::disconnectExecutableSignals(std::unique_ptr<ADTExecutable> &task)
 {
-    dbusInterface->connection().disconnect("ru.basealt",
+    dbusInterface->connection().disconnect("ru.basealt.alterator",
                                            "/ru/basealt/alterator/executor",
                                            "ru.basealt.alterator.executor",
                                            "executor_stdout",
                                            task.get(),
                                            SLOT(getStdout(QString)));
 
-    dbusInterface->connection().disconnect("ru.basealt",
+    dbusInterface->connection().disconnect("ru.basealt.alterator",
                                            "/ru/basealt/alterator/executor",
                                            "ru.basealt.alterator.executor",
                                            "executor_stderr",
                                            task.get(),
-                                           SLOT(getStderr(QString)));
-
-    dbusInterface->connection().disconnect("ru.basealt.alterator",
-                                           "/ru/basealt/alterator/executor",
-                                           "ru.basealt.alterator.executor",
-                                           "executor_stdout",
-                                           this,
-                                           SLOT(getStdout(QString)));
-
-    dbusInterface->connection().disconnect("ru.basealt.alterator",
-                                           "/ru/basealt/alterator/executor",
-                                           "ru.basealt.alterator.executor",
-                                           "executor_stderr",
-                                           this,
                                            SLOT(getStderr(QString)));
 }
 

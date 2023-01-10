@@ -130,8 +130,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>608</width>
-                  <height>281</height>
+                  <width>610</width>
+                  <height>286</height>
                  </rect>
                 </property>
                </widget>
@@ -166,8 +166,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>96</width>
-                  <height>26</height>
+                  <width>98</width>
+                  <height>28</height>
                  </rect>
                 </property>
                </widget>
@@ -207,22 +207,6 @@
         </property>
         <property name="text">
          <string>Troubleshoot and help prevent computer problems.</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="1">
-       <widget class="QPushButton" name="detailsPushButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
-        </property>
-        <property name="text">
-         <string>Details...</string>
         </property>
        </widget>
       </item>

@@ -19,11 +19,10 @@
 ***********************************************************************************************************************/
 
 #include "checkwizardpage.h"
-#include "../core/diagnostictool.h"
+#include "adtwizard.h"
 #include "ui_checkwizardpage.h"
-#include <adtwizard.h>
 
-#include <QDebug>
+#include <QPushButton>
 #include <QStyle>
 
 CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
@@ -38,6 +37,7 @@ CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     , detailsLayout(nullptr)
     , detailsText(nullptr)
     , currentCheckDetailsButton(nullptr)
+    , backToSummaryLogsButton(nullptr)
 {
     ui->setupUi(this);
 
@@ -46,8 +46,21 @@ CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
 
     summaryLayout->addStretch(10);
 
+    backToSummaryLogsButton = new QPushButton();
+    backToSummaryLogsButton->setText("Back");
+
+    connect(backToSummaryLogsButton,
+            SIGNAL(clicked()),
+            this,
+            SLOT(onbackToSummaryLogsButton_clicked()));
+
+    QHBoxLayout *detailsHButtonLayout = new QHBoxLayout();
+    detailsHButtonLayout->addStretch();
+    detailsHButtonLayout->addWidget(backToSummaryLogsButton);
+
     detailsText = new QPlainTextEdit();
     detailsLayout->addWidget(detailsText);
+    detailsLayout->insertLayout(10, detailsHButtonLayout);
 
     ui->summaryScrollAreaWidgetContents->setLayout(summaryLayout);
     ui->detailsScrollAreaWidgetContents->setLayout(detailsLayout);
@@ -110,9 +123,6 @@ void CheckWizardPage::runChecks()
             this,
             SLOT(finishCheck(ADTExecutable *)));
 
-    connect(diagnosticTool, SIGNAL(gotStdout(QString)), this, SLOT(getStdoutAndStderr(QString)));
-    connect(diagnosticTool, SIGNAL(gotStderr(QString)), this, SLOT(getStdoutAndStderr(QString)));
-
     connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
 
     connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
@@ -120,69 +130,6 @@ void CheckWizardPage::runChecks()
     diagnosticTool->moveToThread(workingThread);
 
     workingThread->start();
-}
-
-void CheckWizardPage::addBeginCheckSummaryLogs(ADTExecutable *check)
-{
-    QHBoxLayout *hLayout = new QHBoxLayout();
-
-    currentIconLabel          = new QLabel();
-    currentTextLabel          = new QLabel();
-    currentCheckDetailsButton = new QPushButton();
-    currentCheckDetailsButton->setText("Details");
-    currentCheckDetailsButton->setProperty("taskId", QVariant(check->m_id));
-    connect(currentCheckDetailsButton,
-            SIGNAL(clicked()),
-            this,
-            SLOT(currentCheckDetailsButton_clicked()));
-
-    QIcon icon = style()->standardIcon(QStyle::SP_BrowserReload);
-    currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
-
-    currentTextLabel->setText("Running " + check->m_name + " check...");
-
-    hLayout->addWidget(currentIconLabel);
-    hLayout->addWidget(currentTextLabel);
-    hLayout->addStretch(10);
-    hLayout->addWidget(currentCheckDetailsButton);
-
-    summaryLayout->insertLayout(0, hLayout);
-}
-
-void CheckWizardPage::addFinishCheckSummaryLogs(ADTExecutable *check)
-{
-    if (currentIconLabel == nullptr || currentTextLabel == nullptr)
-    {
-        return;
-    }
-
-    QIcon icon = style()->standardIcon(QStyle::SP_DialogApplyButton);
-    currentTextLabel->setText("Check " + check->m_name + " completed");
-
-    if (check->m_exit_code != 0)
-    {
-        icon = style()->standardIcon(QStyle::SP_DialogCloseButton);
-        currentTextLabel->setText("Check " + check->m_name + " failed");
-    }
-
-    currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
-}
-
-void CheckWizardPage::addBeginCheckDetailsLogs(ADTExecutable *check)
-{
-    detailsText->appendPlainText("Checking " + check->m_name);
-}
-
-void CheckWizardPage::addFinishCheckDetailsLogs(ADTExecutable *check)
-{
-    QString line("Finish " + check->m_name);
-
-    if (check->m_exit_code != 0)
-    {
-        line = QString("Failed " + check->m_name);
-    }
-
-    detailsText->appendPlainText(line);
 }
 
 void CheckWizardPage::onProgressUpdate(int progress)
@@ -224,22 +171,54 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
 
 void CheckWizardPage::beginCheck(ADTExecutable *check)
 {
-    addBeginCheckSummaryLogs(check);
-    addBeginCheckDetailsLogs(check);
+    QHBoxLayout *hLayout = new QHBoxLayout();
+
+    currentIconLabel          = new QLabel();
+    currentTextLabel          = new QLabel();
+    currentCheckDetailsButton = new QPushButton();
+
+    currentCheckDetailsButton->setText("Details");
+
+    currentCheckDetailsButton->setProperty("taskId", QVariant(check->m_id));
+
+    connect(currentCheckDetailsButton,
+            SIGNAL(clicked()),
+            this,
+            SLOT(currentCheckDetailsButton_clicked()));
+
+    QIcon icon = style()->standardIcon(QStyle::SP_BrowserReload);
+    currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
+
+    currentTextLabel->setText("Running " + check->m_name + " check...");
+
+    hLayout->addWidget(currentIconLabel);
+    hLayout->addWidget(currentTextLabel);
+    hLayout->addStretch(10);
+    hLayout->addWidget(currentCheckDetailsButton);
+
+    summaryLayout->insertLayout(0, hLayout);
 }
 
 void CheckWizardPage::finishCheck(ADTExecutable *check)
 {
-    addFinishCheckSummaryLogs(check);
-    addFinishCheckDetailsLogs(check);
+    if (currentIconLabel == nullptr || currentTextLabel == nullptr)
+    {
+        return;
+    }
+
+    QIcon icon = style()->standardIcon(QStyle::SP_DialogApplyButton);
+    currentTextLabel->setText("Check " + check->m_name + " completed");
+
+    if (check->m_exit_code != 0)
+    {
+        icon = style()->standardIcon(QStyle::SP_DialogCloseButton);
+        currentTextLabel->setText("Check " + check->m_name + " failed");
+    }
+
+    currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
 }
 
-void CheckWizardPage::getStdoutAndStderr(QString out)
-{
-    detailsText->appendPlainText(out);
-}
-
-void CheckWizardPage::on_detailsPushButton_clicked()
+void CheckWizardPage::onbackToSummaryLogsButton_clicked()
 {
     if (ui->stackedWidget->currentIndex() == 0)
     {
@@ -268,6 +247,6 @@ void CheckWizardPage::currentCheckDetailsButton_clicked()
             detailsText->appendPlainText(check->m_stderr);
         }
 
-        on_detailsPushButton_clicked();
+        onbackToSummaryLogsButton_clicked();
     }
 }

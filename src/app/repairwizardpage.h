@@ -46,9 +46,9 @@ public:
 private:
     Ui::RepairWizardPage *ui;
 
-    bool isOpening = false;
-
     DiagnosticTool *diagnosticTool;
+
+    bool isOpening = false;
 
     bool isCompleteResolvers;
 
@@ -59,17 +59,13 @@ private:
     QVBoxLayout *summaryLayout;
     QVBoxLayout *detailsLayout;
     QPlainTextEdit *detailsText;
+    QPushButton *currentResolvDetailsButton;
+    QPushButton *backToSummaryLogsButton;
 
 private:
     void showEvent(QShowEvent *event) override;
 
     void runResolvers();
-
-    void addBeginResolvSummaryLogs(ADTExecutable *resolv);
-    void addFinishResolvSummaryLogs(ADTExecutable *resolv);
-
-    void addBeginResolvDetailsLogs(ADTExecutable *resolv);
-    void addFinishResolvDetailsLogs(ADTExecutable *resolv);
 
 private slots:
     void onProgressUpdate(int progress);
@@ -85,9 +81,9 @@ private slots:
     void beginResolv(ADTExecutable *resolv);
     void finishResolv(ADTExecutable *resolv);
 
-    void getStdoutAndStderr(QString out);
+    void currentResolvDetailsButton_clicked();
 
-    void on_detailPushButton_clicked();
+    void onbackToSummaryLogsButton_clicked();
 
 private:
     RepairWizardPage(const RepairWizardPage &) = delete;            // copy ctor

@@ -62,17 +62,12 @@ private:
     QVBoxLayout *detailsLayout;
     QPlainTextEdit *detailsText;
     QPushButton *currentCheckDetailsButton;
+    QPushButton *backToSummaryLogsButton;
 
 private:
     void showEvent(QShowEvent *event) override;
 
     void runChecks();
-
-    void addBeginCheckSummaryLogs(ADTExecutable *check);
-    void addFinishCheckSummaryLogs(ADTExecutable *check);
-
-    void addBeginCheckDetailsLogs(ADTExecutable *check);
-    void addFinishCheckDetailsLogs(ADTExecutable *check);
 
 private slots:
     void onProgressUpdate(int progress);
@@ -88,11 +83,9 @@ private slots:
     void beginCheck(ADTExecutable *check);
     void finishCheck(ADTExecutable *check);
 
-    void getStdoutAndStderr(QString out);
-
-    void on_detailsPushButton_clicked();
-
     void currentCheckDetailsButton_clicked();
+
+    void onbackToSummaryLogsButton_clicked();
 
 private:
     CheckWizardPage(const CheckWizardPage &) = delete;            // copy ctor
