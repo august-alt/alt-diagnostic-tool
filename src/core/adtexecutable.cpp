@@ -28,6 +28,7 @@ ADTExecutable::ADTExecutable()
     , m_category("")
     , m_command("")
     , m_args("")
+    , m_exit_code(-1)
     , m_stdout("")
     , m_stderr("")
 {}

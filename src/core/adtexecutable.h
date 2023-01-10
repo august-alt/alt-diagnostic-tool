@@ -33,6 +33,7 @@ class ADTExecutable : public QObject
     Q_PROPERTY(QString category MEMBER m_category)
     Q_PROPERTY(QString command MEMBER m_command)
     Q_PROPERTY(QString args MEMBER m_args)
+    Q_PROPERTY(int m_exit_code MEMBER m_exit_code)
 
 public:
     int m_id;
@@ -40,6 +41,7 @@ public:
     QString m_category;
     QString m_command;
     QString m_args;
+    int m_exit_code;
 
     QString m_stdout;
     QString m_stderr;
