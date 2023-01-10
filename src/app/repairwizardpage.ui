@@ -195,7 +195,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="statusLabel">
         <property name="text">
-         <string>RP_7.12 patch package is being applied</string>
+         <string/>
         </property>
        </widget>
       </item>
