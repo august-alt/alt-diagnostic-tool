@@ -61,8 +61,6 @@ ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
 void ADTWizard::cancelButtonPressed()
 {
     emit cancelPressed(currentId());
-
-    emit reject();
 }
 
 QJsonDocument ADTWizard::LoadJSonFile(QString file)

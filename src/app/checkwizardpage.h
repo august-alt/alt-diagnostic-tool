@@ -23,7 +23,10 @@
 
 #include "../core/diagnostictool.h"
 
+#include <QLabel>
+#include <QPlainTextEdit>
 #include <QThread>
+#include <QVBoxLayout>
 #include <QWizardPage>
 
 namespace Ui
@@ -53,6 +56,14 @@ private:
 
     QThread *workingThread;
 
+    QLabel *currentIconLabel;
+    QLabel *currentTextLabel;
+    QVBoxLayout *summaryLayout;
+    QVBoxLayout *detailsLayout;
+    QPlainTextEdit *detailsText;
+    QPushButton *currentCheckDetailsButton;
+    QPushButton *backToSummaryLogsButton;
+
 private:
     void showEvent(QShowEvent *event) override;
 
@@ -68,6 +79,13 @@ private slots:
     void enableNextButton();
 
     void cancelButtonPressed(int currentPage);
+
+    void beginCheck(ADTExecutable *check);
+    void finishCheck(ADTExecutable *check);
+
+    void currentCheckDetailsButton_clicked();
+
+    void onbackToSummaryLogsButton_clicked();
 
 private:
     CheckWizardPage(const CheckWizardPage &) = delete;            // copy ctor

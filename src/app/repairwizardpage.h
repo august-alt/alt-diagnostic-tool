@@ -23,6 +23,10 @@
 
 #include "../core/diagnostictool.h"
 
+#include <QLabel>
+#include <QPlainTextEdit>
+#include <QThread>
+#include <QVBoxLayout>
 #include <QWizardPage>
 
 namespace Ui
@@ -42,13 +46,21 @@ public:
 private:
     Ui::RepairWizardPage *ui;
 
-    bool isOpening = false;
-
     DiagnosticTool *diagnosticTool;
+
+    bool isOpening = false;
 
     bool isCompleteResolvers;
 
     QThread *workingThread;
+
+    QLabel *currentIconLabel;
+    QLabel *currentTextLabel;
+    QVBoxLayout *summaryLayout;
+    QVBoxLayout *detailsLayout;
+    QPlainTextEdit *detailsText;
+    QPushButton *currentResolvDetailsButton;
+    QPushButton *backToSummaryLogsButton;
 
 private:
     void showEvent(QShowEvent *event) override;
@@ -65,6 +77,13 @@ private slots:
     void enableNextButton();
 
     void cancelButtonPressed(int currentPage);
+
+    void beginResolv(ADTExecutable *resolv);
+    void finishResolv(ADTExecutable *resolv);
+
+    void currentResolvDetailsButton_clicked();
+
+    void onbackToSummaryLogsButton_clicked();
 
 private:
     RepairWizardPage(const RepairWizardPage &) = delete;            // copy ctor
