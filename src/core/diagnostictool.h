@@ -42,6 +42,8 @@ public:
     unsigned int getAmountOfChecks();
     unsigned int getAmountOfResolvers();
 
+    bool anyErrorsInChecks();
+
 public slots:
     void runChecks();
     void runResolvers();

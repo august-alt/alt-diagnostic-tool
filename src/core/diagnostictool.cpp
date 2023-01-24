@@ -236,3 +236,18 @@ unsigned int DiagnosticTool::getAmountOfResolvers()
 {
     return d->resolvers->size();
 }
+
+bool DiagnosticTool::anyErrorsInChecks()
+{
+    auto &checks = (*d->checks.get());
+
+    for (auto &check : checks)
+    {
+        if (check.get()->m_exit_code != 0)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
