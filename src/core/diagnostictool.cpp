@@ -251,3 +251,12 @@ bool DiagnosticTool::anyErrorsInChecks()
 
     return false;
 }
+
+bool DiagnosticTool::hasAnyResolvers()
+{
+    if (!d->resolvers->empty())
+    {
+        return false;
+    }
+    return true;
+}

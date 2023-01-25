@@ -69,7 +69,7 @@ CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     ui->mainProgressBar->setMaximum(100);
     ui->mainProgressBar->setValue(0);
 
-    ui->finishRadioButton->setChecked(false);
+    ui->finishRadioButton->setChecked(true);
     ui->finishRadioButton->setEnabled(false);
     ui->runRepairRadioButton->setEnabled(false);
 }
@@ -81,7 +81,7 @@ bool CheckWizardPage::isComplete() const
 
 int CheckWizardPage::nextId() const
 {
-    if (diagnosticTool->anyErrorsInChecks())
+    if (diagnosticTool->anyErrorsInChecks() && diagnosticTool->hasAnyResolvers())
     {
         return ADTWizard::Repair_Page;
     }
@@ -205,10 +205,9 @@ void CheckWizardPage::beginCheck(ADTExecutable *check)
 
 void CheckWizardPage::finishCheck(ADTExecutable *check)
 {
-    if (diagnosticTool->anyErrorsInChecks())
+    if (diagnosticTool->anyErrorsInChecks() && diagnosticTool->hasAnyResolvers())
     {
         ui->runRepairRadioButton->setEnabled(true);
-        //ui->finishRadioButton->setChecked(false);
         ui->finishRadioButton->setEnabled(true);
         ui->runRepairRadioButton->setEnabled(true);
     }

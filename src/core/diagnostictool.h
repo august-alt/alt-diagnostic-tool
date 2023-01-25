@@ -43,6 +43,7 @@ public:
     unsigned int getAmountOfResolvers();
 
     bool anyErrorsInChecks();
+    bool hasAnyResolvers();
 
 public slots:
     void runChecks();
