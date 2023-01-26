@@ -56,6 +56,7 @@ ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
 
     connect(this, SIGNAL(cancelPressed(int)), checkPage.get(), SLOT(cancelButtonPressed(int)));
     connect(this, SIGNAL(cancelPressed(int)), repairPage.get(), SLOT(cancelButtonPressed(int)));
+    connect(this, SIGNAL(cancelPressed(int)), finishPage.get(), SLOT(cancelButtonPressed(int)));
 }
 
 void ADTWizard::cancelButtonPressed()

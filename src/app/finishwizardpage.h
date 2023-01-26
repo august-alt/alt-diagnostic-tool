@@ -38,6 +38,9 @@ public:
 private:
     Ui::FinishWizardPage *ui;
 
+private slots:
+    void cancelButtonPressed(int currentPage);
+
 private:
     FinishWizardPage(const FinishWizardPage &) = delete;            // copy ctor
     FinishWizardPage(FinishWizardPage &&)      = delete;            // move ctor
