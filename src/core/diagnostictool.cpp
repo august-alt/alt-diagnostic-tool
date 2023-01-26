@@ -254,9 +254,5 @@ bool DiagnosticTool::anyErrorsInChecks()
 
 bool DiagnosticTool::hasAnyResolvers()
 {
-    if (!d->resolvers->empty())
-    {
-        return false;
-    }
-    return true;
+    return !d->resolvers->empty();
 }
