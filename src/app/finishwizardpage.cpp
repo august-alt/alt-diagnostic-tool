@@ -19,6 +19,7 @@
 ***********************************************************************************************************************/
 
 #include "finishwizardpage.h"
+#include "adtwizard.h"
 #include "ui_finishwizardpage.h"
 
 FinishWizardPage::FinishWizardPage(QWidget *parent)
@@ -26,4 +27,12 @@ FinishWizardPage::FinishWizardPage(QWidget *parent)
     , ui(new Ui::FinishWizardPage)
 {
     ui->setupUi(this);
+}
+
+void FinishWizardPage::cancelButtonPressed(int currentPage)
+{
+    if (currentPage == ADTWizard::Finish_Page)
+    {
+        wizard()->reject();
+    }
 }
