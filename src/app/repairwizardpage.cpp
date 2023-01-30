@@ -77,6 +77,8 @@ bool RepairWizardPage::isComplete() const
 
 void RepairWizardPage::showEvent(QShowEvent *event)
 {
+    wizard()->button(QWizard::CancelButton)->setEnabled(true);
+
     if (isOpening)
     {
         return;
@@ -150,6 +152,7 @@ void RepairWizardPage::cancelButtonPressed(int currentPage)
 
         if (!isCompleteResolvers)
         {
+            wizard()->button(QWizard::CancelButton)->setEnabled(false);
             workingThread->wait();
         }
     }
@@ -159,8 +162,8 @@ void RepairWizardPage::beginResolv(ADTExecutable *resolv)
 {
     QHBoxLayout *hLayout = new QHBoxLayout();
 
-    currentIconLabel          = new QLabel();
-    currentTextLabel          = new QLabel();
+    currentIconLabel           = new QLabel();
+    currentTextLabel           = new QLabel();
     currentResolvDetailsButton = new QPushButton();
 
     currentResolvDetailsButton->setText("Details");

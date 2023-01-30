@@ -19,6 +19,7 @@
 ***********************************************************************************************************************/
 
 #include "introwizardpage.h"
+#include "adtwizard.h"
 #include "ui_introwizardpage.h"
 
 IntroWizardPage::IntroWizardPage(QWidget *parent)
@@ -26,4 +27,12 @@ IntroWizardPage::IntroWizardPage(QWidget *parent)
     , ui(new Ui::IntroWizardPage)
 {
     ui->setupUi(this);
+}
+
+void IntroWizardPage::cancelButtonPressed(int currentPage)
+{
+    if (currentPage == ADTWizard::Intro_Page)
+    {
+        wizard()->reject();
+    }
 }

@@ -168,6 +168,7 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
 
         if (!isCompleteChecks)
         {
+            wizard()->button(QWizard::CancelButton)->setEnabled(false);
             workingThread->wait();
         }
     }

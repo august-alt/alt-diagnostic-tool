@@ -35,11 +35,10 @@ class FinishWizardPage : public QWizardPage
 public:
     FinishWizardPage(QWidget *parent = nullptr);
 
+    void initializePage() override;
+
 private:
     Ui::FinishWizardPage *ui;
-
-private slots:
-    void cancelButtonPressed(int currentPage);
 
 private:
     FinishWizardPage(const FinishWizardPage &) = delete;            // copy ctor
