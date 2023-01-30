@@ -135,6 +135,8 @@ void RepairWizardPage::disableNextButton()
     isCompleteResolvers = false;
 
     emit completeChanged();
+
+    wizard()->button(QWizard::BackButton)->setEnabled(false);
 }
 
 void RepairWizardPage::enableNextButton()
