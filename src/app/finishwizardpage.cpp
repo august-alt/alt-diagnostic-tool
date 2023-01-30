@@ -22,6 +22,8 @@
 #include "adtwizard.h"
 #include "ui_finishwizardpage.h"
 
+#include <QPushButton>
+
 FinishWizardPage::FinishWizardPage(QWidget *parent)
     : QWizardPage(parent)
     , ui(new Ui::FinishWizardPage)
@@ -29,10 +31,7 @@ FinishWizardPage::FinishWizardPage(QWidget *parent)
     ui->setupUi(this);
 }
 
-void FinishWizardPage::cancelButtonPressed(int currentPage)
+void FinishWizardPage::initializePage()
 {
-    if (currentPage == ADTWizard::Finish_Page)
-    {
-        wizard()->reject();
-    }
+    wizard()->button(QWizard::CancelButton)->setEnabled(false);
 }

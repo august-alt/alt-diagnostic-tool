@@ -161,9 +161,7 @@ void DiagnosticTool::executeCommand(std::unique_ptr<ADTExecutable> &task)
 
 ADTExecutable *DiagnosticTool::getCheck(int id)
 {
-    auto &checks = (*d->checks.get());
-
-    for (auto &check : checks)
+    for (auto &check : *d->checks)
     {
         if (check.get()->m_id == id)
         {
@@ -176,9 +174,7 @@ ADTExecutable *DiagnosticTool::getCheck(int id)
 
 ADTExecutable *DiagnosticTool::getResolv(int id)
 {
-    auto &resolv = (*d->resolvers.get());
-
-    for (auto &resolver : resolv)
+    for (auto &resolver : *d->resolvers)
     {
         if (resolver.get()->m_id == id)
         {
@@ -239,9 +235,7 @@ unsigned int DiagnosticTool::getAmountOfResolvers()
 
 bool DiagnosticTool::anyErrorsInChecks()
 {
-    auto &checks = (*d->checks.get());
-
-    for (auto &check : checks)
+    for (auto &check : *d->checks)
     {
         if (check.get()->m_exit_code != 0)
         {

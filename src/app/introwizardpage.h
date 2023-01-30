@@ -38,6 +38,9 @@ public:
 private:
     Ui::IntroWizardPage *ui;
 
+private slots:
+    void cancelButtonPressed(int currentPage);
+
 private:
     IntroWizardPage(const IntroWizardPage &) = delete;            // copy ctor
     IntroWizardPage(IntroWizardPage &&)      = delete;            // move ctor

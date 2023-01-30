@@ -72,6 +72,13 @@ CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     ui->finishRadioButton->setChecked(true);
     ui->finishRadioButton->setEnabled(false);
     ui->runRepairRadioButton->setEnabled(false);
+
+    ui->finishRadioButton->sizePolicy().setRetainSizeWhenHidden(true);
+
+    ui->runRepairRadioButton->sizePolicy().setRetainSizeWhenHidden(true);
+
+    ui->finishRadioButton->setVisible(false);
+    ui->runRepairRadioButton->setVisible(false);
 }
 
 bool CheckWizardPage::isComplete() const
@@ -151,10 +158,15 @@ void CheckWizardPage::disableNextButton()
     isCompleteChecks = false;
 
     emit completeChanged();
+
+    wizard()->button(QWizard::BackButton)->setEnabled(false);
 }
 
 void CheckWizardPage::enableNextButton()
 {
+    ui->finishRadioButton->setVisible(false);
+    ui->runRepairRadioButton->setVisible(false);
+
     isCompleteChecks = true;
 
     emit completeChanged();
@@ -168,6 +180,11 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
 
         if (!isCompleteChecks)
         {
+            wizard()->button(QWizard::CancelButton)->setEnabled(false);
+
+            ui->finishRadioButton->setVisible(false);
+            ui->runRepairRadioButton->setVisible(false);
+
             workingThread->wait();
         }
     }
@@ -207,6 +224,9 @@ void CheckWizardPage::finishCheck(ADTExecutable *check)
 {
     if (diagnosticTool->anyErrorsInChecks() && diagnosticTool->hasAnyResolvers())
     {
+        ui->finishRadioButton->setVisible(true);
+        ui->runRepairRadioButton->setVisible(true);
+
         ui->runRepairRadioButton->setEnabled(true);
         ui->finishRadioButton->setEnabled(true);
         ui->runRepairRadioButton->setEnabled(true);
