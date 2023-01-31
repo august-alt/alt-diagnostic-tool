@@ -38,6 +38,7 @@ public:
     DiagnosticTool(QJsonDocument document);
 
     void cancelTask();
+    void resetStopFlag();
 
     unsigned int getAmountOfChecks();
     unsigned int getAmountOfResolvers();

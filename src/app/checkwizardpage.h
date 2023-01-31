@@ -87,6 +87,10 @@ private slots:
 
     void onbackToSummaryLogsButton_clicked();
 
+    void currentIdChanged(int id);
+
+    void cleanUpUi();
+
 private:
     CheckWizardPage(const CheckWizardPage &) = delete;            // copy ctor
     CheckWizardPage(CheckWizardPage &&)      = delete;            // move ctor

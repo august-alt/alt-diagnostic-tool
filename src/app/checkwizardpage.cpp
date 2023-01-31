@@ -110,12 +110,7 @@ void CheckWizardPage::showEvent(QShowEvent *event)
 
     QWizardPage::showEvent(event);
 
-    runChecks();
-}
-
-void CheckWizardPage::runChecks()
-{
-    workingThread = new QThread();
+    connect(wizard(), SIGNAL(currentIdChanged(int)), this, SLOT(currentIdChanged(int)));
 
     connect(diagnosticTool, SIGNAL(begin()), this, SLOT(disableNextButton()));
 
@@ -133,6 +128,17 @@ void CheckWizardPage::runChecks()
             SIGNAL(finishTask(ADTExecutable *)),
             this,
             SLOT(finishCheck(ADTExecutable *)));
+}
+
+void CheckWizardPage::runChecks()
+{
+    ui->mainProgressBar->setValue(0);
+
+    cleanUpUi();
+
+    wizard()->button(QWizard::CancelButton)->setEnabled(true);
+
+    workingThread = new QThread();
 
     connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
 
@@ -169,6 +175,10 @@ void CheckWizardPage::enableNextButton()
 
     isCompleteChecks = true;
 
+    disconnect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
+
+    disconnect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
+
     emit completeChanged();
 }
 
@@ -187,6 +197,8 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
 
             workingThread->wait();
         }
+
+        ui->stackedWidget->setCurrentIndex(0);
     }
 }
 
@@ -259,6 +271,35 @@ void CheckWizardPage::onbackToSummaryLogsButton_clicked()
     {
         ui->stackedWidget->setCurrentIndex(0);
     }
+}
+
+void CheckWizardPage::currentIdChanged(int id)
+{
+    if (id == ADTWizard::Check_Page)
+    {
+        cleanUpUi();
+
+        diagnosticTool->resetStopFlag();
+
+        runChecks();
+    }
+}
+
+void CheckWizardPage::cleanUpUi()
+{
+    delete ui->summaryScrollAreaWidgetContents;
+
+    ui->summaryScrollAreaWidgetContents = new QWidget();
+
+    ui->summaryScrollArea->setWidget(ui->summaryScrollAreaWidgetContents);
+
+    summaryLayout = new QVBoxLayout();
+
+    summaryLayout->addStretch(10);
+
+    ui->summaryScrollAreaWidgetContents->setLayout(summaryLayout);
+
+    ui->stackedWidget->setCurrentIndex(0);
 }
 
 void CheckWizardPage::currentCheckDetailsButton_clicked()
