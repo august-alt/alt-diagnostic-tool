@@ -75,6 +75,10 @@ private:
     void enableButtonsAfterChecks();
     void disableButtonsBeforeChecks();
 
+    void showFinishRadiobuttons();
+    void hideFinishRadiobuttons();
+    void setRadiobuttonSizePolicy();
+
 private slots:
     void onProgressUpdate(int progress);
 
@@ -91,7 +95,7 @@ private slots:
 
     void currentCheckDetailsButton_clicked();
 
-    void onbackToSummaryLogsButton_clicked();
+    void exchangeWidgetsInStackedWidget();
 
     void currentIdChanged(int id);
 

@@ -253,5 +253,6 @@ bool DiagnosticTool::anyErrorsInChecks()
 
 bool DiagnosticTool::hasAnyResolvers()
 {
-    return !d->resolvers->empty();
+    //return !d->resolvers->empty();
+    return true;
 }
