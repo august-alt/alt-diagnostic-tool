@@ -104,6 +104,7 @@ void CheckWizardPage::showEvent(QShowEvent *event)
 {
     if (isOpening)
     {
+        qWarning() << "show event not running!";
         return;
     }
     isOpening = true;
@@ -111,7 +112,25 @@ void CheckWizardPage::showEvent(QShowEvent *event)
     QWizardPage::showEvent(event);
 
     connect(wizard(), SIGNAL(currentIdChanged(int)), this, SLOT(currentIdChanged(int)));
+}
 
+void CheckWizardPage::runChecks()
+{
+    cleanUpUi();
+
+    workingThread = new QThread();
+
+    connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
+
+    connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
+
+    diagnosticTool->moveToThread(workingThread);
+
+    workingThread->start();
+}
+
+void CheckWizardPage::connectSlotsToDiagnosticTool()
+{
     connect(diagnosticTool, SIGNAL(begin()), this, SLOT(beginAllChecks()));
 
     connect(diagnosticTool, SIGNAL(finish()), this, SLOT(finishAllChecks()));
@@ -130,23 +149,46 @@ void CheckWizardPage::showEvent(QShowEvent *event)
             SLOT(finishCurrentCheck(ADTExecutable *)));
 }
 
-void CheckWizardPage::runChecks()
+void CheckWizardPage::disconnectSlotToDiagnosticTool()
 {
-    ui->mainProgressBar->setValue(0);
+    disconnect(diagnosticTool, SIGNAL(begin()), this, SLOT(beginAllChecks()));
 
-    cleanUpUi();
+    disconnect(diagnosticTool, SIGNAL(finish()), this, SLOT(finishAllChecks()));
+
+    disconnect(diagnosticTool, SIGNAL(messageChanged(QString)), this, SLOT(messageChanged(QString)));
+
+    disconnect(diagnosticTool, SIGNAL(onProgressUpdate(int)), this, SLOT(onProgressUpdate(int)));
+
+    disconnect(diagnosticTool,
+               SIGNAL(beginTask(ADTExecutable *)),
+               this,
+               SLOT(beginCurrentCheck(ADTExecutable *)));
+    disconnect(diagnosticTool,
+               SIGNAL(finishTask(ADTExecutable *)),
+               this,
+               SLOT(finishCurrentCheck(ADTExecutable *)));
+}
+
+void CheckWizardPage::enableButtonsAfterChecks()
+{
+    isCompleteChecks = true;
+
+    emit completeChanged();
+
+    wizard()->button(QWizard::CancelButton)->setEnabled(false);
+
+    wizard()->button(QWizard::BackButton)->setEnabled(true);
+}
+
+void CheckWizardPage::disableButtonsBeforeChecks()
+{
+    isCompleteChecks = false;
+
+    emit completeChanged();
 
     wizard()->button(QWizard::CancelButton)->setEnabled(true);
 
-    workingThread = new QThread();
-
-    connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
-
-    connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
-
-    diagnosticTool->moveToThread(workingThread);
-
-    workingThread->start();
+    wizard()->button(QWizard::BackButton)->setEnabled(false);
 }
 
 void CheckWizardPage::onProgressUpdate(int progress)
@@ -161,11 +203,7 @@ void CheckWizardPage::messageChanged(QString message)
 
 void CheckWizardPage::beginAllChecks()
 {
-    isCompleteChecks = false;
-
-    emit completeChanged();
-
-    wizard()->button(QWizard::BackButton)->setEnabled(false);
+    disableButtonsBeforeChecks();
 }
 
 void CheckWizardPage::finishAllChecks()
@@ -173,13 +211,11 @@ void CheckWizardPage::finishAllChecks()
     ui->finishRadioButton->setVisible(false);
     ui->runRepairRadioButton->setVisible(false);
 
-    isCompleteChecks = true;
-
     disconnect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
 
-    disconnect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
+    disconnectSlotToDiagnosticTool();
 
-    emit completeChanged();
+    enableButtonsAfterChecks();
 }
 
 void CheckWizardPage::cancelButtonPressed(int currentPage)
@@ -190,7 +226,7 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
 
         if (!isCompleteChecks)
         {
-            wizard()->button(QWizard::CancelButton)->setEnabled(false);
+            enableButtonsAfterChecks();
 
             ui->finishRadioButton->setVisible(false);
             ui->runRepairRadioButton->setVisible(false);
@@ -277,7 +313,7 @@ void CheckWizardPage::currentIdChanged(int id)
 {
     if (id == ADTWizard::Check_Page)
     {
-        cleanUpUi();
+        connectSlotsToDiagnosticTool();
 
         diagnosticTool->resetStopFlag();
 
@@ -287,6 +323,8 @@ void CheckWizardPage::currentIdChanged(int id)
 
 void CheckWizardPage::cleanUpUi()
 {
+    ui->mainProgressBar->setValue(0);
+
     delete ui->summaryScrollAreaWidgetContents;
 
     ui->summaryScrollAreaWidgetContents = new QWidget();

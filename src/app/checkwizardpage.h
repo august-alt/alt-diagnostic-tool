@@ -69,6 +69,12 @@ private:
 
     void runChecks();
 
+    void connectSlotsToDiagnosticTool();
+    void disconnectSlotToDiagnosticTool();
+
+    void enableButtonsAfterChecks();
+    void disableButtonsBeforeChecks();
+
 private slots:
     void onProgressUpdate(int progress);
 
