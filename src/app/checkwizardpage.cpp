@@ -112,9 +112,9 @@ void CheckWizardPage::showEvent(QShowEvent *event)
 
     connect(wizard(), SIGNAL(currentIdChanged(int)), this, SLOT(currentIdChanged(int)));
 
-    connect(diagnosticTool, SIGNAL(begin()), this, SLOT(disableNextButton()));
+    connect(diagnosticTool, SIGNAL(begin()), this, SLOT(beginAllChecks()));
 
-    connect(diagnosticTool, SIGNAL(finish()), this, SLOT(enableNextButton()));
+    connect(diagnosticTool, SIGNAL(finish()), this, SLOT(finishAllChecks()));
 
     connect(diagnosticTool, SIGNAL(messageChanged(QString)), this, SLOT(messageChanged(QString)));
 
@@ -123,11 +123,11 @@ void CheckWizardPage::showEvent(QShowEvent *event)
     connect(diagnosticTool,
             SIGNAL(beginTask(ADTExecutable *)),
             this,
-            SLOT(beginCheck(ADTExecutable *)));
+            SLOT(beginCurrentCheck(ADTExecutable *)));
     connect(diagnosticTool,
             SIGNAL(finishTask(ADTExecutable *)),
             this,
-            SLOT(finishCheck(ADTExecutable *)));
+            SLOT(finishCurrentCheck(ADTExecutable *)));
 }
 
 void CheckWizardPage::runChecks()
@@ -159,7 +159,7 @@ void CheckWizardPage::messageChanged(QString message)
     ui->currentStatusLabel->setText("Running check number: " + message);
 }
 
-void CheckWizardPage::disableNextButton()
+void CheckWizardPage::beginAllChecks()
 {
     isCompleteChecks = false;
 
@@ -168,7 +168,7 @@ void CheckWizardPage::disableNextButton()
     wizard()->button(QWizard::BackButton)->setEnabled(false);
 }
 
-void CheckWizardPage::enableNextButton()
+void CheckWizardPage::finishAllChecks()
 {
     ui->finishRadioButton->setVisible(false);
     ui->runRepairRadioButton->setVisible(false);
@@ -202,7 +202,7 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
     }
 }
 
-void CheckWizardPage::beginCheck(ADTExecutable *check)
+void CheckWizardPage::beginCurrentCheck(ADTExecutable *check)
 {
     QHBoxLayout *hLayout = new QHBoxLayout();
 
@@ -232,7 +232,7 @@ void CheckWizardPage::beginCheck(ADTExecutable *check)
     summaryLayout->insertLayout(0, hLayout);
 }
 
-void CheckWizardPage::finishCheck(ADTExecutable *check)
+void CheckWizardPage::finishCurrentCheck(ADTExecutable *check)
 {
     if (diagnosticTool->anyErrorsInChecks() && diagnosticTool->hasAnyResolvers())
     {

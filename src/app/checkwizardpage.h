@@ -74,14 +74,14 @@ private slots:
 
     void messageChanged(QString message);
 
-    void disableNextButton();
+    void beginAllChecks();
 
-    void enableNextButton();
+    void finishAllChecks();
 
     void cancelButtonPressed(int currentPage);
 
-    void beginCheck(ADTExecutable *check);
-    void finishCheck(ADTExecutable *check);
+    void beginCurrentCheck(ADTExecutable *check);
+    void finishCurrentCheck(ADTExecutable *check);
 
     void currentCheckDetailsButton_clicked();
 
