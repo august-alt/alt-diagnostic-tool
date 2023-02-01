@@ -20,6 +20,7 @@
 
 #include "checkwizardpage.h"
 #include "adtwizard.h"
+#include "executablestatuswidget.h"
 #include "ui_checkwizardpage.h"
 
 #include <QPushButton>
@@ -31,8 +32,7 @@ CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     , diagnosticTool(diagTool)
     , isCompleteChecks(false)
     , workingThread(nullptr)
-    , currentIconLabel(nullptr)
-    , currentTextLabel(nullptr)
+    , currentCheckWidget(nullptr)
     , summaryLayout(nullptr)
     , detailsLayout(nullptr)
     , detailsText(nullptr)
@@ -43,8 +43,6 @@ CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
 
     summaryLayout = new QVBoxLayout();
     detailsLayout = new QVBoxLayout();
-
-    summaryLayout->addStretch(10);
 
     backToSummaryLogsButton = new QPushButton();
     backToSummaryLogsButton->setText("Back");
@@ -259,51 +257,30 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
 
 void CheckWizardPage::beginCurrentCheck(ADTExecutable *check)
 {
-    QHBoxLayout *hLayout = new QHBoxLayout();
-
-    currentIconLabel          = new QLabel();
-    currentTextLabel          = new QLabel();
-    currentCheckDetailsButton = new QPushButton();
-
-    currentCheckDetailsButton->setText("Details");
-
-    currentCheckDetailsButton->setProperty("taskId", QVariant(check->m_id));
-
-    connect(currentCheckDetailsButton,
-            SIGNAL(clicked()),
+    ExecutableStatusWidget *statusWidget = new ExecutableStatusWidget(check->m_id);
+    connect(statusWidget,
+            SIGNAL(onDetailsButtonPressed(int)),
             this,
-            SLOT(currentCheckDetailsButton_clicked()));
+            SLOT(currentCheckDetailsButton_clicked(int)));
 
-    QIcon icon = style()->standardIcon(QStyle::SP_BrowserReload);
-    currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
+    statusWidget->setText("Running " + check->m_name + " check...");
 
-    currentTextLabel->setText("Running " + check->m_name + " check...");
+    summaryLayout->insertWidget(0, statusWidget, Qt::AlignTop);
 
-    hLayout->addWidget(currentIconLabel);
-    hLayout->addWidget(currentTextLabel);
-    hLayout->addStretch(10);
-    hLayout->addWidget(currentCheckDetailsButton);
-
-    summaryLayout->insertLayout(0, hLayout);
+    currentCheckWidget = statusWidget;
 }
 
 void CheckWizardPage::finishCurrentCheck(ADTExecutable *check)
 {
-    if (currentIconLabel == nullptr || currentTextLabel == nullptr)
-    {
-        return;
-    }
-
     QIcon icon = style()->standardIcon(QStyle::SP_DialogApplyButton);
-    currentTextLabel->setText("Check " + check->m_name + " completed");
+    currentCheckWidget->setText("Check " + check->m_name + " completed");
 
     if (check->m_exit_code != 0)
     {
         icon = style()->standardIcon(QStyle::SP_DialogCloseButton);
-        currentTextLabel->setText("Check " + check->m_name + " failed");
+        currentCheckWidget->setText("Check " + check->m_name + " failed");
     }
-
-    currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
+    currentCheckWidget->setIcon(icon);
 }
 
 void CheckWizardPage::exchangeWidgetsInStackedWidget()
@@ -342,30 +319,25 @@ void CheckWizardPage::cleanUpUi()
 
     summaryLayout = new QVBoxLayout();
 
-    summaryLayout->addStretch(10);
+    summaryLayout->setAlignment(Qt::AlignTop);
+    summaryLayout->insertStretch(0, 10);
 
     ui->summaryScrollAreaWidgetContents->setLayout(summaryLayout);
 
     ui->stackedWidget->setCurrentIndex(0);
 }
 
-void CheckWizardPage::currentCheckDetailsButton_clicked()
+void CheckWizardPage::currentCheckDetailsButton_clicked(int id)
 {
-    QPushButton *senderPtr = dynamic_cast<QPushButton *>(sender());
-    if (senderPtr != nullptr)
+    ADTExecutable *check = diagnosticTool->getCheck(id);
+
+    if (check != nullptr)
     {
-        QString id = senderPtr->property("taskId").toString();
+        detailsText->clear();
 
-        ADTExecutable *check = diagnosticTool->getCheck(id.toInt());
-
-        if (check != nullptr)
-        {
-            detailsText->clear();
-
-            detailsText->appendPlainText(check->m_stdout);
-            detailsText->appendPlainText(check->m_stderr);
-        }
-
-        exchangeWidgetsInStackedWidget();
+        detailsText->appendPlainText(check->m_stdout);
+        detailsText->appendPlainText(check->m_stderr);
     }
+
+    exchangeWidgetsInStackedWidget();
 }

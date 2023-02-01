@@ -29,6 +29,7 @@ set(HEADERS
     checkwizardpage.h
     repairwizardpage.h
     finishwizardpage.h
+    executablestatuswidget.h
 
     adtwizard.h
 )
@@ -38,6 +39,7 @@ set(SOURCES
     checkwizardpage.cpp
     repairwizardpage.cpp
     finishwizardpage.cpp
+    executablestatuswidget.cpp
 
     adtwizard.cpp
     main.cpp
@@ -49,6 +51,7 @@ set(UI_FORMS
     checkwizardpage.ui
     repairwizardpage.ui
     finishwizardpage.ui
+    executablestatuswidget.ui
 )
 set(RESOURCES
     resources.qrc

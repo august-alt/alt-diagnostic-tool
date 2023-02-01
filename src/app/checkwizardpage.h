@@ -23,6 +23,8 @@
 
 #include "../core/diagnostictool.h"
 
+#include "executablestatuswidget.h"
+
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QThread>
@@ -56,8 +58,7 @@ private:
 
     QThread *workingThread;
 
-    QLabel *currentIconLabel;
-    QLabel *currentTextLabel;
+    ExecutableStatusWidget *currentCheckWidget;
     QVBoxLayout *summaryLayout;
     QVBoxLayout *detailsLayout;
     QPlainTextEdit *detailsText;
@@ -93,7 +94,7 @@ private slots:
     void beginCurrentCheck(ADTExecutable *check);
     void finishCurrentCheck(ADTExecutable *check);
 
-    void currentCheckDetailsButton_clicked();
+    void currentCheckDetailsButton_clicked(int id);
 
     void exchangeWidgetsInStackedWidget();
 
