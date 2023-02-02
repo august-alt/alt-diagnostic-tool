@@ -243,14 +243,8 @@ void CheckWizardPage::finishCurrentTask(ADTExecutable *task)
 
 void CheckWizardPage::exchangeWidgetsInStackedWidget()
 {
-    if (ui->stackedWidget->currentIndex() == 0)
-    {
-        ui->stackedWidget->setCurrentIndex(1);
-    }
-    else
-    {
-        ui->stackedWidget->setCurrentIndex(0);
-    }
+    ui->stackedWidget->currentIndex() == 0 ? ui->stackedWidget->setCurrentIndex(1)
+                                           : ui->stackedWidget->setCurrentIndex(0);
 }
 
 void CheckWizardPage::currentIdChanged(int id)

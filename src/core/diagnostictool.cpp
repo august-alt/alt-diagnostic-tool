@@ -248,12 +248,10 @@ bool DiagnosticTool::anyErrorsInChecks()
         }
     }
 
-    //return false;
-    return true;
+    return false;
 }
 
 bool DiagnosticTool::hasAnyResolvers()
 {
-    //return !d->resolvers->empty();
-    return true;
+    return !d->resolvers->empty();
 }
