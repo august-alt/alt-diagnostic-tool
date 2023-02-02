@@ -5,10 +5,16 @@
 
 #include "abstractexecutablepage.h"
 
-class SlotConnector
+class SlotConnector : public QObject
 {
 public:
-    SlotConnector(DiagnosticTool *diagToll, AbstractExecutablePage *page);
+    Q_OBJECT
+
+public:
+    SlotConnector();
+
+    void connectSignals(DiagnosticTool *diagTool, AbstractExecutablePage *page);
+    void disconnectSignals(DiagnosticTool *diagTool, AbstractExecutablePage *page);
 };
 
 #endif // SLOTCONNECTOR_H

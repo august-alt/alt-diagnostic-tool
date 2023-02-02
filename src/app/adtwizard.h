@@ -27,6 +27,7 @@
 #include "finishwizardpage.h"
 #include "introwizardpage.h"
 #include "repairwizardpage.h"
+#include "slotconnector.h"
 
 #include <QScopedPointer>
 #include <QWizard>
@@ -52,6 +53,8 @@ public:
 private slots:
     void cancelButtonPressed();
 
+    void currentIdChanged(int id);
+
 signals:
     void cancelPressed(int currentPage);
 
@@ -62,6 +65,8 @@ private:
     QScopedPointer<CheckWizardPage> checkPage;
     QScopedPointer<RepairWizardPage> repairPage;
     QScopedPointer<FinishWizardPage> finishPage;
+
+    QScopedPointer<SlotConnector> slotConnector;
 
 private:
     QJsonDocument LoadJSonFile(QString file);

@@ -36,6 +36,7 @@ ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
     , checkPage(nullptr)
     , repairPage(nullptr)
     , finishPage(nullptr)
+    , slotConnector(nullptr)
 {
     diagnosticTool.reset(new DiagnosticTool(LoadJSonFile(jsonFile)));
 
@@ -43,6 +44,8 @@ ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
     checkPage.reset(new CheckWizardPage(diagnosticTool.data()));
     repairPage.reset(new RepairWizardPage(diagnosticTool.data()));
     finishPage.reset(new FinishWizardPage());
+
+    slotConnector.reset(new SlotConnector);
 
     setPage(Intro_Page, introPage.data());
     setPage(Check_Page, checkPage.data());
@@ -57,11 +60,37 @@ ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
     connect(this, SIGNAL(cancelPressed(int)), introPage.get(), SLOT(cancelButtonPressed(int)));
     connect(this, SIGNAL(cancelPressed(int)), checkPage.get(), SLOT(cancelButtonPressed(int)));
     connect(this, SIGNAL(cancelPressed(int)), repairPage.get(), SLOT(cancelButtonPressed(int)));
+
+    connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(currentIdChanged(int)));
 }
 
 void ADTWizard::cancelButtonPressed()
 {
     emit cancelPressed(currentId());
+}
+
+void ADTWizard::currentIdChanged(int id)
+{
+    qWarning() << "ADWWIzard: currentIdChanged" << id;
+
+    switch (id)
+    {
+    case ADTWizard::Intro_Page:
+        break;
+
+    case ADTWizard::Check_Page:
+
+        slotConnector->connectSignals(diagnosticTool.data(),
+                                      static_cast<AbstractExecutablePage *>(checkPage.get()));
+
+        break;
+
+    case ADTWizard::Repair_Page:
+        break;
+
+    case ADTWizard::FinishButton:
+        break;
+    }
 }
 
 QJsonDocument ADTWizard::LoadJSonFile(QString file)

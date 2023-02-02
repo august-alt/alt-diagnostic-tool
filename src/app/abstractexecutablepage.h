@@ -3,19 +3,24 @@
 
 #include "../core/adtexecutable.h"
 
-class AbstractExecutablePage
+class AbstractExecutablePage : public QObject
 {
+    Q_OBJECT
 public:
     AbstractExecutablePage();
 
 public slots:
-    virtual void beginAllTasks()  = 0;
-    virtual void finishAllTasks() = 0;
+    virtual void beginAllTasks();
+    virtual void finishAllTasks();
 
-    virtual void beginCurrentTask(ADTExecutable *task)  = 0;
-    virtual void finishCurrentTask(ADTExecutable *task) = 0;
+    virtual void beginCurrentTask(ADTExecutable *task);
+    virtual void finishCurrentTask(ADTExecutable *task);
 
-    virtual ~AbstractExecutablePage();
+    virtual void onProgressUpdate(int progress);
+
+    virtual void messageChanged(QString message);
+
+    ~AbstractExecutablePage();
 };
 
 #endif // ABSTRACTEXECUTABLEPAGE_H

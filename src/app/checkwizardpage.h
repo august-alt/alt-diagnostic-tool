@@ -37,7 +37,7 @@ namespace Ui
 class CheckWizardPage;
 }
 
-class CheckWizardPage : public QWizardPage, AbstractExecutablePage
+class CheckWizardPage : public QWizardPage
 {
     Q_OBJECT
 
@@ -83,16 +83,17 @@ private:
 
 public slots:
 
-    void beginAllTasks() override;
-    void finishAllTasks() override;
+    virtual void beginAllTasks() override;
+    virtual void finishAllTasks() override;
 
-    void beginCurrentTask(ADTExecutable *task) override;
-    void finishCurrentTask(ADTExecutable *task) override;
+    virtual void beginCurrentTask(ADTExecutable *task) override;
+    virtual void finishCurrentTask(ADTExecutable *task) override;
+
+    virtual void onProgressUpdate(int progress) override;
+
+    virtual void messageChanged(QString message) override;
 
 private slots:
-    void onProgressUpdate(int progress);
-
-    void messageChanged(QString message);
 
     void cancelButtonPressed(int currentPage);
 
