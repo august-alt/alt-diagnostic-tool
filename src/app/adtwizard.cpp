@@ -70,11 +70,17 @@ void ADTWizard::cancelButtonPressed()
     emit cancelPressed(currentId());
 }
 
-void ADTWizard::currentIdChanged(int id)
+void ADTWizard::currentIdChanged(int currentPageId)
 {
-    qWarning() << "ADWWIzard: currentIdChanged" << id;
+    connectSlotInCurrentPage(currentPageId);
+    disconnectSlotInPreviousPage();
 
-    switch (id)
+    previousPage = currentPageId;
+}
+
+void ADTWizard::connectSlotInCurrentPage(int currentPageId)
+{
+    switch (currentPageId)
     {
     case ADTWizard::Intro_Page:
         break;
@@ -83,17 +89,39 @@ void ADTWizard::currentIdChanged(int id)
 
         slotConnector->connectSignals(diagnosticTool.data(),
                                       static_cast<AbstractExecutablePage *>(checkPage.get()));
-
         break;
 
     case ADTWizard::Repair_Page:
+        slotConnector->connectSignals(diagnosticTool.data(),
+                                      static_cast<AbstractExecutablePage *>(repairPage.get()));
         break;
 
     case ADTWizard::FinishButton:
         break;
     }
+}
 
-    disconnectSlotInPreviousPage(id);
+void ADTWizard::disconnectSlotInPreviousPage()
+{
+    switch (previousPage)
+    {
+    case ADTWizard::Intro_Page:
+        break;
+
+    case ADTWizard::Check_Page:
+
+        slotConnector->disconnectSignals(diagnosticTool.data(),
+                                         static_cast<AbstractExecutablePage *>(checkPage.get()));
+        break;
+
+    case ADTWizard::Repair_Page:
+        slotConnector->disconnectSignals(diagnosticTool.data(),
+                                         static_cast<AbstractExecutablePage *>(repairPage.get()));
+        break;
+
+    case ADTWizard::FinishButton:
+        break;
+    }
 }
 
 QJsonDocument ADTWizard::LoadJSonFile(QString file)
@@ -115,28 +143,4 @@ QJsonDocument ADTWizard::LoadJSonFile(QString file)
     doc = (QJsonDocument::fromJson(fileData));
 
     return doc;
-}
-
-void ADTWizard::disconnectSlotInPreviousPage(int id)
-{
-    switch (previousPage)
-    {
-    case ADTWizard::Intro_Page:
-        break;
-
-    case ADTWizard::Check_Page:
-
-        slotConnector->disconnectSignals(diagnosticTool.data(),
-                                         static_cast<AbstractExecutablePage *>(checkPage.get()));
-
-        break;
-
-    case ADTWizard::Repair_Page:
-        break;
-
-    case ADTWizard::FinishButton:
-        break;
-    }
-
-    previousPage = id;
 }

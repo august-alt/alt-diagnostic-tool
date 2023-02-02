@@ -53,7 +53,7 @@ public:
 private slots:
     void cancelButtonPressed();
 
-    void currentIdChanged(int id);
+    void currentIdChanged(int currentPageId);
 
 signals:
     void cancelPressed(int currentPage);
@@ -73,7 +73,8 @@ private:
 private:
     QJsonDocument LoadJSonFile(QString file);
 
-    void disconnectSlotInPreviousPage(int id);
+    void connectSlotInCurrentPage(int currentPageId);
+    void disconnectSlotInPreviousPage();
 };
 
 #endif // ADTWIZARD_H

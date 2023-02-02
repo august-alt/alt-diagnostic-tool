@@ -76,7 +76,7 @@ void DiagnosticTool::runChecks()
         emit messageChanged(check.get()->m_name);
 
         executeCommand(check);
-        QThread::sleep(1); //delay, in order to see the progress
+        //QThread::sleep(1); //delay, in order to see the progress
 
         progress = progress + percentByOneCheck;
 
@@ -248,7 +248,8 @@ bool DiagnosticTool::anyErrorsInChecks()
         }
     }
 
-    return false;
+    //return false;
+    return true;
 }
 
 bool DiagnosticTool::hasAnyResolvers()
