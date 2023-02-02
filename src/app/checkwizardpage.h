@@ -23,6 +23,7 @@
 
 #include "../core/diagnostictool.h"
 
+#include "abstractexecutablepage.h"
 #include "executablestatuswidget.h"
 
 #include <QLabel>
@@ -36,7 +37,7 @@ namespace Ui
 class CheckWizardPage;
 }
 
-class CheckWizardPage : public QWizardPage
+class CheckWizardPage : public QWizardPage, AbstractExecutablePage
 {
     Q_OBJECT
 
@@ -80,19 +81,20 @@ private:
     void hideFinishRadiobuttons();
     void setRadiobuttonSizePolicy();
 
+public slots:
+
+    void beginAllTasks() override;
+    void finishAllTasks() override;
+
+    void beginCurrentTask(ADTExecutable *task) override;
+    void finishCurrentTask(ADTExecutable *task) override;
+
 private slots:
     void onProgressUpdate(int progress);
 
     void messageChanged(QString message);
 
-    void beginAllChecks();
-
-    void finishAllChecks();
-
     void cancelButtonPressed(int currentPage);
-
-    void beginCurrentCheck(ADTExecutable *check);
-    void finishCurrentCheck(ADTExecutable *check);
 
     void currentCheckDetailsButton_clicked(int id);
 

@@ -30,8 +30,10 @@ set(HEADERS
     repairwizardpage.h
     finishwizardpage.h
     executablestatuswidget.h
+    abstractexecutablepage.h
 
     adtwizard.h
+    slotconnector.h
 )
 
 set(SOURCES
@@ -40,8 +42,10 @@ set(SOURCES
     repairwizardpage.cpp
     finishwizardpage.cpp
     executablestatuswidget.cpp
+    abstractexecutablepage.cpp
 
     adtwizard.cpp
+    slotconnector.cpp
     main.cpp
 )
 

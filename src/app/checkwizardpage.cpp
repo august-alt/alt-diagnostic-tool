@@ -124,9 +124,9 @@ void CheckWizardPage::runChecks()
 
 void CheckWizardPage::connectSlotsToDiagnosticTool()
 {
-    connect(diagnosticTool, SIGNAL(begin()), this, SLOT(beginAllChecks()));
+    connect(diagnosticTool, SIGNAL(begin()), this, SLOT(beginAllTasks()));
 
-    connect(diagnosticTool, SIGNAL(finish()), this, SLOT(finishAllChecks()));
+    connect(diagnosticTool, SIGNAL(finish()), this, SLOT(finishAllTasks()));
 
     connect(diagnosticTool, SIGNAL(messageChanged(QString)), this, SLOT(messageChanged(QString)));
 
@@ -135,18 +135,18 @@ void CheckWizardPage::connectSlotsToDiagnosticTool()
     connect(diagnosticTool,
             SIGNAL(beginTask(ADTExecutable *)),
             this,
-            SLOT(beginCurrentCheck(ADTExecutable *)));
+            SLOT(beginCurrentTask(ADTExecutable *)));
     connect(diagnosticTool,
             SIGNAL(finishTask(ADTExecutable *)),
             this,
-            SLOT(finishCurrentCheck(ADTExecutable *)));
+            SLOT(finishCurrentTask(ADTExecutable *)));
 }
 
 void CheckWizardPage::disconnectSlotToDiagnosticTool()
 {
-    disconnect(diagnosticTool, SIGNAL(begin()), this, SLOT(beginAllChecks()));
+    disconnect(diagnosticTool, SIGNAL(begin()), this, SLOT(beginAllTasks()));
 
-    disconnect(diagnosticTool, SIGNAL(finish()), this, SLOT(finishAllChecks()));
+    disconnect(diagnosticTool, SIGNAL(finish()), this, SLOT(finishAllTasks()));
 
     disconnect(diagnosticTool, SIGNAL(messageChanged(QString)), this, SLOT(messageChanged(QString)));
 
@@ -155,11 +155,11 @@ void CheckWizardPage::disconnectSlotToDiagnosticTool()
     disconnect(diagnosticTool,
                SIGNAL(beginTask(ADTExecutable *)),
                this,
-               SLOT(beginCurrentCheck(ADTExecutable *)));
+               SLOT(beginCurrentTask(ADTExecutable *)));
     disconnect(diagnosticTool,
                SIGNAL(finishTask(ADTExecutable *)),
                this,
-               SLOT(finishCurrentCheck(ADTExecutable *)));
+               SLOT(finishCurrentTask(ADTExecutable *)));
 }
 
 void CheckWizardPage::enableButtonsAfterChecks()
@@ -220,12 +220,12 @@ void CheckWizardPage::messageChanged(QString message)
     ui->currentStatusLabel->setText("Running check number: " + message);
 }
 
-void CheckWizardPage::beginAllChecks()
+void CheckWizardPage::beginAllTasks()
 {
     disableButtonsBeforeChecks();
 }
 
-void CheckWizardPage::finishAllChecks()
+void CheckWizardPage::finishAllTasks()
 {
     showFinishRadiobuttons();
 
@@ -255,30 +255,30 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
     }
 }
 
-void CheckWizardPage::beginCurrentCheck(ADTExecutable *check)
+void CheckWizardPage::beginCurrentTask(ADTExecutable *task)
 {
-    ExecutableStatusWidget *statusWidget = new ExecutableStatusWidget(check->m_id);
+    ExecutableStatusWidget *statusWidget = new ExecutableStatusWidget(task->m_id);
     connect(statusWidget,
             SIGNAL(onDetailsButtonPressed(int)),
             this,
             SLOT(currentCheckDetailsButton_clicked(int)));
 
-    statusWidget->setText("Running " + check->m_name + " check...");
+    statusWidget->setText("Running " + task->m_name + " check...");
 
     summaryLayout->insertWidget(0, statusWidget, Qt::AlignTop);
 
     currentCheckWidget = statusWidget;
 }
 
-void CheckWizardPage::finishCurrentCheck(ADTExecutable *check)
+void CheckWizardPage::finishCurrentTask(ADTExecutable *task)
 {
     QIcon icon = style()->standardIcon(QStyle::SP_DialogApplyButton);
-    currentCheckWidget->setText("Check " + check->m_name + " completed");
+    currentCheckWidget->setText("Check " + task->m_name + " completed");
 
-    if (check->m_exit_code != 0)
+    if (task->m_exit_code != 0)
     {
         icon = style()->standardIcon(QStyle::SP_DialogCloseButton);
-        currentCheckWidget->setText("Check " + check->m_name + " failed");
+        currentCheckWidget->setText("Check " + task->m_name + " failed");
     }
     currentCheckWidget->setIcon(icon);
 }
