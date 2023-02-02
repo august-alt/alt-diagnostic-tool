@@ -6,7 +6,7 @@
 ExecutableStatusWidget::ExecutableStatusWidget(int _id, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::ExecutableStatusWidget)
-    , id(-1)
+    , id(_id)
 {
     ui->setupUi(this);
 
