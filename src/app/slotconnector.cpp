@@ -4,22 +4,40 @@ SlotConnector::SlotConnector() {}
 
 void SlotConnector::connectSignals(DiagnosticTool *diagTool, AbstractExecutablePage *page)
 {
-    QObject::connect(diagTool, SIGNAL(begin()), page, SLOT(beginAllTasks()));
+    connect(diagTool, SIGNAL(begin()), page, SLOT(beginAllTasks()));
 
-    QObject::connect(diagTool, SIGNAL(finish()), page, SLOT(finishAllTasks()));
+    connect(diagTool, SIGNAL(finish()), page, SLOT(finishAllTasks()));
 
-    QObject::connect(diagTool, SIGNAL(messageChanged(QString)), page, SLOT(messageChanged(QString)));
+    connect(diagTool, SIGNAL(messageChanged(QString)), page, SLOT(messageChanged(QString)));
 
-    QObject::connect(diagTool, SIGNAL(onProgressUpdate(int)), page, SLOT(onProgressUpdate(int)));
+    connect(diagTool, SIGNAL(onProgressUpdate(int)), page, SLOT(onProgressUpdate(int)));
 
-    QObject::connect(diagTool,
-                     SIGNAL(beginTask(ADTExecutable *)),
-                     page,
-                     SLOT(beginCurrentTask(ADTExecutable *)));
-    QObject::connect(diagTool,
-                     SIGNAL(finishTask(ADTExecutable *)),
-                     page,
-                     SLOT(finishCurrentTask(ADTExecutable *)));
+    connect(diagTool,
+            SIGNAL(beginTask(ADTExecutable *)),
+            page,
+            SLOT(beginCurrentTask(ADTExecutable *)));
+    connect(diagTool,
+            SIGNAL(finishTask(ADTExecutable *)),
+            page,
+            SLOT(finishCurrentTask(ADTExecutable *)));
 }
 
-void SlotConnector::disconnectSignals(DiagnosticTool *diagTool, AbstractExecutablePage *page) {}
+void SlotConnector::disconnectSignals(DiagnosticTool *diagTool, AbstractExecutablePage *page)
+{
+    disconnect(diagTool, SIGNAL(begin()), page, SLOT(beginAllTasks()));
+
+    disconnect(diagTool, SIGNAL(finish()), page, SLOT(finishAllTasks()));
+
+    disconnect(diagTool, SIGNAL(messageChanged(QString)), page, SLOT(messageChanged(QString)));
+
+    disconnect(diagTool, SIGNAL(onProgressUpdate(int)), page, SLOT(onProgressUpdate(int)));
+
+    disconnect(diagTool,
+               SIGNAL(beginTask(ADTExecutable *)),
+               page,
+               SLOT(beginCurrentTask(ADTExecutable *)));
+    disconnect(diagTool,
+               SIGNAL(finishTask(ADTExecutable *)),
+               page,
+               SLOT(finishCurrentTask(ADTExecutable *)));
+}

@@ -68,8 +68,12 @@ private:
 
     QScopedPointer<SlotConnector> slotConnector;
 
+    int previousPage;
+
 private:
     QJsonDocument LoadJSonFile(QString file);
+
+    void disconnectSlotInPreviousPage(int id);
 };
 
 #endif // ADTWIZARD_H

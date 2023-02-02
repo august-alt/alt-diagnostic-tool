@@ -27,7 +27,7 @@
 #include <QStyle>
 
 CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
-    : QWizardPage(parent)
+    : AbstractExecutablePage(parent)
     , ui(new Ui::CheckWizardPage)
     , diagnosticTool(diagTool)
     , isCompleteChecks(false)
@@ -122,46 +122,6 @@ void CheckWizardPage::runChecks()
     workingThread->start();
 }
 
-void CheckWizardPage::connectSlotsToDiagnosticTool()
-{
-    connect(diagnosticTool, SIGNAL(begin()), this, SLOT(beginAllTasks()));
-
-    connect(diagnosticTool, SIGNAL(finish()), this, SLOT(finishAllTasks()));
-
-    connect(diagnosticTool, SIGNAL(messageChanged(QString)), this, SLOT(messageChanged(QString)));
-
-    connect(diagnosticTool, SIGNAL(onProgressUpdate(int)), this, SLOT(onProgressUpdate(int)));
-
-    connect(diagnosticTool,
-            SIGNAL(beginTask(ADTExecutable *)),
-            this,
-            SLOT(beginCurrentTask(ADTExecutable *)));
-    connect(diagnosticTool,
-            SIGNAL(finishTask(ADTExecutable *)),
-            this,
-            SLOT(finishCurrentTask(ADTExecutable *)));
-}
-
-void CheckWizardPage::disconnectSlotToDiagnosticTool()
-{
-    disconnect(diagnosticTool, SIGNAL(begin()), this, SLOT(beginAllTasks()));
-
-    disconnect(diagnosticTool, SIGNAL(finish()), this, SLOT(finishAllTasks()));
-
-    disconnect(diagnosticTool, SIGNAL(messageChanged(QString)), this, SLOT(messageChanged(QString)));
-
-    disconnect(diagnosticTool, SIGNAL(onProgressUpdate(int)), this, SLOT(onProgressUpdate(int)));
-
-    disconnect(diagnosticTool,
-               SIGNAL(beginTask(ADTExecutable *)),
-               this,
-               SLOT(beginCurrentTask(ADTExecutable *)));
-    disconnect(diagnosticTool,
-               SIGNAL(finishTask(ADTExecutable *)),
-               this,
-               SLOT(finishCurrentTask(ADTExecutable *)));
-}
-
 void CheckWizardPage::enableButtonsAfterChecks()
 {
     isCompleteChecks = true;
@@ -231,8 +191,6 @@ void CheckWizardPage::finishAllTasks()
 
     disconnect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
 
-    disconnectSlotToDiagnosticTool();
-
     enableButtonsAfterChecks();
 }
 
@@ -299,8 +257,6 @@ void CheckWizardPage::currentIdChanged(int id)
 {
     if (id == ADTWizard::Check_Page)
     {
-        connectSlotsToDiagnosticTool();
-
         diagnosticTool->resetStopFlag();
 
         runChecks();

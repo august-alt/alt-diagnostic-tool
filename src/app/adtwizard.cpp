@@ -37,6 +37,7 @@ ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
     , repairPage(nullptr)
     , finishPage(nullptr)
     , slotConnector(nullptr)
+    , previousPage(0)
 {
     diagnosticTool.reset(new DiagnosticTool(LoadJSonFile(jsonFile)));
 
@@ -91,6 +92,8 @@ void ADTWizard::currentIdChanged(int id)
     case ADTWizard::FinishButton:
         break;
     }
+
+    disconnectSlotInPreviousPage(id);
 }
 
 QJsonDocument ADTWizard::LoadJSonFile(QString file)
@@ -112,4 +115,28 @@ QJsonDocument ADTWizard::LoadJSonFile(QString file)
     doc = (QJsonDocument::fromJson(fileData));
 
     return doc;
+}
+
+void ADTWizard::disconnectSlotInPreviousPage(int id)
+{
+    switch (previousPage)
+    {
+    case ADTWizard::Intro_Page:
+        break;
+
+    case ADTWizard::Check_Page:
+
+        slotConnector->disconnectSignals(diagnosticTool.data(),
+                                         static_cast<AbstractExecutablePage *>(checkPage.get()));
+
+        break;
+
+    case ADTWizard::Repair_Page:
+        break;
+
+    case ADTWizard::FinishButton:
+        break;
+    }
+
+    previousPage = id;
 }

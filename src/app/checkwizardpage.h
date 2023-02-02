@@ -37,7 +37,7 @@ namespace Ui
 class CheckWizardPage;
 }
 
-class CheckWizardPage : public QWizardPage
+class CheckWizardPage : public AbstractExecutablePage
 {
     Q_OBJECT
 
@@ -70,9 +70,6 @@ private:
     void showEvent(QShowEvent *event) override;
 
     void runChecks();
-
-    void connectSlotsToDiagnosticTool();
-    void disconnectSlotToDiagnosticTool();
 
     void enableButtonsAfterChecks();
     void disableButtonsBeforeChecks();

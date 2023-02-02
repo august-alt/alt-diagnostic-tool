@@ -3,11 +3,14 @@
 
 #include "../core/adtexecutable.h"
 
-class AbstractExecutablePage : public QObject
+#include <QWizard>
+
+class AbstractExecutablePage : public QWizardPage
 {
     Q_OBJECT
 public:
-    AbstractExecutablePage();
+    AbstractExecutablePage(QWidget *parent = nullptr);
+    virtual ~AbstractExecutablePage() = default;
 
 public slots:
     virtual void beginAllTasks();
@@ -19,8 +22,6 @@ public slots:
     virtual void onProgressUpdate(int progress);
 
     virtual void messageChanged(QString message);
-
-    ~AbstractExecutablePage();
 };
 
 #endif // ABSTRACTEXECUTABLEPAGE_H
