@@ -26,13 +26,12 @@
 #include <QStyle>
 
 RepairWizardPage::RepairWizardPage(DiagnosticTool *diagTool, QWidget *parent)
-    : QWizardPage(parent)
+    : AbstractExecutablePage(parent)
     , ui(new Ui::RepairWizardPage)
     , diagnosticTool(diagTool)
     , isCompleteResolvers(false)
     , workingThread(nullptr)
-    , currentIconLabel(nullptr)
-    , currentTextLabel(nullptr)
+    , currentResolvWidget(nullptr)
     , summaryLayout(nullptr)
     , detailsLayout(nullptr)
     , detailsText(nullptr)
@@ -44,15 +43,13 @@ RepairWizardPage::RepairWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     summaryLayout = new QVBoxLayout();
     detailsLayout = new QVBoxLayout();
 
-    summaryLayout->addStretch(10);
-
     backToSummaryLogsButton = new QPushButton();
     backToSummaryLogsButton->setText("Back");
 
     connect(backToSummaryLogsButton,
             SIGNAL(clicked()),
             this,
-            SLOT(onbackToSummaryLogsButton_clicked()));
+            SLOT(exchangeWidgetsInStackedWidget()));
 
     QHBoxLayout *detailsHButtonLayout = new QHBoxLayout();
     detailsHButtonLayout->addStretch();
@@ -77,8 +74,6 @@ bool RepairWizardPage::isComplete() const
 
 void RepairWizardPage::showEvent(QShowEvent *event)
 {
-    wizard()->button(QWizard::CancelButton)->setEnabled(true);
-
     if (isOpening)
     {
         return;
@@ -87,29 +82,14 @@ void RepairWizardPage::showEvent(QShowEvent *event)
 
     QWizardPage::showEvent(event);
 
-    runResolvers();
+    connect(wizard(), SIGNAL(currentIdChanged(int)), this, SLOT(currentIdChanged(int)));
 }
 
 void RepairWizardPage::runResolvers()
 {
+    cleanUpUi();
+
     workingThread = new QThread();
-
-    connect(diagnosticTool, SIGNAL(begin()), this, SLOT(disableNextButton()));
-
-    connect(diagnosticTool, SIGNAL(finish()), this, SLOT(enableNextButton()));
-
-    connect(diagnosticTool, SIGNAL(messageChanged(QString)), this, SLOT(messageChanged(QString)));
-
-    connect(diagnosticTool, SIGNAL(onProgressUpdate(int)), this, SLOT(onProgressUpdate(int)));
-
-    connect(diagnosticTool,
-            SIGNAL(beginTask(ADTExecutable *)),
-            this,
-            SLOT(beginResolv(ADTExecutable *)));
-    connect(diagnosticTool,
-            SIGNAL(finishTask(ADTExecutable *)),
-            this,
-            SLOT(finishResolv(ADTExecutable *)));
 
     connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runResolvers()));
 
@@ -118,6 +98,28 @@ void RepairWizardPage::runResolvers()
     diagnosticTool->moveToThread(workingThread);
 
     workingThread->start();
+}
+
+void RepairWizardPage::enableButtonsAfterChecks()
+{
+    isCompleteResolvers = true;
+
+    emit completeChanged();
+
+    wizard()->button(QWizard::CancelButton)->setEnabled(false);
+
+    wizard()->button(QWizard::BackButton)->setEnabled(true);
+}
+
+void RepairWizardPage::disableButtonsBeforeChecks()
+{
+    isCompleteResolvers = false;
+
+    emit completeChanged();
+
+    wizard()->button(QWizard::CancelButton)->setEnabled(true);
+
+    wizard()->button(QWizard::BackButton)->setEnabled(false);
 }
 
 void RepairWizardPage::onProgressUpdate(int progress)
@@ -130,114 +132,110 @@ void RepairWizardPage::messageChanged(QString message)
     ui->statusLabel->setText("Running resolver: " + message);
 }
 
-void RepairWizardPage::disableNextButton()
+void RepairWizardPage::beginAllTasks()
 {
-    isCompleteResolvers = false;
-
-    emit completeChanged();
-
-    wizard()->button(QWizard::BackButton)->setEnabled(false);
+    disableButtonsBeforeChecks();
 }
 
-void RepairWizardPage::enableNextButton()
+void RepairWizardPage::finishAllTasks()
 {
-    isCompleteResolvers = true;
+    disconnect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
 
-    emit completeChanged();
+    enableButtonsAfterChecks();
 }
 
 void RepairWizardPage::cancelButtonPressed(int currentPage)
 {
-    if (currentPage == ADTWizard::Repair_Page)
+    if (currentPage == ADTWizard::Check_Page)
     {
         diagnosticTool->cancelTask();
 
         if (!isCompleteResolvers)
         {
-            wizard()->button(QWizard::CancelButton)->setEnabled(false);
             workingThread->wait();
+
+            enableButtonsAfterChecks();
         }
-    }
-}
 
-void RepairWizardPage::beginResolv(ADTExecutable *resolv)
-{
-    QHBoxLayout *hLayout = new QHBoxLayout();
-
-    currentIconLabel           = new QLabel();
-    currentTextLabel           = new QLabel();
-    currentResolvDetailsButton = new QPushButton();
-
-    currentResolvDetailsButton->setText("Details");
-
-    currentResolvDetailsButton->setProperty("taskId", QVariant(resolv->m_id));
-
-    connect(currentResolvDetailsButton,
-            SIGNAL(clicked()),
-            this,
-            SLOT(currentResolvDetailsButton_clicked()));
-
-    QIcon icon = style()->standardIcon(QStyle::SP_BrowserReload);
-    currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
-
-    currentTextLabel->setText("Running " + resolv->m_name + " check...");
-
-    hLayout->addWidget(currentIconLabel);
-    hLayout->addWidget(currentTextLabel);
-    hLayout->addStretch(10);
-    hLayout->addWidget(currentResolvDetailsButton);
-
-    summaryLayout->insertLayout(0, hLayout);
-}
-
-void RepairWizardPage::finishResolv(ADTExecutable *resolv)
-{
-    if (currentIconLabel == nullptr || currentTextLabel == nullptr)
-    {
-        return;
-    }
-
-    QIcon icon = style()->standardIcon(QStyle::SP_DialogApplyButton);
-    currentTextLabel->setText("Resolver " + resolv->m_name + " completed");
-
-    if (resolv->m_exit_code != 0)
-    {
-        icon = style()->standardIcon(QStyle::SP_DialogCloseButton);
-        currentTextLabel->setText("Resolver " + resolv->m_name + " failed");
-    }
-
-    currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
-}
-
-void RepairWizardPage::onbackToSummaryLogsButton_clicked()
-{
-    if (ui->stackedWidget->currentIndex() == 0)
-    {
-        ui->stackedWidget->setCurrentIndex(1);
-    }
-    else
-    {
         ui->stackedWidget->setCurrentIndex(0);
     }
 }
 
-void RepairWizardPage::currentResolvDetailsButton_clicked()
+void RepairWizardPage::beginCurrentTask(ADTExecutable *task)
 {
-    QPushButton *senderPtr = dynamic_cast<QPushButton *>(sender());
-    if (senderPtr != nullptr)
+    ExecutableStatusWidget *statusWidget = new ExecutableStatusWidget(task->m_id);
+    connect(statusWidget,
+            SIGNAL(onDetailsButtonPressed(int)),
+            this,
+            SLOT(currentResolvDetailsButton_clicked(int)));
+
+    statusWidget->setText(tr("Running ") + task->m_name + tr(" resolver..."));
+
+    summaryLayout->insertWidget(0, statusWidget, Qt::AlignTop);
+
+    currentResolvWidget = statusWidget;
+}
+
+void RepairWizardPage::finishCurrentTask(ADTExecutable *task)
+{
+    QIcon icon = style()->standardIcon(QStyle::SP_DialogApplyButton);
+    currentResolvWidget->setText(tr("Resolver ") + task->m_name + tr(" completed"));
+
+    if (task->m_exit_code != 0)
     {
-        QString id = senderPtr->property("taskId").toString();
-
-        ADTExecutable *resolv = diagnosticTool->getResolv(id.toInt());
-
-        if (resolv != nullptr)
-        {
-            detailsText->clear();
-
-            detailsText->appendPlainText(resolv->m_stdout);
-            detailsText->appendPlainText(resolv->m_stderr);
-        }
-
-        onbackToSummaryLogsButton_clicked();
+        icon = style()->standardIcon(QStyle::SP_DialogCloseButton);
+        currentResolvWidget->setText(tr("Resolver ") + task->m_name + tr(" failed"));
     }
+    currentResolvWidget->setIcon(icon);
+}
+
+void RepairWizardPage::currentResolvDetailsButton_clicked(int id)
+{
+    ADTExecutable *resolv = diagnosticTool->getResolv(id);
+
+    if (resolv != nullptr)
+    {
+        detailsText->clear();
+
+        detailsText->appendPlainText(resolv->m_stdout);
+        detailsText->appendPlainText(resolv->m_stderr);
+    }
+
+    exchangeWidgetsInStackedWidget();
+}
+
+void RepairWizardPage::exchangeWidgetsInStackedWidget()
+{
+    ui->stackedWidget->currentIndex() == 0 ? ui->stackedWidget->setCurrentIndex(1)
+                                           : ui->stackedWidget->setCurrentIndex(0);
+}
+
+void RepairWizardPage::currentIdChanged(int id)
+{
+    if (id == ADTWizard::Repair_Page)
+    {
+        diagnosticTool->resetStopFlag();
+
+        runResolvers();
+    }
+}
+
+void RepairWizardPage::cleanUpUi()
+{
+    ui->repairProgressBar->setValue(0);
+
+    delete ui->summaryScrollAreaWidgetContents;
+
+    ui->summaryScrollAreaWidgetContents = new QWidget();
+
+    ui->summaryScrollArea->setWidget(ui->summaryScrollAreaWidgetContents);
+
+    summaryLayout = new QVBoxLayout();
+
+    summaryLayout->setAlignment(Qt::AlignTop);
+    summaryLayout->insertStretch(0, 10);
+
+    ui->summaryScrollAreaWidgetContents->setLayout(summaryLayout);
+
+    ui->stackedWidget->setCurrentIndex(0);
 }

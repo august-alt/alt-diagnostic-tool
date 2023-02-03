@@ -20,19 +20,19 @@
 
 #include "checkwizardpage.h"
 #include "adtwizard.h"
+#include "executablestatuswidget.h"
 #include "ui_checkwizardpage.h"
 
 #include <QPushButton>
 #include <QStyle>
 
 CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
-    : QWizardPage(parent)
+    : AbstractExecutablePage(parent)
     , ui(new Ui::CheckWizardPage)
     , diagnosticTool(diagTool)
     , isCompleteChecks(false)
     , workingThread(nullptr)
-    , currentIconLabel(nullptr)
-    , currentTextLabel(nullptr)
+    , currentCheckWidget(nullptr)
     , summaryLayout(nullptr)
     , detailsLayout(nullptr)
     , detailsText(nullptr)
@@ -44,15 +44,13 @@ CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     summaryLayout = new QVBoxLayout();
     detailsLayout = new QVBoxLayout();
 
-    summaryLayout->addStretch(10);
-
     backToSummaryLogsButton = new QPushButton();
     backToSummaryLogsButton->setText("Back");
 
     connect(backToSummaryLogsButton,
             SIGNAL(clicked()),
             this,
-            SLOT(onbackToSummaryLogsButton_clicked()));
+            SLOT(exchangeWidgetsInStackedWidget()));
 
     QHBoxLayout *detailsHButtonLayout = new QHBoxLayout();
     detailsHButtonLayout->addStretch();
@@ -70,15 +68,8 @@ CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
     ui->mainProgressBar->setValue(0);
 
     ui->finishRadioButton->setChecked(true);
-    ui->finishRadioButton->setEnabled(false);
-    ui->runRepairRadioButton->setEnabled(false);
-
-    ui->finishRadioButton->sizePolicy().setRetainSizeWhenHidden(true);
-
-    ui->runRepairRadioButton->sizePolicy().setRetainSizeWhenHidden(true);
-
-    ui->finishRadioButton->setVisible(false);
-    ui->runRepairRadioButton->setVisible(false);
+    setRadiobuttonSizePolicy();
+    hideFinishRadiobuttons();
 }
 
 bool CheckWizardPage::isComplete() const
@@ -88,7 +79,8 @@ bool CheckWizardPage::isComplete() const
 
 int CheckWizardPage::nextId() const
 {
-    if (diagnosticTool->anyErrorsInChecks() && diagnosticTool->hasAnyResolvers())
+    if (diagnosticTool->anyErrorsInChecks() && diagnosticTool->hasAnyResolvers()
+        && ui->runRepairRadioButton->isChecked())
     {
         return ADTWizard::Repair_Page;
     }
@@ -110,29 +102,16 @@ void CheckWizardPage::showEvent(QShowEvent *event)
 
     QWizardPage::showEvent(event);
 
-    runChecks();
+    connect(wizard(), SIGNAL(currentIdChanged(int)), this, SLOT(currentIdChanged(int)));
 }
 
 void CheckWizardPage::runChecks()
 {
+    cleanUpUi();
+
+    hideFinishRadiobuttons();
+
     workingThread = new QThread();
-
-    connect(diagnosticTool, SIGNAL(begin()), this, SLOT(disableNextButton()));
-
-    connect(diagnosticTool, SIGNAL(finish()), this, SLOT(enableNextButton()));
-
-    connect(diagnosticTool, SIGNAL(messageChanged(QString)), this, SLOT(messageChanged(QString)));
-
-    connect(diagnosticTool, SIGNAL(onProgressUpdate(int)), this, SLOT(onProgressUpdate(int)));
-
-    connect(diagnosticTool,
-            SIGNAL(beginTask(ADTExecutable *)),
-            this,
-            SLOT(beginCheck(ADTExecutable *)));
-    connect(diagnosticTool,
-            SIGNAL(finishTask(ADTExecutable *)),
-            this,
-            SLOT(finishCheck(ADTExecutable *)));
 
     connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
 
@@ -141,6 +120,54 @@ void CheckWizardPage::runChecks()
     diagnosticTool->moveToThread(workingThread);
 
     workingThread->start();
+}
+
+void CheckWizardPage::enableButtonsAfterChecks()
+{
+    isCompleteChecks = true;
+
+    emit completeChanged();
+
+    wizard()->button(QWizard::CancelButton)->setEnabled(false);
+
+    wizard()->button(QWizard::BackButton)->setEnabled(true);
+}
+
+void CheckWizardPage::disableButtonsBeforeChecks()
+{
+    isCompleteChecks = false;
+
+    emit completeChanged();
+
+    wizard()->button(QWizard::CancelButton)->setEnabled(true);
+
+    wizard()->button(QWizard::BackButton)->setEnabled(false);
+}
+
+void CheckWizardPage::showFinishRadiobuttons()
+{
+    if (diagnosticTool->anyErrorsInChecks() && diagnosticTool->hasAnyResolvers())
+    {
+        ui->finishRadioButton->setVisible(true);
+        ui->runRepairRadioButton->setVisible(true);
+    }
+}
+
+void CheckWizardPage::hideFinishRadiobuttons()
+{
+    ui->finishRadioButton->setVisible(false);
+    ui->runRepairRadioButton->setVisible(false);
+}
+
+void CheckWizardPage::setRadiobuttonSizePolicy()
+{
+    QSizePolicy finishRadioButtonPolicy = ui->finishRadioButton->sizePolicy();
+    finishRadioButtonPolicy.setRetainSizeWhenHidden(true);
+    ui->finishRadioButton->setSizePolicy(finishRadioButtonPolicy);
+
+    QSizePolicy runRepairRadioButtonpolicy = ui->runRepairRadioButton->sizePolicy();
+    runRepairRadioButtonpolicy.setRetainSizeWhenHidden(true);
+    ui->runRepairRadioButton->setSizePolicy(runRepairRadioButtonpolicy);
 }
 
 void CheckWizardPage::onProgressUpdate(int progress)
@@ -153,23 +180,18 @@ void CheckWizardPage::messageChanged(QString message)
     ui->currentStatusLabel->setText("Running check number: " + message);
 }
 
-void CheckWizardPage::disableNextButton()
+void CheckWizardPage::beginAllTasks()
 {
-    isCompleteChecks = false;
-
-    emit completeChanged();
-
-    wizard()->button(QWizard::BackButton)->setEnabled(false);
+    disableButtonsBeforeChecks();
 }
 
-void CheckWizardPage::enableNextButton()
+void CheckWizardPage::finishAllTasks()
 {
-    ui->finishRadioButton->setVisible(false);
-    ui->runRepairRadioButton->setVisible(false);
+    showFinishRadiobuttons();
 
-    isCompleteChecks = true;
+    disconnect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
 
-    emit completeChanged();
+    enableButtonsAfterChecks();
 }
 
 void CheckWizardPage::cancelButtonPressed(int currentPage)
@@ -180,104 +202,92 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
 
         if (!isCompleteChecks)
         {
-            wizard()->button(QWizard::CancelButton)->setEnabled(false);
-
-            ui->finishRadioButton->setVisible(false);
-            ui->runRepairRadioButton->setVisible(false);
-
             workingThread->wait();
+
+            enableButtonsAfterChecks();
+
+            showFinishRadiobuttons();
         }
-    }
-}
 
-void CheckWizardPage::beginCheck(ADTExecutable *check)
-{
-    QHBoxLayout *hLayout = new QHBoxLayout();
-
-    currentIconLabel          = new QLabel();
-    currentTextLabel          = new QLabel();
-    currentCheckDetailsButton = new QPushButton();
-
-    currentCheckDetailsButton->setText("Details");
-
-    currentCheckDetailsButton->setProperty("taskId", QVariant(check->m_id));
-
-    connect(currentCheckDetailsButton,
-            SIGNAL(clicked()),
-            this,
-            SLOT(currentCheckDetailsButton_clicked()));
-
-    QIcon icon = style()->standardIcon(QStyle::SP_BrowserReload);
-    currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
-
-    currentTextLabel->setText("Running " + check->m_name + " check...");
-
-    hLayout->addWidget(currentIconLabel);
-    hLayout->addWidget(currentTextLabel);
-    hLayout->addStretch(10);
-    hLayout->addWidget(currentCheckDetailsButton);
-
-    summaryLayout->insertLayout(0, hLayout);
-}
-
-void CheckWizardPage::finishCheck(ADTExecutable *check)
-{
-    if (diagnosticTool->anyErrorsInChecks() && diagnosticTool->hasAnyResolvers())
-    {
-        ui->finishRadioButton->setVisible(true);
-        ui->runRepairRadioButton->setVisible(true);
-
-        ui->runRepairRadioButton->setEnabled(true);
-        ui->finishRadioButton->setEnabled(true);
-        ui->runRepairRadioButton->setEnabled(true);
-    }
-
-    if (currentIconLabel == nullptr || currentTextLabel == nullptr)
-    {
-        return;
-    }
-
-    QIcon icon = style()->standardIcon(QStyle::SP_DialogApplyButton);
-    currentTextLabel->setText("Check " + check->m_name + " completed");
-
-    if (check->m_exit_code != 0)
-    {
-        icon = style()->standardIcon(QStyle::SP_DialogCloseButton);
-        currentTextLabel->setText("Check " + check->m_name + " failed");
-    }
-
-    currentIconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
-}
-
-void CheckWizardPage::onbackToSummaryLogsButton_clicked()
-{
-    if (ui->stackedWidget->currentIndex() == 0)
-    {
-        ui->stackedWidget->setCurrentIndex(1);
-    }
-    else
-    {
         ui->stackedWidget->setCurrentIndex(0);
     }
 }
 
-void CheckWizardPage::currentCheckDetailsButton_clicked()
+void CheckWizardPage::beginCurrentTask(ADTExecutable *task)
 {
-    QPushButton *senderPtr = dynamic_cast<QPushButton *>(sender());
-    if (senderPtr != nullptr)
+    ExecutableStatusWidget *statusWidget = new ExecutableStatusWidget(task->m_id);
+    connect(statusWidget,
+            SIGNAL(onDetailsButtonPressed(int)),
+            this,
+            SLOT(currentCheckDetailsButton_clicked(int)));
+
+    statusWidget->setText(tr("Running ") + task->m_name + tr(" check..."));
+
+    summaryLayout->insertWidget(0, statusWidget, Qt::AlignTop);
+
+    currentCheckWidget = statusWidget;
+}
+
+void CheckWizardPage::finishCurrentTask(ADTExecutable *task)
+{
+    QIcon icon = style()->standardIcon(QStyle::SP_DialogApplyButton);
+    currentCheckWidget->setText(tr("Check ") + task->m_name + tr(" completed"));
+
+    if (task->m_exit_code != 0)
     {
-        QString id = senderPtr->property("taskId").toString();
-
-        ADTExecutable *check = diagnosticTool->getCheck(id.toInt());
-
-        if (check != nullptr)
-        {
-            detailsText->clear();
-
-            detailsText->appendPlainText(check->m_stdout);
-            detailsText->appendPlainText(check->m_stderr);
-        }
-
-        onbackToSummaryLogsButton_clicked();
+        icon = style()->standardIcon(QStyle::SP_DialogCloseButton);
+        currentCheckWidget->setText(tr("Check ") + task->m_name + tr(" failed"));
     }
+    currentCheckWidget->setIcon(icon);
+}
+
+void CheckWizardPage::exchangeWidgetsInStackedWidget()
+{
+    ui->stackedWidget->currentIndex() == 0 ? ui->stackedWidget->setCurrentIndex(1)
+                                           : ui->stackedWidget->setCurrentIndex(0);
+}
+
+void CheckWizardPage::currentIdChanged(int id)
+{
+    if (id == ADTWizard::Check_Page)
+    {
+        diagnosticTool->resetStopFlag();
+
+        runChecks();
+    }
+}
+
+void CheckWizardPage::cleanUpUi()
+{
+    ui->mainProgressBar->setValue(0);
+
+    delete ui->summaryScrollAreaWidgetContents;
+
+    ui->summaryScrollAreaWidgetContents = new QWidget();
+
+    ui->summaryScrollArea->setWidget(ui->summaryScrollAreaWidgetContents);
+
+    summaryLayout = new QVBoxLayout();
+
+    summaryLayout->setAlignment(Qt::AlignTop);
+    summaryLayout->insertStretch(0, 10);
+
+    ui->summaryScrollAreaWidgetContents->setLayout(summaryLayout);
+
+    ui->stackedWidget->setCurrentIndex(0);
+}
+
+void CheckWizardPage::currentCheckDetailsButton_clicked(int id)
+{
+    ADTExecutable *check = diagnosticTool->getCheck(id);
+
+    if (check != nullptr)
+    {
+        detailsText->clear();
+
+        detailsText->appendPlainText(check->m_stdout);
+        detailsText->appendPlainText(check->m_stderr);
+    }
+
+    exchangeWidgetsInStackedWidget();
 }

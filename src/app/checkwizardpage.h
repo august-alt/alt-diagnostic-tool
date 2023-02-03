@@ -23,6 +23,9 @@
 
 #include "../core/diagnostictool.h"
 
+#include "abstractexecutablepage.h"
+#include "executablestatuswidget.h"
+
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QThread>
@@ -34,7 +37,7 @@ namespace Ui
 class CheckWizardPage;
 }
 
-class CheckWizardPage : public QWizardPage
+class CheckWizardPage : public AbstractExecutablePage
 {
     Q_OBJECT
 
@@ -56,8 +59,7 @@ private:
 
     QThread *workingThread;
 
-    QLabel *currentIconLabel;
-    QLabel *currentTextLabel;
+    ExecutableStatusWidget *currentCheckWidget;
     QVBoxLayout *summaryLayout;
     QVBoxLayout *detailsLayout;
     QPlainTextEdit *detailsText;
@@ -69,23 +71,36 @@ private:
 
     void runChecks();
 
+    void enableButtonsAfterChecks();
+    void disableButtonsBeforeChecks();
+
+    void showFinishRadiobuttons();
+    void hideFinishRadiobuttons();
+    void setRadiobuttonSizePolicy();
+
+public slots:
+
+    virtual void beginAllTasks() override;
+    virtual void finishAllTasks() override;
+
+    virtual void beginCurrentTask(ADTExecutable *task) override;
+    virtual void finishCurrentTask(ADTExecutable *task) override;
+
+    virtual void onProgressUpdate(int progress) override;
+
+    virtual void messageChanged(QString message) override;
+
 private slots:
-    void onProgressUpdate(int progress);
-
-    void messageChanged(QString message);
-
-    void disableNextButton();
-
-    void enableNextButton();
 
     void cancelButtonPressed(int currentPage);
 
-    void beginCheck(ADTExecutable *check);
-    void finishCheck(ADTExecutable *check);
+    void currentCheckDetailsButton_clicked(int id);
 
-    void currentCheckDetailsButton_clicked();
+    void exchangeWidgetsInStackedWidget();
 
-    void onbackToSummaryLogsButton_clicked();
+    void currentIdChanged(int id);
+
+    void cleanUpUi();
 
 private:
     CheckWizardPage(const CheckWizardPage &) = delete;            // copy ctor

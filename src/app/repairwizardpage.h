@@ -23,6 +23,9 @@
 
 #include "../core/diagnostictool.h"
 
+#include "abstractexecutablepage.h"
+#include "executablestatuswidget.h"
+
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QThread>
@@ -34,7 +37,7 @@ namespace Ui
 class RepairWizardPage;
 }
 
-class RepairWizardPage : public QWizardPage
+class RepairWizardPage : public AbstractExecutablePage
 {
     Q_OBJECT
 
@@ -54,8 +57,7 @@ private:
 
     QThread *workingThread;
 
-    QLabel *currentIconLabel;
-    QLabel *currentTextLabel;
+    ExecutableStatusWidget *currentResolvWidget;
     QVBoxLayout *summaryLayout;
     QVBoxLayout *detailsLayout;
     QPlainTextEdit *detailsText;
@@ -67,23 +69,32 @@ private:
 
     void runResolvers();
 
+    void enableButtonsAfterChecks();
+    void disableButtonsBeforeChecks();
+
+public slots:
+
+    void beginAllTasks() override;
+    void finishAllTasks() override;
+
+    void beginCurrentTask(ADTExecutable *resolv) override;
+    void finishCurrentTask(ADTExecutable *resolv) override;
+
+    void onProgressUpdate(int progress) override;
+
+    void messageChanged(QString message) override;
+
 private slots:
-    void onProgressUpdate(int progress);
-
-    void messageChanged(QString message);
-
-    void disableNextButton();
-
-    void enableNextButton();
 
     void cancelButtonPressed(int currentPage);
 
-    void beginResolv(ADTExecutable *resolv);
-    void finishResolv(ADTExecutable *resolv);
+    void currentResolvDetailsButton_clicked(int id);
 
-    void currentResolvDetailsButton_clicked();
+    void exchangeWidgetsInStackedWidget();
 
-    void onbackToSummaryLogsButton_clicked();
+    void currentIdChanged(int id);
+
+    void cleanUpUi();
 
 private:
     RepairWizardPage(const RepairWizardPage &) = delete;            // copy ctor

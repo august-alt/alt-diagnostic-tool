@@ -223,6 +223,11 @@ void DiagnosticTool::cancelTask()
     stopFlag = true;
 }
 
+void DiagnosticTool::resetStopFlag()
+{
+    stopFlag = false;
+}
+
 unsigned int DiagnosticTool::getAmountOfChecks()
 {
     return d->checks->size();
