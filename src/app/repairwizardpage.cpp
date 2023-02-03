@@ -169,7 +169,7 @@ void RepairWizardPage::beginCurrentTask(ADTExecutable *task)
             this,
             SLOT(currentResolvDetailsButton_clicked(int)));
 
-    statusWidget->setText("Running " + task->m_name + " resolver...");
+    statusWidget->setText(tr("Running ") + task->m_name + tr(" resolver..."));
 
     summaryLayout->insertWidget(0, statusWidget, Qt::AlignTop);
 
@@ -179,12 +179,12 @@ void RepairWizardPage::beginCurrentTask(ADTExecutable *task)
 void RepairWizardPage::finishCurrentTask(ADTExecutable *task)
 {
     QIcon icon = style()->standardIcon(QStyle::SP_DialogApplyButton);
-    currentResolvWidget->setText("Resolver " + task->m_name + " completed");
+    currentResolvWidget->setText(tr("Resolver ") + task->m_name + tr(" completed"));
 
     if (task->m_exit_code != 0)
     {
         icon = style()->standardIcon(QStyle::SP_DialogCloseButton);
-        currentResolvWidget->setText("Resolver " + task->m_name + " failed");
+        currentResolvWidget->setText(tr("Resolver ") + task->m_name + tr(" failed"));
     }
     currentResolvWidget->setIcon(icon);
 }

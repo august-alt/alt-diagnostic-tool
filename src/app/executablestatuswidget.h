@@ -13,11 +13,11 @@ class ExecutableStatusWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit ExecutableStatusWidget(int _id, QWidget *parent = nullptr);
+    explicit ExecutableStatusWidget(int id, QWidget *parent = nullptr);
     ~ExecutableStatusWidget();
 
 public:
-    void setId(int _id);
+    void setId(int id);
     int getId();
 
     void setText(QString text);
@@ -33,7 +33,7 @@ private slots:
 private:
     Ui::ExecutableStatusWidget *ui;
 
-    int id;
+    int currentId;
 
 private:
     ExecutableStatusWidget(const ExecutableStatusWidget &) = delete;            // copy ctor

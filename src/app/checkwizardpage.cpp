@@ -221,7 +221,7 @@ void CheckWizardPage::beginCurrentTask(ADTExecutable *task)
             this,
             SLOT(currentCheckDetailsButton_clicked(int)));
 
-    statusWidget->setText("Running " + task->m_name + " check...");
+    statusWidget->setText(tr("Running ") + task->m_name + tr(" check..."));
 
     summaryLayout->insertWidget(0, statusWidget, Qt::AlignTop);
 
@@ -231,12 +231,12 @@ void CheckWizardPage::beginCurrentTask(ADTExecutable *task)
 void CheckWizardPage::finishCurrentTask(ADTExecutable *task)
 {
     QIcon icon = style()->standardIcon(QStyle::SP_DialogApplyButton);
-    currentCheckWidget->setText("Check " + task->m_name + " completed");
+    currentCheckWidget->setText(tr("Check ") + task->m_name + tr(" completed"));
 
     if (task->m_exit_code != 0)
     {
         icon = style()->standardIcon(QStyle::SP_DialogCloseButton);
-        currentCheckWidget->setText("Check " + task->m_name + " failed");
+        currentCheckWidget->setText(tr("Check ") + task->m_name + tr(" failed"));
     }
     currentCheckWidget->setIcon(icon);
 }

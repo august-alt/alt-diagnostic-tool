@@ -3,10 +3,10 @@
 
 #include <QStyle>
 
-ExecutableStatusWidget::ExecutableStatusWidget(int _id, QWidget *parent)
+ExecutableStatusWidget::ExecutableStatusWidget(int id, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::ExecutableStatusWidget)
-    , id(_id)
+    , currentId(id)
 {
     ui->setupUi(this);
 
@@ -30,17 +30,17 @@ void ExecutableStatusWidget::setIcon(QIcon &icon)
     ui->iconLabel->setPixmap(icon.pixmap(QSize(16, 16)));
 }
 
-void ExecutableStatusWidget::setId(int _id)
+void ExecutableStatusWidget::setId(int id)
 {
-    id = _id;
+    currentId = id;
 }
 
 int ExecutableStatusWidget::getId()
 {
-    return id;
+    return currentId;
 }
 
 void ExecutableStatusWidget::on_detailedPushButton_clicked()
 {
-    emit onDetailsButtonPressed(id);
+    emit onDetailsButtonPressed(currentId);
 }
