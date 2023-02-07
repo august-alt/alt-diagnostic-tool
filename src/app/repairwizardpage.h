@@ -21,7 +21,7 @@
 #ifndef REPAIRWIZARDPAGE_H
 #define REPAIRWIZARDPAGE_H
 
-#include "../core/diagnostictool.h"
+#include "../core/adtexecutablerunner.h"
 
 #include "abstractexecutablepage.h"
 #include "executablestatuswidget.h"
@@ -42,14 +42,14 @@ class RepairWizardPage : public AbstractExecutablePage
     Q_OBJECT
 
 public:
-    RepairWizardPage(DiagnosticTool *diagTool, QWidget *parent = nullptr);
+    RepairWizardPage(ADTExecutableRunner *run, QWidget *parent = nullptr);
 
     virtual bool isComplete() const override;
 
 private:
     Ui::RepairWizardPage *ui;
 
-    DiagnosticTool *diagnosticTool;
+    ADTExecutableRunner *runner;
 
     bool isOpening = false;
 

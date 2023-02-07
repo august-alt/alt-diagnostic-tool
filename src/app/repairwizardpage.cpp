@@ -25,10 +25,10 @@
 #include <QPushButton>
 #include <QStyle>
 
-RepairWizardPage::RepairWizardPage(DiagnosticTool *diagTool, QWidget *parent)
+RepairWizardPage::RepairWizardPage(ADTExecutableRunner *run, QWidget *parent)
     : AbstractExecutablePage(parent)
     , ui(new Ui::RepairWizardPage)
-    , diagnosticTool(diagTool)
+    , runner(run)
     , isCompleteResolvers(false)
     , workingThread(nullptr)
     , currentResolvWidget(nullptr)
@@ -91,11 +91,11 @@ void RepairWizardPage::runResolvers()
 
     workingThread = new QThread();
 
-    connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runResolvers()));
+    connect(workingThread, SIGNAL(started()), runner, SLOT(runResolvers()));
 
-    connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
+    connect(workingThread, SIGNAL(finished()), runner, SLOT(deleteLater()));
 
-    diagnosticTool->moveToThread(workingThread);
+    runner->moveToThread(workingThread);
 
     workingThread->start();
 }
@@ -139,7 +139,7 @@ void RepairWizardPage::beginAllTasks()
 
 void RepairWizardPage::finishAllTasks()
 {
-    disconnect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
+    disconnect(workingThread, SIGNAL(started()), runner, SLOT(runChecks()));
 
     enableButtonsAfterChecks();
 }
@@ -148,7 +148,7 @@ void RepairWizardPage::cancelButtonPressed(int currentPage)
 {
     if (currentPage == ADTWizard::Check_Page)
     {
-        diagnosticTool->cancelTask();
+        runner->cancelTasks();
 
         if (!isCompleteResolvers)
         {
@@ -191,7 +191,7 @@ void RepairWizardPage::finishCurrentTask(ADTExecutable *task)
 
 void RepairWizardPage::currentResolvDetailsButton_clicked(int id)
 {
-    ADTExecutable *resolv = diagnosticTool->getResolv(id);
+    ADTExecutable *resolv = runner->getTask(id);
 
     if (resolv != nullptr)
     {
@@ -214,7 +214,7 @@ void RepairWizardPage::currentIdChanged(int id)
 {
     if (id == ADTWizard::Repair_Page)
     {
-        diagnosticTool->resetStopFlag();
+        runner->resetStopFlag();
 
         runResolvers();
     }

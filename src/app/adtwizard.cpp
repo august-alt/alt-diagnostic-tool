@@ -19,6 +19,7 @@
 ***********************************************************************************************************************/
 
 #include "adtwizard.h"
+#include "../core/adtjsonloader.h"
 
 #include <QDebug>
 #include <QFile>
@@ -31,7 +32,8 @@
 
 ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
     : QWizard(parent)
-    , diagnosticTool(nullptr)
+    , checks(nullptr)
+    , resolvers(nullptr)
     , introPage(nullptr)
     , checkPage(nullptr)
     , repairPage(nullptr)
@@ -39,11 +41,13 @@ ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
     , slotConnector(nullptr)
     , previousPage(0)
 {
-    diagnosticTool.reset(new DiagnosticTool(LoadJSonFile(jsonFile)));
+    checks = std::make_unique<ADTExecutableRunner>(ADTJsonLoader::loadDocument(jsonFile, "checks"));
+    resolvers = std::make_unique<ADTExecutableRunner>(
+        ADTJsonLoader::loadDocument(jsonFile, "resolvers"));
 
     introPage.reset(new IntroWizardPage());
-    checkPage.reset(new CheckWizardPage(diagnosticTool.data()));
-    repairPage.reset(new RepairWizardPage(diagnosticTool.data()));
+    checkPage.reset(new CheckWizardPage(checks.get()));
+    repairPage.reset(new RepairWizardPage(resolvers.get()));
     finishPage.reset(new FinishWizardPage());
 
     slotConnector.reset(new SlotConnector);
@@ -87,12 +91,12 @@ void ADTWizard::connectSlotInCurrentPage(int currentPageId)
 
     case ADTWizard::Check_Page:
 
-        slotConnector->connectSignals(diagnosticTool.data(),
+        slotConnector->connectSignals(checks.get(),
                                       static_cast<AbstractExecutablePage *>(checkPage.get()));
         break;
 
     case ADTWizard::Repair_Page:
-        slotConnector->connectSignals(diagnosticTool.data(),
+        slotConnector->connectSignals(resolvers.get(),
                                       static_cast<AbstractExecutablePage *>(repairPage.get()));
         break;
 
@@ -110,12 +114,12 @@ void ADTWizard::disconnectSlotInPreviousPage()
 
     case ADTWizard::Check_Page:
 
-        slotConnector->disconnectSignals(diagnosticTool.data(),
+        slotConnector->disconnectSignals(checks.get(),
                                          static_cast<AbstractExecutablePage *>(checkPage.get()));
         break;
 
     case ADTWizard::Repair_Page:
-        slotConnector->disconnectSignals(diagnosticTool.data(),
+        slotConnector->disconnectSignals(resolvers.get(),
                                          static_cast<AbstractExecutablePage *>(repairPage.get()));
         break;
 

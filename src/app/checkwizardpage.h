@@ -21,7 +21,7 @@
 #ifndef CHECKWIZARDPAGE_H
 #define CHECKWIZARDPAGE_H
 
-#include "../core/diagnostictool.h"
+#include "../core/adtexecutablerunner.h"
 
 #include "abstractexecutablepage.h"
 #include "executablestatuswidget.h"
@@ -42,7 +42,7 @@ class CheckWizardPage : public AbstractExecutablePage
     Q_OBJECT
 
 public:
-    CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent = nullptr);
+    CheckWizardPage(ADTExecutableRunner *run, QWidget *parent = nullptr);
 
     virtual bool isComplete() const override;
 
@@ -51,7 +51,7 @@ public:
 private:
     Ui::CheckWizardPage *ui;
 
-    DiagnosticTool *diagnosticTool;
+    ADTExecutableRunner *runner;
 
     bool isOpening = false;
 

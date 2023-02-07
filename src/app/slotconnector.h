@@ -1,7 +1,7 @@
 #ifndef SLOTCONNECTOR_H
 #define SLOTCONNECTOR_H
 
-#include "../core/diagnostictool.h"
+#include "../core/adtexecutablerunner.h"
 
 #include "abstractexecutablepage.h"
 
@@ -13,8 +13,8 @@ public:
 public:
     SlotConnector();
 
-    void connectSignals(DiagnosticTool *diagTool, AbstractExecutablePage *page);
-    void disconnectSignals(DiagnosticTool *diagTool, AbstractExecutablePage *page);
+    void connectSignals(ADTExecutableRunner *diagTool, AbstractExecutablePage *page);
+    void disconnectSignals(ADTExecutableRunner *diagTool, AbstractExecutablePage *page);
 };
 
 #endif // SLOTCONNECTOR_H

@@ -9,11 +9,12 @@ set (HEADERS
     adtcheck.h
     adtresolver.h
 
-    adtjsonconverter.h
+    adtexecutablerunner.h
+    adtexecutablerunnerprivate.h
 
-    diagnostictool.h
-    diagnostictoolprivate.h
+    adtjsonconverter.h
     alteratorexecutordbusinterface.h
+    adtjsonloader.h
 )
 
 set (SOURCES
@@ -21,9 +22,11 @@ set (SOURCES
     adtcheck.cpp
     adtresolver.cpp
 
+    adtexecutablerunner.cpp
+    adtexecutablerunnerprivate.cpp
+
     adtjsonconverter.cpp
-    diagnostictool.cpp
-    diagnostictoolprivate.cpp
+    adtjsonloader.cpp
 )
 
 ADD_LIBRARY(adtcore STATIC ${SOURCES} ${HEADERS})

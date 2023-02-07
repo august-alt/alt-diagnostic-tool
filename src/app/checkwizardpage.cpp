@@ -26,10 +26,10 @@
 #include <QPushButton>
 #include <QStyle>
 
-CheckWizardPage::CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent)
+CheckWizardPage::CheckWizardPage(ADTExecutableRunner *run, QWidget *parent)
     : AbstractExecutablePage(parent)
     , ui(new Ui::CheckWizardPage)
-    , diagnosticTool(diagTool)
+    , runner(run)
     , isCompleteChecks(false)
     , workingThread(nullptr)
     , currentCheckWidget(nullptr)
@@ -79,8 +79,7 @@ bool CheckWizardPage::isComplete() const
 
 int CheckWizardPage::nextId() const
 {
-    if (diagnosticTool->anyErrorsInChecks() && diagnosticTool->hasAnyResolvers()
-        && ui->runRepairRadioButton->isChecked())
+    if (runner->isAnyErrorsInTask() && ui->runRepairRadioButton->isChecked())
     {
         return ADTWizard::Repair_Page;
     }
@@ -113,11 +112,11 @@ void CheckWizardPage::runChecks()
 
     workingThread = new QThread();
 
-    connect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
+    connect(workingThread, SIGNAL(started()), runner, SLOT(runTasks()));
 
     connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
 
-    diagnosticTool->moveToThread(workingThread);
+    runner->moveToThread(workingThread);
 
     workingThread->start();
 }
@@ -146,7 +145,7 @@ void CheckWizardPage::disableButtonsBeforeChecks()
 
 void CheckWizardPage::showFinishRadiobuttons()
 {
-    if (diagnosticTool->anyErrorsInChecks() && diagnosticTool->hasAnyResolvers())
+    if (runner->isAnyErrorsInTask())
     {
         ui->finishRadioButton->setVisible(true);
         ui->runRepairRadioButton->setVisible(true);
@@ -189,7 +188,7 @@ void CheckWizardPage::finishAllTasks()
 {
     showFinishRadiobuttons();
 
-    disconnect(workingThread, SIGNAL(started()), diagnosticTool, SLOT(runChecks()));
+    disconnect(workingThread, SIGNAL(started()), runner, SLOT(runTasks()));
 
     enableButtonsAfterChecks();
 }
@@ -198,7 +197,7 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
 {
     if (currentPage == ADTWizard::Check_Page)
     {
-        diagnosticTool->cancelTask();
+        runner->cancelTasks();
 
         if (!isCompleteChecks)
         {
@@ -251,7 +250,7 @@ void CheckWizardPage::currentIdChanged(int id)
 {
     if (id == ADTWizard::Check_Page)
     {
-        diagnosticTool->resetStopFlag();
+        runner->resetStopFlag();
 
         runChecks();
     }
@@ -279,7 +278,7 @@ void CheckWizardPage::cleanUpUi()
 
 void CheckWizardPage::currentCheckDetailsButton_clicked(int id)
 {
-    ADTExecutable *check = diagnosticTool->getCheck(id);
+    ADTExecutable *check = runner->getTask(id);
 
     if (check != nullptr)
     {

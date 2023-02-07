@@ -21,7 +21,7 @@
 #ifndef ADTWIZARD_H
 #define ADTWIZARD_H
 
-#include "../core/diagnostictool.h"
+#include "../core/adtexecutablerunner.h"
 
 #include "checkwizardpage.h"
 #include "finishwizardpage.h"
@@ -59,7 +59,8 @@ signals:
     void cancelPressed(int currentPage);
 
 private:
-    QScopedPointer<DiagnosticTool> diagnosticTool;
+    std::unique_ptr<ADTExecutableRunner> checks;
+    std::unique_ptr<ADTExecutableRunner> resolvers;
 
     QScopedPointer<IntroWizardPage> introPage;
     QScopedPointer<CheckWizardPage> checkPage;

@@ -2,41 +2,41 @@
 
 SlotConnector::SlotConnector() {}
 
-void SlotConnector::connectSignals(DiagnosticTool *diagTool, AbstractExecutablePage *page)
+void SlotConnector::connectSignals(ADTExecutableRunner *runner, AbstractExecutablePage *page)
 {
-    connect(diagTool, SIGNAL(begin()), page, SLOT(beginAllTasks()));
+    connect(runner, SIGNAL(begin()), page, SLOT(beginAllTasks()));
 
-    connect(diagTool, SIGNAL(finish()), page, SLOT(finishAllTasks()));
+    connect(runner, SIGNAL(finish()), page, SLOT(finishAllTasks()));
 
-    connect(diagTool, SIGNAL(messageChanged(QString)), page, SLOT(messageChanged(QString)));
+    connect(runner, SIGNAL(messageChanged(QString)), page, SLOT(messageChanged(QString)));
 
-    connect(diagTool, SIGNAL(onProgressUpdate(int)), page, SLOT(onProgressUpdate(int)));
+    connect(runner, SIGNAL(onProgressUpdate(int)), page, SLOT(onProgressUpdate(int)));
 
-    connect(diagTool,
+    connect(runner,
             SIGNAL(beginTask(ADTExecutable *)),
             page,
             SLOT(beginCurrentTask(ADTExecutable *)));
-    connect(diagTool,
+    connect(runner,
             SIGNAL(finishTask(ADTExecutable *)),
             page,
             SLOT(finishCurrentTask(ADTExecutable *)));
 }
 
-void SlotConnector::disconnectSignals(DiagnosticTool *diagTool, AbstractExecutablePage *page)
+void SlotConnector::disconnectSignals(ADTExecutableRunner *runner, AbstractExecutablePage *page)
 {
-    disconnect(diagTool, SIGNAL(begin()), page, SLOT(beginAllTasks()));
+    disconnect(runner, SIGNAL(begin()), page, SLOT(beginAllTasks()));
 
-    disconnect(diagTool, SIGNAL(finish()), page, SLOT(finishAllTasks()));
+    disconnect(runner, SIGNAL(finish()), page, SLOT(finishAllTasks()));
 
-    disconnect(diagTool, SIGNAL(messageChanged(QString)), page, SLOT(messageChanged(QString)));
+    disconnect(runner, SIGNAL(messageChanged(QString)), page, SLOT(messageChanged(QString)));
 
-    disconnect(diagTool, SIGNAL(onProgressUpdate(int)), page, SLOT(onProgressUpdate(int)));
+    disconnect(runner, SIGNAL(onProgressUpdate(int)), page, SLOT(onProgressUpdate(int)));
 
-    disconnect(diagTool,
+    disconnect(runner,
                SIGNAL(beginTask(ADTExecutable *)),
                page,
                SLOT(beginCurrentTask(ADTExecutable *)));
-    disconnect(diagTool,
+    disconnect(runner,
                SIGNAL(finishTask(ADTExecutable *)),
                page,
                SLOT(finishCurrentTask(ADTExecutable *)));
