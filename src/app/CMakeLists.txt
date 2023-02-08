@@ -31,6 +31,9 @@ set(HEADERS
     finishwizardpage.h
     executablestatuswidget.h
     abstractexecutablepage.h
+    adtwizardpage.h
+    adtwizardpage.inl
+
 
     adtwizard.h
     slotconnector.h

@@ -80,6 +80,20 @@ void ADTWizard::currentIdChanged(int currentPageId)
     disconnectSlotInPreviousPage();
 
     previousPage = currentPageId;
+
+    switch (currentPageId)
+    {
+    case Check_Page:
+        checkPage.data()->runTasks();
+        break;
+
+    case Repair_Page:
+        repairPage.data()->runTasks();
+        break;
+
+    default:
+        break;
+    }
 }
 
 void ADTWizard::connectSlotInCurrentPage(int currentPageId)

@@ -26,7 +26,7 @@
 #include <QStyle>
 
 RepairWizardPage::RepairWizardPage(ADTExecutableRunner *run, QWidget *parent)
-    : AbstractExecutablePage(parent)
+    : AbstractExecutablePage(run, parent)
     , ui(new Ui::RepairWizardPage)
     , runner(run)
     , isCompleteResolvers(false)

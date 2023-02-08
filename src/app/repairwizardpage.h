@@ -64,7 +64,7 @@ private:
     QPushButton *currentResolvDetailsButton;
     QPushButton *backToSummaryLogsButton;
 
-private:
+protected:
     void showEvent(QShowEvent *event) override;
 
     void runResolvers();

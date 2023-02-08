@@ -32,11 +32,6 @@
 #include <QVBoxLayout>
 #include <QWizardPage>
 
-namespace Ui
-{
-class CheckWizardPage;
-}
-
 class CheckWizardPage : public AbstractExecutablePage
 {
     Q_OBJECT
@@ -49,58 +44,13 @@ public:
     virtual int nextId() const override;
 
 private:
-    Ui::CheckWizardPage *ui;
-
-    ADTExecutableRunner *runner;
-
-    bool isOpening = false;
-
-    bool isCompleteChecks;
-
-    QThread *workingThread;
-
-    ExecutableStatusWidget *currentCheckWidget;
-    QVBoxLayout *summaryLayout;
-    QVBoxLayout *detailsLayout;
-    QPlainTextEdit *detailsText;
-    QPushButton *currentCheckDetailsButton;
-    QPushButton *backToSummaryLogsButton;
-
-private:
-    void showEvent(QShowEvent *event) override;
-
-    void runChecks();
-
-    void enableButtonsAfterChecks();
-    void disableButtonsBeforeChecks();
-
     void showFinishRadiobuttons();
     void hideFinishRadiobuttons();
     void setRadiobuttonSizePolicy();
 
-public slots:
-
-    virtual void beginAllTasks() override;
-    virtual void finishAllTasks() override;
-
-    virtual void beginCurrentTask(ADTExecutable *task) override;
-    virtual void finishCurrentTask(ADTExecutable *task) override;
-
-    virtual void onProgressUpdate(int progress) override;
-
-    virtual void messageChanged(QString message) override;
-
 private slots:
 
     void cancelButtonPressed(int currentPage);
-
-    void currentCheckDetailsButton_clicked(int id);
-
-    void exchangeWidgetsInStackedWidget();
-
-    void currentIdChanged(int id);
-
-    void cleanUpUi();
 
 private:
     CheckWizardPage(const CheckWizardPage &) = delete;            // copy ctor
