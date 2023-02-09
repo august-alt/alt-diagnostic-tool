@@ -8,7 +8,7 @@ AbstractExecutablePage::AbstractExecutablePage(ADTExecutableRunner *run, QWidget
     : QWizardPage(parent)
     , pageUi(new ADTWizardPage<Ui::CheckWizardPage>())
     , runner(run)
-    , isCompleteChecks(false)
+    , isCompleteTasks(false)
     , workingThread(nullptr)
     , currentCheckWidget(nullptr)
     , summaryLayout(nullptr)
@@ -44,6 +44,11 @@ AbstractExecutablePage::AbstractExecutablePage(ADTExecutableRunner *run, QWidget
     pageUi->ui->mainProgressBar->setMinimum(0);
     pageUi->ui->mainProgressBar->setMaximum(100);
     pageUi->ui->mainProgressBar->setValue(0);
+}
+
+AbstractExecutablePage::~AbstractExecutablePage()
+{
+    delete pageUi;
 }
 
 void AbstractExecutablePage::runTasks()
@@ -119,7 +124,7 @@ void AbstractExecutablePage::messageChanged(QString message)
 
 void AbstractExecutablePage::enableButtonsAfterChecks()
 {
-    isCompleteChecks = true;
+    isCompleteTasks = true;
 
     emit completeChanged();
 
@@ -130,7 +135,7 @@ void AbstractExecutablePage::enableButtonsAfterChecks()
 
 void AbstractExecutablePage::disableButtonsBeforeChecks()
 {
-    isCompleteChecks = false;
+    isCompleteTasks = false;
 
     emit completeChanged();
 

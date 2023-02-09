@@ -29,6 +29,11 @@ IntroWizardPage::IntroWizardPage(QWidget *parent)
     ui->setupUi(this);
 }
 
+IntroWizardPage::~IntroWizardPage()
+{
+    delete ui;
+}
+
 void IntroWizardPage::cancelButtonPressed(int currentPage)
 {
     if (currentPage == ADTWizard::Intro_Page)

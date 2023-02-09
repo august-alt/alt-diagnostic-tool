@@ -34,6 +34,7 @@ class FinishWizardPage : public QWizardPage
 
 public:
     FinishWizardPage(QWidget *parent = nullptr);
+    ~FinishWizardPage();
 
     void initializePage() override;
 

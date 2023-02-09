@@ -46,55 +46,9 @@ public:
 
     virtual bool isComplete() const override;
 
-private:
-    Ui::RepairWizardPage *ui;
-
-    ADTExecutableRunner *runner;
-
-    bool isOpening = false;
-
-    bool isCompleteResolvers;
-
-    QThread *workingThread;
-
-    ExecutableStatusWidget *currentResolvWidget;
-    QVBoxLayout *summaryLayout;
-    QVBoxLayout *detailsLayout;
-    QPlainTextEdit *detailsText;
-    QPushButton *currentResolvDetailsButton;
-    QPushButton *backToSummaryLogsButton;
-
-protected:
-    void showEvent(QShowEvent *event) override;
-
-    void runResolvers();
-
-    void enableButtonsAfterChecks();
-    void disableButtonsBeforeChecks();
-
-public slots:
-
-    void beginAllTasks() override;
-    void finishAllTasks() override;
-
-    void beginCurrentTask(ADTExecutable *resolv) override;
-    void finishCurrentTask(ADTExecutable *resolv) override;
-
-    void onProgressUpdate(int progress) override;
-
-    void messageChanged(QString message) override;
-
 private slots:
 
     void cancelButtonPressed(int currentPage);
-
-    void currentResolvDetailsButton_clicked(int id);
-
-    void exchangeWidgetsInStackedWidget();
-
-    void currentIdChanged(int id);
-
-    void cleanUpUi();
 
 private:
     RepairWizardPage(const RepairWizardPage &) = delete;            // copy ctor

@@ -8,9 +8,16 @@ class ADTWizardPage
 {
 public:
     ADTWizardPage();
+    virtual ~ADTWizardPage();
 
 public:
     TUi *ui;
+
+private:
+    ADTWizardPage(const ADTWizardPage &) = delete;            // copy ctor
+    ADTWizardPage(ADTWizardPage &&)      = delete;            // move ctor
+    ADTWizardPage &operator=(const ADTWizardPage &) = delete; // copy assignment
+    ADTWizardPage &operator=(ADTWizardPage &&) = delete;      // move assignm
 };
 
 #include <adtwizardpage.inl>

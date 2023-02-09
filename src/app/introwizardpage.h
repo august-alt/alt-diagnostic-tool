@@ -34,6 +34,7 @@ class IntroWizardPage : public QWizardPage
 
 public:
     IntroWizardPage(QWidget *parent = nullptr);
+    ~IntroWizardPage();
 
 private:
     Ui::IntroWizardPage *ui;

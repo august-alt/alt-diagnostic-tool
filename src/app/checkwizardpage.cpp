@@ -36,7 +36,7 @@ CheckWizardPage::CheckWizardPage(ADTExecutableRunner *run, QWidget *parent)
 
 bool CheckWizardPage::isComplete() const
 {
-    return isCompleteChecks;
+    return isCompleteTasks;
 }
 
 int CheckWizardPage::nextId() const
@@ -85,7 +85,7 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
     {
         runner->cancelTasks();
 
-        if (!isCompleteChecks)
+        if (!isCompleteTasks)
         {
             workingThread->wait();
 

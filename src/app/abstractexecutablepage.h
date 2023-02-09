@@ -16,7 +16,7 @@ class AbstractExecutablePage : public QWizardPage
     Q_OBJECT
 public:
     AbstractExecutablePage(ADTExecutableRunner *run, QWidget *parent = nullptr);
-    virtual ~AbstractExecutablePage() = default;
+    virtual ~AbstractExecutablePage();
 
     virtual void runTasks();
 
@@ -39,7 +39,7 @@ protected:
 
     bool isOpening = false;
 
-    bool isCompleteChecks;
+    bool isCompleteTasks;
 
     QThread *workingThread;
 
