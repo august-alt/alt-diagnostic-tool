@@ -72,8 +72,6 @@ private:
     int previousPage;
 
 private:
-    QJsonDocument LoadJSonFile(QString file);
-
     void connectSlotInCurrentPage(int currentPageId);
     void disconnectSlotInPreviousPage();
 };

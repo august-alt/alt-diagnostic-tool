@@ -141,24 +141,3 @@ void ADTWizard::disconnectSlotInPreviousPage()
         break;
     }
 }
-
-QJsonDocument ADTWizard::LoadJSonFile(QString file)
-{
-    QFile jsonFile(file);
-
-    QJsonDocument doc;
-
-    if (!jsonFile.open(QIODevice::ReadOnly))
-    {
-        qWarning() << "Can't open json file!";
-        return doc;
-    }
-
-    QByteArray fileData = jsonFile.readAll();
-
-    jsonFile.close();
-
-    doc = (QJsonDocument::fromJson(fileData));
-
-    return doc;
-}
