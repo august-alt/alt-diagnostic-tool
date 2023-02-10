@@ -56,7 +56,6 @@ set(UI_FORMS
 
     introwizardpage.ui
     checkwizardpage.ui
-    repairwizardpage.ui
     finishwizardpage.ui
     executablestatuswidget.ui
 )

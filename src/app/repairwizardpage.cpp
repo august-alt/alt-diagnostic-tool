@@ -20,7 +20,6 @@
 
 #include "repairwizardpage.h"
 #include "adtwizard.h"
-#include "ui_repairwizardpage.h"
 
 #include <QThread>
 
