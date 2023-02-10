@@ -32,11 +32,6 @@ CheckWizardPage::CheckWizardPage(ADTExecutableRunner *run, QWidget *parent)
     hideFinishRadiobuttons();
 }
 
-bool CheckWizardPage::isComplete() const
-{
-    return isCompleteTasks;
-}
-
 int CheckWizardPage::nextId() const
 {
     if (runner->isAnyErrorsInTask() && pageUi->ui->runRepairRadioButton->isChecked())

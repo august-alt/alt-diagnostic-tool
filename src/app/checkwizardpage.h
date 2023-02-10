@@ -31,8 +31,6 @@ class CheckWizardPage : public AbstractExecutablePage
 public:
     CheckWizardPage(ADTExecutableRunner *run, QWidget *parent = nullptr);
 
-    virtual bool isComplete() const override;
-
     virtual int nextId() const override;
 
 private:

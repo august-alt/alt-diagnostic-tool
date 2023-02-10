@@ -55,8 +55,6 @@ void AbstractExecutablePage::runTasks()
 {
     cleanUpUi();
 
-    //hideFinishRadiobuttons();
-
     runner->resetStopFlag();
 
     workingThread = new QThread();
@@ -70,6 +68,11 @@ void AbstractExecutablePage::runTasks()
     workingThread->start();
 }
 
+bool AbstractExecutablePage::isComplete() const
+{
+    return isCompleteTasks;
+}
+
 void AbstractExecutablePage::beginAllTasks()
 {
     disableButtonsBeforeChecks();
@@ -77,8 +80,6 @@ void AbstractExecutablePage::beginAllTasks()
 
 void AbstractExecutablePage::finishAllTasks()
 {
-    //showFinishRadiobuttons();
-
     QObject::disconnect(workingThread, SIGNAL(started()), runner, SLOT(runTasks()));
 
     enableButtonsAfterChecks();

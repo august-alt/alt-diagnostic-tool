@@ -20,6 +20,8 @@ public:
 
     virtual void runTasks();
 
+    virtual bool isComplete() const override;
+
 public slots:
     virtual void beginAllTasks();
     virtual void finishAllTasks();

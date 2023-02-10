@@ -31,11 +31,6 @@ RepairWizardPage::RepairWizardPage(ADTExecutableRunner *run, QWidget *parent)
     pageUi->ui->runRepairRadioButton->setVisible(false);
 }
 
-bool RepairWizardPage::isComplete() const
-{
-    return isCompleteTasks;
-}
-
 void RepairWizardPage::cancelButtonPressed(int currentPage)
 {
     if (currentPage == ADTWizard::Repair_Page)
