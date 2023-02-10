@@ -36,10 +36,10 @@ private:
     int currentId;
 
 private:
-    ExecutableStatusWidget(const ExecutableStatusWidget &) = delete;            // copy ctor
-    ExecutableStatusWidget(ExecutableStatusWidget &&)      = delete;            // move ctor
-    ExecutableStatusWidget &operator=(const ExecutableStatusWidget &) = delete; // copy assignment
-    ExecutableStatusWidget &operator=(ExecutableStatusWidget &&) = delete;      // move assignment
+    ExecutableStatusWidget(const ExecutableStatusWidget &) = delete;
+    ExecutableStatusWidget(ExecutableStatusWidget &&)      = delete;
+    ExecutableStatusWidget &operator=(const ExecutableStatusWidget &) = delete;
+    ExecutableStatusWidget &operator=(ExecutableStatusWidget &&) = delete;
 };
 
 #endif // EXECUTABLESTATUSWIDGET_H

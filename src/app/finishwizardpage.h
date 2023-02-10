@@ -42,10 +42,10 @@ private:
     Ui::FinishWizardPage *ui;
 
 private:
-    FinishWizardPage(const FinishWizardPage &) = delete;            // copy ctor
-    FinishWizardPage(FinishWizardPage &&)      = delete;            // move ctor
-    FinishWizardPage &operator=(const FinishWizardPage &) = delete; // copy assignment
-    FinishWizardPage &operator=(FinishWizardPage &&) = delete;      // move assignment
+    FinishWizardPage(const FinishWizardPage &) = delete;
+    FinishWizardPage(FinishWizardPage &&)      = delete;
+    FinishWizardPage &operator=(const FinishWizardPage &) = delete;
+    FinishWizardPage &operator=(FinishWizardPage &&) = delete;
 };
 
 #endif // FINISHWIZARDPAGE_H

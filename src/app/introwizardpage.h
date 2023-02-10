@@ -43,10 +43,10 @@ private slots:
     void cancelButtonPressed(int currentPage);
 
 private:
-    IntroWizardPage(const IntroWizardPage &) = delete;            // copy ctor
-    IntroWizardPage(IntroWizardPage &&)      = delete;            // move ctor
-    IntroWizardPage &operator=(const IntroWizardPage &) = delete; // copy assignment
-    IntroWizardPage &operator=(IntroWizardPage &&) = delete;      // move assignment
+    IntroWizardPage(const IntroWizardPage &) = delete;
+    IntroWizardPage(IntroWizardPage &&)      = delete;
+    IntroWizardPage &operator=(const IntroWizardPage &) = delete;
+    IntroWizardPage &operator=(IntroWizardPage &&) = delete;
 };
 
 #endif // INTROWIZARDPAGE_H

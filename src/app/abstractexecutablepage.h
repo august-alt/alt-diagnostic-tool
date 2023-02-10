@@ -62,10 +62,10 @@ private slots:
     virtual void exchangeWidgetsInStackedWidget();
 
 private:
-    AbstractExecutablePage(const AbstractExecutablePage &) = delete;            // copy ctor
-    AbstractExecutablePage(AbstractExecutablePage &&)      = delete;            // move ctor
-    AbstractExecutablePage &operator=(const AbstractExecutablePage &) = delete; // copy assignment
-    AbstractExecutablePage &operator=(AbstractExecutablePage &&) = delete;      // move assignm
+    AbstractExecutablePage(const AbstractExecutablePage &) = delete;
+    AbstractExecutablePage(AbstractExecutablePage &&)      = delete;
+    AbstractExecutablePage &operator=(const AbstractExecutablePage &) = delete;
+    AbstractExecutablePage &operator=(AbstractExecutablePage &&) = delete;
 };
 
 #endif // ABSTRACTEXECUTABLEPAGE_H

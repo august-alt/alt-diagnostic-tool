@@ -51,10 +51,10 @@ private slots:
     void cancelButtonPressed(int currentPage);
 
 private:
-    RepairWizardPage(const RepairWizardPage &) = delete;            // copy ctor
-    RepairWizardPage(RepairWizardPage &&)      = delete;            // move ctor
-    RepairWizardPage &operator=(const RepairWizardPage &) = delete; // copy assignment
-    RepairWizardPage &operator=(RepairWizardPage &&) = delete;      // move assignment
+    RepairWizardPage(const RepairWizardPage &) = delete;
+    RepairWizardPage(RepairWizardPage &&)      = delete;
+    RepairWizardPage &operator=(const RepairWizardPage &) = delete;
+    RepairWizardPage &operator=(RepairWizardPage &&) = delete;
 };
 
 #endif // REPAIRWIZARDPAGE_H

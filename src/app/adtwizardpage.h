@@ -14,10 +14,10 @@ public:
     TUi *ui;
 
 private:
-    ADTWizardPage(const ADTWizardPage &) = delete;            // copy ctor
-    ADTWizardPage(ADTWizardPage &&)      = delete;            // move ctor
-    ADTWizardPage &operator=(const ADTWizardPage &) = delete; // copy assignment
-    ADTWizardPage &operator=(ADTWizardPage &&) = delete;      // move assignm
+    ADTWizardPage(const ADTWizardPage &) = delete;
+    ADTWizardPage(ADTWizardPage &&)      = delete;
+    ADTWizardPage &operator=(const ADTWizardPage &) = delete;
+    ADTWizardPage &operator=(ADTWizardPage &&) = delete;
 };
 
 #include <adtwizardpage.inl>
