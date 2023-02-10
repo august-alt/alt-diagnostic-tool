@@ -21,16 +21,8 @@
 #ifndef CHECKWIZARDPAGE_H
 #define CHECKWIZARDPAGE_H
 
-#include "../core/adtexecutablerunner.h"
-
 #include "abstractexecutablepage.h"
 #include "executablestatuswidget.h"
-
-#include <QLabel>
-#include <QPlainTextEdit>
-#include <QThread>
-#include <QVBoxLayout>
-#include <QWizardPage>
 
 class CheckWizardPage : public AbstractExecutablePage
 {

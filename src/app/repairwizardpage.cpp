@@ -22,8 +22,7 @@
 #include "adtwizard.h"
 #include "ui_repairwizardpage.h"
 
-#include <QPushButton>
-#include <QStyle>
+#include <QThread>
 
 RepairWizardPage::RepairWizardPage(ADTExecutableRunner *run, QWidget *parent)
     : AbstractExecutablePage(run, parent)

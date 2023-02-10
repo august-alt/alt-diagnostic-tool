@@ -20,11 +20,9 @@
 
 #include "checkwizardpage.h"
 #include "adtwizard.h"
-#include "executablestatuswidget.h"
 #include "ui_checkwizardpage.h"
 
-#include <QPushButton>
-#include <QStyle>
+#include <QThread>
 
 CheckWizardPage::CheckWizardPage(ADTExecutableRunner *run, QWidget *parent)
     : AbstractExecutablePage(run, parent)

@@ -21,16 +21,8 @@
 #ifndef REPAIRWIZARDPAGE_H
 #define REPAIRWIZARDPAGE_H
 
-#include "../core/adtexecutablerunner.h"
-
 #include "abstractexecutablepage.h"
 #include "executablestatuswidget.h"
-
-#include <QLabel>
-#include <QPlainTextEdit>
-#include <QThread>
-#include <QVBoxLayout>
-#include <QWizardPage>
 
 namespace Ui
 {
