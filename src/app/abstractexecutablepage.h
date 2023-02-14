@@ -87,7 +87,7 @@ protected:
 private slots:
     virtual void currentTaskDetailsButton_clicked(int id);
 
-    virtual void exchangeWidgetsInStackedWidget();
+    virtual void toggleWidgetsInStackedWidget();
 
 private:
     AbstractExecutablePage(const AbstractExecutablePage &) = delete;

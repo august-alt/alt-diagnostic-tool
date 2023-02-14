@@ -48,7 +48,7 @@ AbstractExecutablePage::AbstractExecutablePage(ADTExecutableRunner *run, QWidget
     connect(backToSummaryLogsButton,
             SIGNAL(clicked()),
             this,
-            SLOT(exchangeWidgetsInStackedWidget()));
+            SLOT(toggleWidgetsInStackedWidget()));
 
     QHBoxLayout *detailsHButtonLayout = new QHBoxLayout();
     detailsHButtonLayout->addStretch();
@@ -194,10 +194,10 @@ void AbstractExecutablePage::currentTaskDetailsButton_clicked(int id)
         detailsText->appendPlainText(task->m_stderr);
     }
 
-    exchangeWidgetsInStackedWidget();
+    toggleWidgetsInStackedWidget();
 }
 
-void AbstractExecutablePage::exchangeWidgetsInStackedWidget()
+void AbstractExecutablePage::toggleWidgetsInStackedWidget()
 {
     ui->stackedWidget->currentIndex() == 0 ? ui->stackedWidget->setCurrentIndex(1)
                                            : ui->stackedWidget->setCurrentIndex(0);
