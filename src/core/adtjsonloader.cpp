@@ -19,11 +19,11 @@
 ***********************************************************************************************************************/
 #include "adtjsonloader.h"
 
+#include <QDebug>
 #include <QFile>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-
-#include <QJsonArray>
 
 ADTJsonLoader::ADTJsonLoader() {}
 

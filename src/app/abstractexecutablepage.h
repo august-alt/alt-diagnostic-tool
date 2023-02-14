@@ -1,14 +1,3 @@
-#ifndef ABSTRACTEXECUTABLEPAGE_H
-#define ABSTRACTEXECUTABLEPAGE_H
-
-#include "../core/adtexecutable.h"
-#include "../core/adtexecutablerunner.h"
-#include "executablestatuswidget.h"
-
-#include "adtwizardpage.h"
-#include "ui_checkwizardpage.h"
-
-#include <QPlainTextEdit>
 /***********************************************************************************************************************
 **
 ** Copyright (C) 2023 BaseALT Ltd. <org@basealt.ru>
@@ -29,7 +18,24 @@
 **
 ***********************************************************************************************************************/
 
+#ifndef ABSTRACTEXECUTABLEPAGE_H
+#define ABSTRACTEXECUTABLEPAGE_H
+
+#include "../core/adtexecutable.h"
+#include "../core/adtexecutablerunner.h"
+#include "executablestatuswidget.h"
+
+#include "adtwizardpage.h"
+#include "ui_checkwizardpage.h"
+
+#include <QPlainTextEdit>
 #include <QWizard>
+
+const int MAIN_PROGRESSBAR_MINIMUM = 0;
+const int MAIN_PROGRESSBAR_MAXIMUM = 100;
+const int LAYOUT_STRETCH_INDEX     = 0;
+const int LAYOUT_STRETCH_FACTOR    = 10;
+const int LAYOUT_INDEX             = 10;
 
 class AbstractExecutablePage : public QWizardPage
 {

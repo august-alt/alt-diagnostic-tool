@@ -43,7 +43,7 @@ AbstractExecutablePage::AbstractExecutablePage(ADTExecutableRunner *run, QWidget
     detailsLayout = new QVBoxLayout();
 
     backToSummaryLogsButton = new QPushButton();
-    backToSummaryLogsButton->setText("Back");
+    backToSummaryLogsButton->setText(tr("Back"));
 
     connect(backToSummaryLogsButton,
             SIGNAL(clicked()),
@@ -56,14 +56,14 @@ AbstractExecutablePage::AbstractExecutablePage(ADTExecutableRunner *run, QWidget
 
     detailsText = new QPlainTextEdit();
     detailsLayout->addWidget(detailsText);
-    detailsLayout->insertLayout(10, detailsHButtonLayout);
+    detailsLayout->insertLayout(LAYOUT_INDEX, detailsHButtonLayout);
 
     pageUi->ui->summaryScrollAreaWidgetContents->setLayout(summaryLayout);
     pageUi->ui->detailsScrollAreaWidgetContents->setLayout(detailsLayout);
 
-    pageUi->ui->mainProgressBar->setMinimum(0);
-    pageUi->ui->mainProgressBar->setMaximum(100);
-    pageUi->ui->mainProgressBar->setValue(0);
+    pageUi->ui->mainProgressBar->setMinimum(MAIN_PROGRESSBAR_MINIMUM);
+    pageUi->ui->mainProgressBar->setMaximum(MAIN_PROGRESSBAR_MAXIMUM);
+    pageUi->ui->mainProgressBar->setValue(MAIN_PROGRESSBAR_MINIMUM);
 }
 
 AbstractExecutablePage::~AbstractExecutablePage()
@@ -140,7 +140,7 @@ void AbstractExecutablePage::onProgressUpdate(int progress)
 
 void AbstractExecutablePage::messageChanged(QString message)
 {
-    pageUi->ui->currentStatusLabel->setText("Running task number: " + message);
+    pageUi->ui->currentStatusLabel->setText(tr("Running task number: ") + message);
 }
 
 void AbstractExecutablePage::enableButtonsAfterChecks()
@@ -167,7 +167,7 @@ void AbstractExecutablePage::disableButtonsBeforeChecks()
 
 void AbstractExecutablePage::cleanUpUi()
 {
-    pageUi->ui->mainProgressBar->setValue(0);
+    pageUi->ui->mainProgressBar->setValue(MAIN_PROGRESSBAR_MINIMUM);
 
     delete pageUi->ui->summaryScrollAreaWidgetContents;
 
@@ -178,7 +178,7 @@ void AbstractExecutablePage::cleanUpUi()
     summaryLayout = new QVBoxLayout();
 
     summaryLayout->setAlignment(Qt::AlignTop);
-    summaryLayout->insertStretch(0, 10);
+    summaryLayout->insertStretch(LAYOUT_STRETCH_INDEX, LAYOUT_STRETCH_FACTOR);
 
     pageUi->ui->summaryScrollAreaWidgetContents->setLayout(summaryLayout);
 
