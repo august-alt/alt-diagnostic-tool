@@ -31,12 +31,6 @@
 #include <QPlainTextEdit>
 #include <QWizard>
 
-const int MAIN_PROGRESSBAR_MINIMUM = 0;
-const int MAIN_PROGRESSBAR_MAXIMUM = 100;
-const int LAYOUT_STRETCH_INDEX     = 0;
-const int LAYOUT_STRETCH_FACTOR    = 10;
-const int LAYOUT_INDEX             = 10;
-
 class AbstractExecutablePage : public QWizardPage
 {
     Q_OBJECT

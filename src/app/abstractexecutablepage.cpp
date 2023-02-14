@@ -24,6 +24,12 @@
 #include <QStyle>
 #include <QThread>
 
+const int MAIN_PROGRESSBAR_MINIMUM = 0;
+const int MAIN_PROGRESSBAR_MAXIMUM = 100;
+const int LAYOUT_STRETCH_INDEX     = 0;
+const int LAYOUT_STRETCH_FACTOR    = 10;
+const int LAYOUT_INDEX             = 10;
+
 AbstractExecutablePage::AbstractExecutablePage(ADTExecutableRunner *run, QWidget *parent)
     : QWizardPage(parent)
     , ui()
