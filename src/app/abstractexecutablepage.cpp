@@ -26,7 +26,7 @@
 
 AbstractExecutablePage::AbstractExecutablePage(ADTExecutableRunner *run, QWidget *parent)
     : QWizardPage(parent)
-    , pageUi(new ADTWizardPage<Ui::CheckWizardPage>())
+    , ui()
     , runner(run)
     , isCompleteTasks(false)
     , workingThread(nullptr)
@@ -37,7 +37,7 @@ AbstractExecutablePage::AbstractExecutablePage(ADTExecutableRunner *run, QWidget
     , currentCheckDetailsButton(nullptr)
     , backToSummaryLogsButton(nullptr)
 {
-    pageUi->ui->setupUi(this);
+    ui->setupUi(this);
 
     summaryLayout = new QVBoxLayout();
     detailsLayout = new QVBoxLayout();
@@ -58,18 +58,15 @@ AbstractExecutablePage::AbstractExecutablePage(ADTExecutableRunner *run, QWidget
     detailsLayout->addWidget(detailsText);
     detailsLayout->insertLayout(LAYOUT_INDEX, detailsHButtonLayout);
 
-    pageUi->ui->summaryScrollAreaWidgetContents->setLayout(summaryLayout);
-    pageUi->ui->detailsScrollAreaWidgetContents->setLayout(detailsLayout);
+    ui->summaryScrollAreaWidgetContents->setLayout(summaryLayout);
+    ui->detailsScrollAreaWidgetContents->setLayout(detailsLayout);
 
-    pageUi->ui->mainProgressBar->setMinimum(MAIN_PROGRESSBAR_MINIMUM);
-    pageUi->ui->mainProgressBar->setMaximum(MAIN_PROGRESSBAR_MAXIMUM);
-    pageUi->ui->mainProgressBar->setValue(MAIN_PROGRESSBAR_MINIMUM);
+    ui->mainProgressBar->setMinimum(MAIN_PROGRESSBAR_MINIMUM);
+    ui->mainProgressBar->setMaximum(MAIN_PROGRESSBAR_MAXIMUM);
+    ui->mainProgressBar->setValue(MAIN_PROGRESSBAR_MINIMUM);
 }
 
-AbstractExecutablePage::~AbstractExecutablePage()
-{
-    delete pageUi;
-}
+AbstractExecutablePage::~AbstractExecutablePage() {}
 
 void AbstractExecutablePage::runTasks()
 {
@@ -135,12 +132,12 @@ void AbstractExecutablePage::finishCurrentTask(ADTExecutable *task)
 
 void AbstractExecutablePage::onProgressUpdate(int progress)
 {
-    pageUi->ui->mainProgressBar->setValue(progress);
+    ui->mainProgressBar->setValue(progress);
 }
 
 void AbstractExecutablePage::messageChanged(QString message)
 {
-    pageUi->ui->currentStatusLabel->setText(tr("Running task number: ") + message);
+    ui->currentStatusLabel->setText(tr("Running task number: ") + message);
 }
 
 void AbstractExecutablePage::enableButtonsAfterChecks()
@@ -167,22 +164,22 @@ void AbstractExecutablePage::disableButtonsBeforeChecks()
 
 void AbstractExecutablePage::cleanUpUi()
 {
-    pageUi->ui->mainProgressBar->setValue(MAIN_PROGRESSBAR_MINIMUM);
+    ui->mainProgressBar->setValue(MAIN_PROGRESSBAR_MINIMUM);
 
-    delete pageUi->ui->summaryScrollAreaWidgetContents;
+    delete ui->summaryScrollAreaWidgetContents;
 
-    pageUi->ui->summaryScrollAreaWidgetContents = new QWidget();
+    ui->summaryScrollAreaWidgetContents = new QWidget();
 
-    pageUi->ui->summaryScrollArea->setWidget(pageUi->ui->summaryScrollAreaWidgetContents);
+    ui->summaryScrollArea->setWidget(ui->summaryScrollAreaWidgetContents);
 
     summaryLayout = new QVBoxLayout();
 
     summaryLayout->setAlignment(Qt::AlignTop);
     summaryLayout->insertStretch(LAYOUT_STRETCH_INDEX, LAYOUT_STRETCH_FACTOR);
 
-    pageUi->ui->summaryScrollAreaWidgetContents->setLayout(summaryLayout);
+    ui->summaryScrollAreaWidgetContents->setLayout(summaryLayout);
 
-    pageUi->ui->stackedWidget->setCurrentIndex(0);
+    ui->stackedWidget->setCurrentIndex(0);
 }
 
 void AbstractExecutablePage::currentTaskDetailsButton_clicked(int id)
@@ -202,6 +199,6 @@ void AbstractExecutablePage::currentTaskDetailsButton_clicked(int id)
 
 void AbstractExecutablePage::exchangeWidgetsInStackedWidget()
 {
-    pageUi->ui->stackedWidget->currentIndex() == 0 ? pageUi->ui->stackedWidget->setCurrentIndex(1)
-                                                   : pageUi->ui->stackedWidget->setCurrentIndex(0);
+    ui->stackedWidget->currentIndex() == 0 ? ui->stackedWidget->setCurrentIndex(1)
+                                           : ui->stackedWidget->setCurrentIndex(0);
 }

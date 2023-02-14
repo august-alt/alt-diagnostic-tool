@@ -27,14 +27,14 @@
 CheckWizardPage::CheckWizardPage(ADTExecutableRunner *run, QWidget *parent)
     : AbstractExecutablePage(run, parent)
 {
-    pageUi->ui->finishRadioButton->setChecked(true);
+    ui->finishRadioButton->setChecked(true);
     setRadiobuttonSizePolicy();
     hideFinishRadiobuttons();
 }
 
 int CheckWizardPage::nextId() const
 {
-    if (runner->isAnyErrorsInTask() && pageUi->ui->runRepairRadioButton->isChecked())
+    if (runner->isAnyErrorsInTask() && ui->runRepairRadioButton->isChecked())
     {
         return ADTWizard::Repair_Page;
     }
@@ -50,26 +50,26 @@ void CheckWizardPage::showFinishRadiobuttons()
 {
     if (runner->isAnyErrorsInTask())
     {
-        pageUi->ui->finishRadioButton->setVisible(true);
-        pageUi->ui->runRepairRadioButton->setVisible(true);
+        ui->finishRadioButton->setVisible(true);
+        ui->runRepairRadioButton->setVisible(true);
     }
 }
 
 void CheckWizardPage::hideFinishRadiobuttons()
 {
-    pageUi->ui->finishRadioButton->setVisible(false);
-    pageUi->ui->runRepairRadioButton->setVisible(false);
+    ui->finishRadioButton->setVisible(false);
+    ui->runRepairRadioButton->setVisible(false);
 }
 
 void CheckWizardPage::setRadiobuttonSizePolicy()
 {
-    QSizePolicy finishRadioButtonPolicy = pageUi->ui->finishRadioButton->sizePolicy();
+    QSizePolicy finishRadioButtonPolicy = ui->finishRadioButton->sizePolicy();
     finishRadioButtonPolicy.setRetainSizeWhenHidden(true);
-    pageUi->ui->finishRadioButton->setSizePolicy(finishRadioButtonPolicy);
+    ui->finishRadioButton->setSizePolicy(finishRadioButtonPolicy);
 
-    QSizePolicy runRepairRadioButtonpolicy = pageUi->ui->runRepairRadioButton->sizePolicy();
+    QSizePolicy runRepairRadioButtonpolicy = ui->runRepairRadioButton->sizePolicy();
     runRepairRadioButtonpolicy.setRetainSizeWhenHidden(true);
-    pageUi->ui->runRepairRadioButton->setSizePolicy(runRepairRadioButtonpolicy);
+    ui->runRepairRadioButton->setSizePolicy(runRepairRadioButtonpolicy);
 }
 
 void CheckWizardPage::cancelButtonPressed(int currentPage)
@@ -87,6 +87,6 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
             showFinishRadiobuttons();
         }
 
-        pageUi->ui->stackedWidget->setCurrentIndex(0);
+        ui->stackedWidget->setCurrentIndex(0);
     }
 }

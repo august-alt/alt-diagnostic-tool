@@ -60,7 +60,7 @@ public slots:
     virtual void messageChanged(QString message);
 
 public:
-    ADTWizardPage<Ui::CheckWizardPage> *pageUi;
+    ADTWizardPage<Ui::CheckWizardPage> ui;
 
 protected:
     ADTExecutableRunner *runner;

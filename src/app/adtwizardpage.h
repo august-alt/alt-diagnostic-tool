@@ -33,6 +33,9 @@ public:
 public:
     TUi *ui;
 
+    TUi *operator->() { return ui; }
+    TUi *operator->() const { return ui; }
+
 private:
     ADTWizardPage(const ADTWizardPage &) = delete;
     ADTWizardPage(ADTWizardPage &&)      = delete;

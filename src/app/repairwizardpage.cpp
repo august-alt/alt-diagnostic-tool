@@ -26,8 +26,8 @@
 RepairWizardPage::RepairWizardPage(ADTExecutableRunner *run, QWidget *parent)
     : AbstractExecutablePage(run, parent)
 {
-    pageUi->ui->finishRadioButton->setVisible(false);
-    pageUi->ui->runRepairRadioButton->setVisible(false);
+    ui->finishRadioButton->setVisible(false);
+    ui->runRepairRadioButton->setVisible(false);
 }
 
 void RepairWizardPage::cancelButtonPressed(int currentPage)
@@ -43,6 +43,6 @@ void RepairWizardPage::cancelButtonPressed(int currentPage)
             enableButtonsAfterChecks();
         }
 
-        pageUi->ui->stackedWidget->setCurrentIndex(0);
+        ui->stackedWidget->setCurrentIndex(0);
     }
 }
