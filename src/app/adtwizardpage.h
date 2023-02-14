@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 **
-** Copyright (C) 2022 BaseALT Ltd. <org@basealt.ru>
+** Copyright (C) 2023 BaseALT Ltd. <org@basealt.ru>
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -18,27 +18,31 @@
 **
 ***********************************************************************************************************************/
 
-#ifndef DIAGNOSTICTOOLPRIVATE_H
-#define DIAGNOSTICTOOLPRIVATE_H
+#ifndef ADTWIZARDPAGE_H
+#define ADTWIZARDPAGE_H
 
-#include "adtcheck.h"
-#include "adtresolver.h"
+#include "ui_checkwizardpage.h"
 
-#include <memory>
-
-class DiagnosticToolPrivate
+template<typename TUi>
+class ADTWizardPage
 {
 public:
-    DiagnosticToolPrivate(QJsonDocument &document);
+    ADTWizardPage();
+    virtual ~ADTWizardPage();
 
 public:
-    std::unique_ptr<std::vector<std::unique_ptr<ADTExecutable>>> checks;
-    std::unique_ptr<std::vector<std::unique_ptr<ADTExecutable>>> resolvers;
+    TUi *ui;
 
-    std::unique_ptr<QJsonDocument> currentDocument;
+    TUi *operator->() { return ui; }
+    TUi *operator->() const { return ui; }
 
 private:
-    void parseExecutors(QJsonDocument *doc);
+    ADTWizardPage(const ADTWizardPage &) = delete;
+    ADTWizardPage(ADTWizardPage &&)      = delete;
+    ADTWizardPage &operator=(const ADTWizardPage &) = delete;
+    ADTWizardPage &operator=(ADTWizardPage &&) = delete;
 };
 
-#endif // DIAGNOSTICTOOLPRIVATE_H
+#include <adtwizardpage.inl>
+
+#endif // ADTWIZARDPAGE_H

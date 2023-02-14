@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 **
-** Copyright (C) 2022 BaseALT Ltd. <org@basealt.ru>
+** Copyright (C) 2023 BaseALT Ltd. <org@basealt.ru>
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -18,33 +18,17 @@
 **
 ***********************************************************************************************************************/
 
-#ifndef REPAIRWIZARDPAGE_H
-#define REPAIRWIZARDPAGE_H
+#ifndef ADTJSONLOADER_H
+#define ADTJSONLOADER_H
 
-#include "abstractexecutablepage.h"
-#include "executablestatuswidget.h"
+#include <QJsonDocument>
 
-namespace Ui
+class ADTJsonLoader
 {
-class RepairWizardPage;
-}
-
-class RepairWizardPage : public AbstractExecutablePage
-{
-    Q_OBJECT
-
 public:
-    RepairWizardPage(ADTExecutableRunner *run, QWidget *parent = nullptr);
+    ADTJsonLoader();
 
-private slots:
-
-    void cancelButtonPressed(int currentPage);
-
-private:
-    RepairWizardPage(const RepairWizardPage &) = delete;
-    RepairWizardPage(RepairWizardPage &&)      = delete;
-    RepairWizardPage &operator=(const RepairWizardPage &) = delete;
-    RepairWizardPage &operator=(RepairWizardPage &&) = delete;
+    static QJsonDocument loadDocument(QString file, QString jsonArrayName);
 };
 
-#endif // REPAIRWIZARDPAGE_H
+#endif // ADTJSONLOADER_H

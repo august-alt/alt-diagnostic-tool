@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 **
-** Copyright (C) 2022 BaseALT Ltd. <org@basealt.ru>
+** Copyright (C) 2023 BaseALT Ltd. <org@basealt.ru>
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -17,38 +17,29 @@
 ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 **
 ***********************************************************************************************************************/
-
-#include "diagnostictool.h"
-#include "adtexecutable.h"
+#include "adtexecutablerunner.h"
 
 #include <QJsonDocument>
 #include <QThread>
-
 #include <QtWidgets/QApplication>
 
-#include <QtDBus/QDBusMessage>
-#include <QtDBus/QDBusReply>
-
-DiagnosticTool::DiagnosticTool(QJsonDocument document)
-    : d(nullptr)
+ADTExecutableRunner::ADTExecutableRunner(QJsonDocument document)
+    : d(std::make_unique<ADTExecutableRunnerPrivate>(document))
     , stopFlag(false)
     , dbus(std::make_unique<QDBusConnection>(QDBusConnection::systemBus()))
     , dbusInterface(std::make_unique<QDBusInterface>("ru.basealt.alterator",
                                                      "/ru/basealt/alterator/executor",
                                                      "ru.basealt.alterator.executor",
                                                      *dbus.get()))
+{}
 
-{
-    d.reset(new DiagnosticToolPrivate(document));
-}
-
-void DiagnosticTool::runChecks()
+void ADTExecutableRunner::runTasks()
 {
     emit begin();
 
-    int checkSize = d->checks->size();
+    int taskSize = d->tasks->size();
 
-    if (checkSize == 0)
+    if (taskSize == 0)
     {
         emit onProgressUpdate(100);
 
@@ -57,25 +48,26 @@ void DiagnosticTool::runChecks()
         emit finish();
 
         QThread::currentThread()->quit();
+
         return;
     }
 
-    int percentByOneCheck = 100 / checkSize;
+    int percentByOneCheck = 100 / taskSize;
 
     int progress = 0;
 
-    auto &checks = (*d->checks.get());
+    auto &tasks = (*d->tasks.get());
 
-    for (auto &check : checks)
+    for (auto &task : tasks)
     {
         if (stopFlag)
         {
             break;
         }
 
-        emit messageChanged(check.get()->m_name);
+        emit messageChanged(task.get()->m_name);
 
-        executeCommand(check);
+        executeTask(task);
         QThread::sleep(1); //delay, in order to see the progress
 
         progress = progress + percentByOneCheck;
@@ -92,57 +84,20 @@ void DiagnosticTool::runChecks()
     QThread::currentThread()->quit();
 }
 
-void DiagnosticTool::runResolvers()
+ADTExecutable *ADTExecutableRunner::getTask(int id)
 {
-    emit begin();
-
-    int resolversSize = d->resolvers->size();
-
-    if (resolversSize == 0)
+    for (auto &task : *d->tasks)
     {
-        emit onProgressUpdate(100);
-
-        this->moveToThread(QApplication::instance()->thread());
-
-        emit finish();
-
-        QThread::currentThread()->quit();
-        return;
-    }
-
-    int percentByOneResolver = 100 / resolversSize;
-
-    int progress = 0;
-
-    auto &resolvers = (*d->resolvers.get());
-
-    for (auto &resolver : resolvers)
-    {
-        if (stopFlag)
+        if (task.get()->m_id == id)
         {
-            break;
+            return task.get();
         }
-
-        emit messageChanged(resolver.get()->m_name);
-
-        executeCommand(resolver);
-        QThread::sleep(1); //delay, in order to see the progress
-
-        progress = progress + percentByOneResolver;
-
-        emit onProgressUpdate(progress);
     }
 
-    emit onProgressUpdate(100);
-
-    this->moveToThread(QApplication::instance()->thread());
-
-    emit finish();
-
-    QThread::currentThread()->quit();
+    return nullptr;
 }
 
-void DiagnosticTool::executeCommand(std::unique_ptr<ADTExecutable> &task)
+void ADTExecutableRunner::executeTask(std::unique_ptr<ADTExecutable> &task)
 {
     //There is no backend at the moment, so we use the test command and signals
 
@@ -159,33 +114,35 @@ void DiagnosticTool::executeCommand(std::unique_ptr<ADTExecutable> &task)
     emit finishTask(task.get());
 }
 
-ADTExecutable *DiagnosticTool::getCheck(int id)
+int ADTExecutableRunner::getAmountOfTasks()
 {
-    for (auto &check : *d->checks)
+    return d->tasks.get()->size();
+}
+
+void ADTExecutableRunner::cancelTasks()
+{
+    stopFlag = true;
+}
+
+void ADTExecutableRunner::resetStopFlag()
+{
+    stopFlag = false;
+}
+
+bool ADTExecutableRunner::isAnyErrorsInTask()
+{
+    for (auto &task : *d->tasks)
     {
-        if (check.get()->m_id == id)
+        if (task.get()->m_exit_code != 0)
         {
-            return check.get();
+            return true;
         }
     }
 
-    return nullptr;
+    return false;
 }
 
-ADTExecutable *DiagnosticTool::getResolv(int id)
-{
-    for (auto &resolver : *d->resolvers)
-    {
-        if (resolver.get()->m_id == id)
-        {
-            return resolver.get();
-        }
-    }
-
-    return nullptr;
-}
-
-void DiagnosticTool::connectExecutableSignals(std::unique_ptr<ADTExecutable> &task)
+void ADTExecutableRunner::connectExecutableSignals(std::unique_ptr<ADTExecutable> &task)
 {
     dbusInterface->connection().connect(QLatin1String("ru.basealt.alterator"),
                                         QLatin1String("/ru/basealt/alterator/executor"),
@@ -201,7 +158,7 @@ void DiagnosticTool::connectExecutableSignals(std::unique_ptr<ADTExecutable> &ta
                                         SLOT(getStderr(QString)));
 }
 
-void DiagnosticTool::disconnectExecutableSignals(std::unique_ptr<ADTExecutable> &task)
+void ADTExecutableRunner::disconnectExecutableSignals(std::unique_ptr<ADTExecutable> &task)
 {
     dbusInterface->connection().disconnect("ru.basealt.alterator",
                                            "/ru/basealt/alterator/executor",
@@ -216,42 +173,4 @@ void DiagnosticTool::disconnectExecutableSignals(std::unique_ptr<ADTExecutable> 
                                            "executor_stderr",
                                            task.get(),
                                            SLOT(getStderr(QString)));
-}
-
-void DiagnosticTool::cancelTask()
-{
-    stopFlag = true;
-}
-
-void DiagnosticTool::resetStopFlag()
-{
-    stopFlag = false;
-}
-
-unsigned int DiagnosticTool::getAmountOfChecks()
-{
-    return d->checks->size();
-}
-
-unsigned int DiagnosticTool::getAmountOfResolvers()
-{
-    return d->resolvers->size();
-}
-
-bool DiagnosticTool::anyErrorsInChecks()
-{
-    for (auto &check : *d->checks)
-    {
-        if (check.get()->m_exit_code != 0)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool DiagnosticTool::hasAnyResolvers()
-{
-    return !d->resolvers->empty();
 }

@@ -31,6 +31,9 @@ set(HEADERS
     finishwizardpage.h
     executablestatuswidget.h
     abstractexecutablepage.h
+    adtwizardpage.h
+    adtwizardpage.inl
+
 
     adtwizard.h
     slotconnector.h
@@ -53,7 +56,6 @@ set(UI_FORMS
 
     introwizardpage.ui
     checkwizardpage.ui
-    repairwizardpage.ui
     finishwizardpage.ui
     executablestatuswidget.ui
 )

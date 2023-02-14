@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 **
-** Copyright (C) 2022 BaseALT Ltd. <org@basealt.ru>
+** Copyright (C) 2023 BaseALT Ltd. <org@basealt.ru>
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -18,33 +18,25 @@
 **
 ***********************************************************************************************************************/
 
-#ifndef REPAIRWIZARDPAGE_H
-#define REPAIRWIZARDPAGE_H
+#ifndef ADTEXECUTABLERUNNERPRIVATE_H
+#define ADTEXECUTABLERUNNERPRIVATE_H
 
-#include "abstractexecutablepage.h"
-#include "executablestatuswidget.h"
+#include "adtexecutable.h"
 
-namespace Ui
+#include <QJsonDocument>
+
+class ADTExecutableRunnerPrivate
 {
-class RepairWizardPage;
-}
-
-class RepairWizardPage : public AbstractExecutablePage
-{
-    Q_OBJECT
+public:
+    ADTExecutableRunnerPrivate(QJsonDocument &document);
 
 public:
-    RepairWizardPage(ADTExecutableRunner *run, QWidget *parent = nullptr);
+    std::unique_ptr<std::vector<std::unique_ptr<ADTExecutable>>> tasks;
 
-private slots:
-
-    void cancelButtonPressed(int currentPage);
+    std::unique_ptr<QJsonDocument> jsonObject;
 
 private:
-    RepairWizardPage(const RepairWizardPage &) = delete;
-    RepairWizardPage(RepairWizardPage &&)      = delete;
-    RepairWizardPage &operator=(const RepairWizardPage &) = delete;
-    RepairWizardPage &operator=(RepairWizardPage &&) = delete;
+    void parseTasks(QJsonDocument *doc);
 };
 
-#endif // REPAIRWIZARDPAGE_H
+#endif // ADTEXECUTABLERUNNERPRIVATE_H

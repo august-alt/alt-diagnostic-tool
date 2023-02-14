@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 **
-** Copyright (C) 2022 BaseALT Ltd. <org@basealt.ru>
+** Copyright (C) 2023 BaseALT Ltd. <org@basealt.ru>
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -17,34 +17,42 @@
 ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 **
 ***********************************************************************************************************************/
+#include "adtjsonloader.h"
 
-#ifndef REPAIRWIZARDPAGE_H
-#define REPAIRWIZARDPAGE_H
+#include <QDebug>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 
-#include "abstractexecutablepage.h"
-#include "executablestatuswidget.h"
+ADTJsonLoader::ADTJsonLoader() {}
 
-namespace Ui
+QJsonDocument ADTJsonLoader::loadDocument(QString file, QString jsonArrayName)
 {
-class RepairWizardPage;
+    QFile jsonFile(file);
+
+    QJsonDocument doc;
+
+    if (!jsonFile.open(QIODevice::ReadOnly))
+    {
+        qWarning() << "Can't open json file!";
+        return doc;
+    }
+
+    QByteArray fileData = jsonFile.readAll();
+
+    jsonFile.close();
+
+    doc = (QJsonDocument::fromJson(fileData));
+
+    QJsonObject object = doc.object();
+
+    if (object.contains(jsonArrayName) && object[jsonArrayName].isArray())
+    {
+        return QJsonDocument(object[jsonArrayName].toArray());
+    }
+
+    qWarning() << "Can't find in " << file << " json array with name " << jsonArrayName;
+
+    return doc;
 }
-
-class RepairWizardPage : public AbstractExecutablePage
-{
-    Q_OBJECT
-
-public:
-    RepairWizardPage(ADTExecutableRunner *run, QWidget *parent = nullptr);
-
-private slots:
-
-    void cancelButtonPressed(int currentPage);
-
-private:
-    RepairWizardPage(const RepairWizardPage &) = delete;
-    RepairWizardPage(RepairWizardPage &&)      = delete;
-    RepairWizardPage &operator=(const RepairWizardPage &) = delete;
-    RepairWizardPage &operator=(RepairWizardPage &&) = delete;
-};
-
-#endif // REPAIRWIZARDPAGE_H

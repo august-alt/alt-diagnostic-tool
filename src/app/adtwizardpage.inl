@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 **
-** Copyright (C) 2022 BaseALT Ltd. <org@basealt.ru>
+** Copyright (C) 2023 BaseALT Ltd. <org@basealt.ru>
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -18,33 +18,13 @@
 **
 ***********************************************************************************************************************/
 
-#ifndef REPAIRWIZARDPAGE_H
-#define REPAIRWIZARDPAGE_H
+template<typename TUi>
+ADTWizardPage<TUi>::ADTWizardPage()
+    : ui(new TUi)
+{}
 
-#include "abstractexecutablepage.h"
-#include "executablestatuswidget.h"
-
-namespace Ui
+template<typename TUi>
+ADTWizardPage<TUi>::~ADTWizardPage()
 {
-class RepairWizardPage;
+    delete ui;
 }
-
-class RepairWizardPage : public AbstractExecutablePage
-{
-    Q_OBJECT
-
-public:
-    RepairWizardPage(ADTExecutableRunner *run, QWidget *parent = nullptr);
-
-private slots:
-
-    void cancelButtonPressed(int currentPage);
-
-private:
-    RepairWizardPage(const RepairWizardPage &) = delete;
-    RepairWizardPage(RepairWizardPage &&)      = delete;
-    RepairWizardPage &operator=(const RepairWizardPage &) = delete;
-    RepairWizardPage &operator=(RepairWizardPage &&) = delete;
-};
-
-#endif // REPAIRWIZARDPAGE_H

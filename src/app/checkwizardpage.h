@@ -21,92 +21,32 @@
 #ifndef CHECKWIZARDPAGE_H
 #define CHECKWIZARDPAGE_H
 
-#include "../core/diagnostictool.h"
-
 #include "abstractexecutablepage.h"
 #include "executablestatuswidget.h"
-
-#include <QLabel>
-#include <QPlainTextEdit>
-#include <QThread>
-#include <QVBoxLayout>
-#include <QWizardPage>
-
-namespace Ui
-{
-class CheckWizardPage;
-}
 
 class CheckWizardPage : public AbstractExecutablePage
 {
     Q_OBJECT
 
 public:
-    CheckWizardPage(DiagnosticTool *diagTool, QWidget *parent = nullptr);
-
-    virtual bool isComplete() const override;
+    CheckWizardPage(ADTExecutableRunner *run, QWidget *parent = nullptr);
 
     virtual int nextId() const override;
 
 private:
-    Ui::CheckWizardPage *ui;
-
-    DiagnosticTool *diagnosticTool;
-
-    bool isOpening = false;
-
-    bool isCompleteChecks;
-
-    QThread *workingThread;
-
-    ExecutableStatusWidget *currentCheckWidget;
-    QVBoxLayout *summaryLayout;
-    QVBoxLayout *detailsLayout;
-    QPlainTextEdit *detailsText;
-    QPushButton *currentCheckDetailsButton;
-    QPushButton *backToSummaryLogsButton;
-
-private:
-    void showEvent(QShowEvent *event) override;
-
-    void runChecks();
-
-    void enableButtonsAfterChecks();
-    void disableButtonsBeforeChecks();
-
     void showFinishRadiobuttons();
     void hideFinishRadiobuttons();
     void setRadiobuttonSizePolicy();
-
-public slots:
-
-    virtual void beginAllTasks() override;
-    virtual void finishAllTasks() override;
-
-    virtual void beginCurrentTask(ADTExecutable *task) override;
-    virtual void finishCurrentTask(ADTExecutable *task) override;
-
-    virtual void onProgressUpdate(int progress) override;
-
-    virtual void messageChanged(QString message) override;
 
 private slots:
 
     void cancelButtonPressed(int currentPage);
 
-    void currentCheckDetailsButton_clicked(int id);
-
-    void exchangeWidgetsInStackedWidget();
-
-    void currentIdChanged(int id);
-
-    void cleanUpUi();
-
 private:
-    CheckWizardPage(const CheckWizardPage &) = delete;            // copy ctor
-    CheckWizardPage(CheckWizardPage &&)      = delete;            // move ctor
-    CheckWizardPage &operator=(const CheckWizardPage &) = delete; // copy assignment
-    CheckWizardPage &operator=(CheckWizardPage &&) = delete;      // move assignment
+    CheckWizardPage(const CheckWizardPage &) = delete;
+    CheckWizardPage(CheckWizardPage &&)      = delete;
+    CheckWizardPage &operator=(const CheckWizardPage &) = delete;
+    CheckWizardPage &operator=(CheckWizardPage &&) = delete;
 };
 
 #endif // CHECKWIZARDPAGE_H

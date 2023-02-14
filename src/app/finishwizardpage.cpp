@@ -31,6 +31,11 @@ FinishWizardPage::FinishWizardPage(QWidget *parent)
     ui->setupUi(this);
 }
 
+FinishWizardPage::~FinishWizardPage()
+{
+    delete ui;
+}
+
 void FinishWizardPage::initializePage()
 {
     wizard()->button(QWizard::CancelButton)->setEnabled(false);

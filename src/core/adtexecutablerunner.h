@@ -1,6 +1,14 @@
+#ifndef ADTEXECUTABLERUNNER_H
+#define ADTEXECUTABLERUNNER_H
+
+#include "adtexecutablerunnerprivate.h"
+
+#include <memory>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusConnectionInterface>
 /***********************************************************************************************************************
 **
-** Copyright (C) 2022 BaseALT Ltd. <org@basealt.ru>
+** Copyright (C) 2023 BaseALT Ltd. <org@basealt.ru>
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -17,46 +25,34 @@
 ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 **
 ***********************************************************************************************************************/
-
-#ifndef DIAGNOSTICTOOL_H
-#define DIAGNOSTICTOOL_H
-
-#include "diagnostictoolprivate.h"
-
-#include <QJsonDocument>
-#include <QScopedPointer>
-#include <QtDBus/QDBusConnection>
-#include <QtDBus/QDBusConnectionInterface>
 #include <QtDBus/QDBusInterface>
 
-class DiagnosticTool : public QObject
+class ADTExecutableRunner : public QObject
 {
 public:
     Q_OBJECT
 
 public:
-    DiagnosticTool(QJsonDocument document);
+    ADTExecutableRunner(QJsonDocument QJsonDocument);
 
-    void cancelTask();
+    int getAmountOfTasks();
+
+    void cancelTasks();
+
     void resetStopFlag();
 
-    unsigned int getAmountOfChecks();
-    unsigned int getAmountOfResolvers();
+    bool isAnyErrorsInTask();
 
-    bool anyErrorsInChecks();
-    bool hasAnyResolvers();
+    ADTExecutable *getTask(int id);
 
 public slots:
-    void runChecks();
-    void runResolvers();
-
-    void executeCommand(std::unique_ptr<ADTExecutable> &task);
-
-    ADTExecutable *getCheck(int id);
-    ADTExecutable *getResolv(int id);
+    void runTasks();
 
 private:
-    QScopedPointer<DiagnosticToolPrivate> d;
+    void executeTask(std::unique_ptr<ADTExecutable> &task);
+
+private:
+    std::unique_ptr<ADTExecutableRunnerPrivate> d;
 
     volatile bool stopFlag;
 
@@ -79,4 +75,4 @@ signals:
     void finish();
 };
 
-#endif // DIAGNOSTICTOOL_H
+#endif //ADTEXECUTABLERUNNER_H

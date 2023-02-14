@@ -1,6 +1,6 @@
 /***********************************************************************************************************************
 **
-** Copyright (C) 2022 BaseALT Ltd. <org@basealt.ru>
+** Copyright (C) 2023 BaseALT Ltd. <org@basealt.ru>
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -17,34 +17,41 @@
 ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 **
 ***********************************************************************************************************************/
+#include "adtexecutablerunnerprivate.h"
+#include "adtjsonconverter.h"
 
-#ifndef REPAIRWIZARDPAGE_H
-#define REPAIRWIZARDPAGE_H
+#include <QJsonArray>
+#include <QJsonObject>
+#include <qjsondocument.h>
 
-#include "abstractexecutablepage.h"
-#include "executablestatuswidget.h"
-
-namespace Ui
+ADTExecutableRunnerPrivate::ADTExecutableRunnerPrivate(QJsonDocument &document)
+    : tasks(std::make_unique<std::vector<std::unique_ptr<ADTExecutable>>>())
+    , jsonObject(std::make_unique<QJsonDocument>(document))
 {
-class RepairWizardPage;
+    parseTasks(jsonObject.get());
 }
 
-class RepairWizardPage : public AbstractExecutablePage
+void ADTExecutableRunnerPrivate::parseTasks(QJsonDocument *doc)
 {
-    Q_OBJECT
+    if (!doc->isArray())
+    {
+        return;
+    }
 
-public:
-    RepairWizardPage(ADTExecutableRunner *run, QWidget *parent = nullptr);
+    QJsonArray taskArray = doc->array();
 
-private slots:
+    if (taskArray.isEmpty())
+    {
+        return;
+    }
 
-    void cancelButtonPressed(int currentPage);
+    tasks->clear();
 
-private:
-    RepairWizardPage(const RepairWizardPage &) = delete;
-    RepairWizardPage(RepairWizardPage &&)      = delete;
-    RepairWizardPage &operator=(const RepairWizardPage &) = delete;
-    RepairWizardPage &operator=(RepairWizardPage &&) = delete;
-};
-
-#endif // REPAIRWIZARDPAGE_H
+    for (int i = 0; i < taskArray.size(); i++)
+    {
+        auto task       = std::make_unique<ADTExecutable>();
+        QJsonObject obj = taskArray[i].toObject();
+        ADTJsonConverter::JSonToObject(*task.get(), &obj);
+        tasks->push_back(std::move(task));
+    }
+}
