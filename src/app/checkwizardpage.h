@@ -31,7 +31,7 @@ class CheckWizardPage : public AbstractExecutablePage
 public:
     CheckWizardPage(ADTExecutableRunner *run, QWidget *parent = nullptr);
 
-    virtual int nextId() const override;
+    bool isAnyErrorsInTasks() override;
 
 private:
     void showFinishRadiobuttons();

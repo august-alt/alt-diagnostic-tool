@@ -51,10 +51,7 @@ AbstractExecutablePage::AbstractExecutablePage(ADTExecutableRunner *run, QWidget
     backToSummaryLogsButton = new QPushButton();
     backToSummaryLogsButton->setText(tr("Back"));
 
-    connect(backToSummaryLogsButton,
-            SIGNAL(clicked()),
-            this,
-            SLOT(toggleWidgetsInStackedWidget()));
+    connect(backToSummaryLogsButton, SIGNAL(clicked()), this, SLOT(toggleWidgetsInStackedWidget()));
 
     QHBoxLayout *detailsHButtonLayout = new QHBoxLayout();
     detailsHButtonLayout->addStretch();
@@ -94,6 +91,16 @@ void AbstractExecutablePage::runTasks()
 bool AbstractExecutablePage::isComplete() const
 {
     return isCompleteTasks;
+}
+
+int AbstractExecutablePage::getAmountOfTasks()
+{
+    return runner->getAmountOfTasks();
+}
+
+bool AbstractExecutablePage::isAnyErrorsInTasks()
+{
+    return runner->isAnyErrorsInTask();
 }
 
 void AbstractExecutablePage::beginAllTasks()

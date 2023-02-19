@@ -68,6 +68,50 @@ ADTWizard::ADTWizard(QJsonDocument checksData, QJsonDocument resolversData, QWid
     connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(currentIdChanged(int)));
 }
 
+int ADTWizard::nextId() const
+{
+    auto repairPg = static_cast<CheckWizardPage *>(page(ADTWizard::Repair_Page));
+    auto checkPg  = static_cast<RepairWizardPage *>(page(ADTWizard::Check_Page));
+
+    int currentPage = currentId();
+
+    switch (currentPage)
+    {
+    case Intro_Page:
+
+        if (checkPg->getAmountOfTasks() != 0)
+        {
+            return Check_Page;
+        }
+        else
+        {
+            return Finish_Page;
+        }
+        break;
+
+    case Check_Page:
+
+        if (repairPg->getAmountOfTasks() != 0 && checkPg->isAnyErrorsInTasks())
+        {
+            return Repair_Page;
+        }
+        else
+        {
+            return Finish_Page;
+        }
+        break;
+
+    case Repair_Page:
+
+        return Finish_Page;
+
+    case Finish_Page:
+        return -1;
+    }
+
+    return -1;
+}
+
 void ADTWizard::cancelButtonPressed()
 {
     emit cancelPressed(currentId());
