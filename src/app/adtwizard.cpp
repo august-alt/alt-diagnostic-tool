@@ -30,7 +30,7 @@
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
 
-ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
+ADTWizard::ADTWizard(QJsonDocument checksData, QJsonDocument resolversData, QWidget *parent)
     : QWizard(parent)
     , checks(nullptr)
     , resolvers(nullptr)
@@ -41,9 +41,8 @@ ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
     , slotConnector(nullptr)
     , previousPage(0)
 {
-    checks = std::make_unique<ADTExecutableRunner>(ADTJsonLoader::loadDocument(jsonFile, "checks"));
-    resolvers = std::make_unique<ADTExecutableRunner>(
-        ADTJsonLoader::loadDocument(jsonFile, "resolvers"));
+    checks    = std::make_unique<ADTExecutableRunner>(checksData);
+    resolvers = std::make_unique<ADTExecutableRunner>(resolversData);
 
     introPage.reset(new IntroWizardPage());
     checkPage.reset(new CheckWizardPage(checks.get()));

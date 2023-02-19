@@ -68,7 +68,7 @@ public:
         Finish_Page
     };
 
-    ADTWizard(QString jsonFile, QWidget *parent = nullptr);
+    ADTWizard(QJsonDocument checksData, QJsonDocument resolversData, QWidget *parent = nullptr);
 
 private slots:
     void cancelButtonPressed();
