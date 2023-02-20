@@ -38,7 +38,7 @@ private:
     void hideFinishRadiobuttons();
     void setRadiobuttonSizePolicy();
 
-private slots:
+public slots:
 
     void cancelButtonPressed(int currentPage);
 

@@ -59,11 +59,17 @@ ADTWizard::ADTWizard(QJsonDocument checksData, QJsonDocument resolversData, QWid
     setStartId(Intro_Page);
 
     disconnect(button(QWizard::CancelButton), SIGNAL(clicked()), this, SLOT(reject()));
-    connect(button(QWizard::CancelButton), SIGNAL(clicked()), this, SLOT(cancelButtonPressed()));
+    connect(button(QWizard::CancelButton),
+            &QPushButton::clicked,
+            this,
+            &ADTWizard::cancelButtonPressed);
 
-    connect(this, SIGNAL(cancelPressed(int)), introPage.get(), SLOT(cancelButtonPressed(int)));
-    connect(this, SIGNAL(cancelPressed(int)), checkPage.get(), SLOT(cancelButtonPressed(int)));
-    connect(this, SIGNAL(cancelPressed(int)), repairPage.get(), SLOT(cancelButtonPressed(int)));
+    connect(this, &ADTWizard::cancelPressed, introPage.get(), &IntroWizardPage::cancelButtonPressed);
+    connect(this, &ADTWizard::cancelPressed, checkPage.get(), &CheckWizardPage::cancelButtonPressed);
+    connect(this,
+            &ADTWizard::cancelPressed,
+            repairPage.get(),
+            &RepairWizardPage::cancelButtonPressed);
 
     connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(currentIdChanged(int)));
 }
