@@ -25,6 +25,8 @@
 
 #include <QJsonDocument>
 
+#include <memory>
+
 class ADTExecutableRunnerPrivate
 {
 public:

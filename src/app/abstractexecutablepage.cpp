@@ -51,7 +51,10 @@ AbstractExecutablePage::AbstractExecutablePage(ADTExecutableRunner *run, QWidget
     backToSummaryLogsButton = new QPushButton();
     backToSummaryLogsButton->setText(tr("Back"));
 
-    connect(backToSummaryLogsButton, SIGNAL(clicked()), this, SLOT(toggleWidgetsInStackedWidget()));
+    connect(backToSummaryLogsButton,
+            SIGNAL(clicked()),
+            this,
+            SLOT(toggleWidgetsInStackedWidget()));
 
     QHBoxLayout *detailsHButtonLayout = new QHBoxLayout();
     detailsHButtonLayout->addStretch();

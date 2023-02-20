@@ -30,27 +30,19 @@
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
 
+const int LAST_PAGE_INDEX = -1;
+
 ADTWizard::ADTWizard(QJsonDocument checksData, QJsonDocument resolversData, QWidget *parent)
     : QWizard(parent)
-    , checks(nullptr)
-    , resolvers(nullptr)
-    , introPage(nullptr)
-    , checkPage(nullptr)
-    , repairPage(nullptr)
-    , finishPage(nullptr)
-    , slotConnector(nullptr)
+    , checks(new ADTExecutableRunner(checksData))
+    , resolvers(new ADTExecutableRunner(resolversData))
+    , introPage(new IntroWizardPage())
+    , checkPage(new CheckWizardPage(checks.get()))
+    , repairPage(new RepairWizardPage(resolvers.get()))
+    , finishPage(new FinishWizardPage())
+    , slotConnector(new SlotConnector())
     , previousPage(0)
 {
-    checks    = std::make_unique<ADTExecutableRunner>(checksData);
-    resolvers = std::make_unique<ADTExecutableRunner>(resolversData);
-
-    introPage.reset(new IntroWizardPage());
-    checkPage.reset(new CheckWizardPage(checks.get()));
-    repairPage.reset(new RepairWizardPage(resolvers.get()));
-    finishPage.reset(new FinishWizardPage());
-
-    slotConnector.reset(new SlotConnector);
-
     setPage(Intro_Page, introPage.data());
     setPage(Check_Page, checkPage.data());
     setPage(Repair_Page, repairPage.data());
@@ -84,38 +76,20 @@ int ADTWizard::nextId() const
     switch (currentPage)
     {
     case Intro_Page:
-
-        if (checkPg->getAmountOfTasks() != 0)
-        {
-            return Check_Page;
-        }
-        else
-        {
-            return Finish_Page;
-        }
-        break;
+        return (checkPg->getAmountOfTasks() != 0 ? Check_Page : Finish_Page);
 
     case Check_Page:
-
-        if (repairPg->getAmountOfTasks() != 0 && checkPg->isAnyErrorsInTasks())
-        {
-            return Repair_Page;
-        }
-        else
-        {
-            return Finish_Page;
-        }
-        break;
+        return (repairPg->getAmountOfTasks() != 0 && checkPg->isAnyErrorsInTasks() ? Repair_Page
+                                                                                   : Finish_Page);
 
     case Repair_Page:
-
         return Finish_Page;
 
     case Finish_Page:
-        return -1;
+        return LAST_PAGE_INDEX;
     }
 
-    return -1;
+    return LAST_PAGE_INDEX;
 }
 
 void ADTWizard::cancelButtonPressed()
@@ -149,9 +123,6 @@ void ADTWizard::connectSlotInCurrentPage(int currentPageId)
 {
     switch (currentPageId)
     {
-    case ADTWizard::Intro_Page:
-        break;
-
     case ADTWizard::Check_Page:
 
         slotConnector->connectSignals(checks.get(),
@@ -163,7 +134,9 @@ void ADTWizard::connectSlotInCurrentPage(int currentPageId)
                                       static_cast<AbstractExecutablePage *>(repairPage.get()));
         break;
 
+    case ADTWizard::Intro_Page:
     case ADTWizard::FinishButton:
+    default:
         break;
     }
 }
@@ -172,9 +145,6 @@ void ADTWizard::disconnectSlotInPreviousPage()
 {
     switch (previousPage)
     {
-    case ADTWizard::Intro_Page:
-        break;
-
     case ADTWizard::Check_Page:
 
         slotConnector->disconnectSignals(checks.get(),
@@ -186,7 +156,9 @@ void ADTWizard::disconnectSlotInPreviousPage()
                                          static_cast<AbstractExecutablePage *>(repairPage.get()));
         break;
 
+    case ADTWizard::Intro_Page:
     case ADTWizard::FinishButton:
+    default:
         break;
     }
 }
