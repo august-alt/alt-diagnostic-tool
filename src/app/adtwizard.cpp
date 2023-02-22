@@ -63,7 +63,7 @@ ADTWizard::ADTWizard(QJsonDocument checksData, QJsonDocument resolversData, QWid
             repairPage.get(),
             &RepairWizardPage::cancelButtonPressed);
 
-    connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(currentIdChanged(int)));
+    connect(this, &QWizard::currentIdChanged, this, &ADTWizard::currentIdChanged);
 }
 
 int ADTWizard::nextId() const
