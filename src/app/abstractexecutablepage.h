@@ -42,6 +42,10 @@ public:
 
     virtual bool isComplete() const override;
 
+    int getAmountOfTasks();
+
+    virtual bool isAnyErrorsInTasks();
+
 public slots:
     virtual void beginAllTasks();
     virtual void finishAllTasks();

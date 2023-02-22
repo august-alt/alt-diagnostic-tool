@@ -96,6 +96,16 @@ bool AbstractExecutablePage::isComplete() const
     return isCompleteTasks;
 }
 
+int AbstractExecutablePage::getAmountOfTasks()
+{
+    return runner->getAmountOfTasks();
+}
+
+bool AbstractExecutablePage::isAnyErrorsInTasks()
+{
+    return runner->isAnyErrorsInTask();
+}
+
 void AbstractExecutablePage::beginAllTasks()
 {
     disableButtonsBeforeChecks();

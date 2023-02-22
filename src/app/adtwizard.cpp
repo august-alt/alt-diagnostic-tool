@@ -30,28 +30,19 @@
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
 
-ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
+const int LAST_PAGE_INDEX = -1;
+
+ADTWizard::ADTWizard(QJsonDocument checksData, QJsonDocument resolversData, QWidget *parent)
     : QWizard(parent)
-    , checks(nullptr)
-    , resolvers(nullptr)
-    , introPage(nullptr)
-    , checkPage(nullptr)
-    , repairPage(nullptr)
-    , finishPage(nullptr)
-    , slotConnector(nullptr)
+    , checks(new ADTExecutableRunner(checksData))
+    , resolvers(new ADTExecutableRunner(resolversData))
+    , introPage(new IntroWizardPage())
+    , checkPage(new CheckWizardPage(checks.get()))
+    , repairPage(new RepairWizardPage(resolvers.get()))
+    , finishPage(new FinishWizardPage())
+    , slotConnector(new SlotConnector())
     , previousPage(0)
 {
-    checks = std::make_unique<ADTExecutableRunner>(ADTJsonLoader::loadDocument(jsonFile, "checks"));
-    resolvers = std::make_unique<ADTExecutableRunner>(
-        ADTJsonLoader::loadDocument(jsonFile, "resolvers"));
-
-    introPage.reset(new IntroWizardPage());
-    checkPage.reset(new CheckWizardPage(checks.get()));
-    repairPage.reset(new RepairWizardPage(resolvers.get()));
-    finishPage.reset(new FinishWizardPage());
-
-    slotConnector.reset(new SlotConnector);
-
     setPage(Intro_Page, introPage.data());
     setPage(Check_Page, checkPage.data());
     setPage(Repair_Page, repairPage.data());
@@ -60,13 +51,45 @@ ADTWizard::ADTWizard(QString jsonFile, QWidget *parent)
     setStartId(Intro_Page);
 
     disconnect(button(QWizard::CancelButton), SIGNAL(clicked()), this, SLOT(reject()));
-    connect(button(QWizard::CancelButton), SIGNAL(clicked()), this, SLOT(cancelButtonPressed()));
+    connect(button(QWizard::CancelButton),
+            &QPushButton::clicked,
+            this,
+            &ADTWizard::cancelButtonPressed);
 
-    connect(this, SIGNAL(cancelPressed(int)), introPage.get(), SLOT(cancelButtonPressed(int)));
-    connect(this, SIGNAL(cancelPressed(int)), checkPage.get(), SLOT(cancelButtonPressed(int)));
-    connect(this, SIGNAL(cancelPressed(int)), repairPage.get(), SLOT(cancelButtonPressed(int)));
+    connect(this, &ADTWizard::cancelPressed, introPage.get(), &IntroWizardPage::cancelButtonPressed);
+    connect(this, &ADTWizard::cancelPressed, checkPage.get(), &CheckWizardPage::cancelButtonPressed);
+    connect(this,
+            &ADTWizard::cancelPressed,
+            repairPage.get(),
+            &RepairWizardPage::cancelButtonPressed);
 
-    connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(currentIdChanged(int)));
+    connect(this, &QWizard::currentIdChanged, this, &ADTWizard::currentIdChanged);
+}
+
+int ADTWizard::nextId() const
+{
+    auto repairPg = static_cast<CheckWizardPage *>(page(ADTWizard::Repair_Page));
+    auto checkPg  = static_cast<RepairWizardPage *>(page(ADTWizard::Check_Page));
+
+    int currentPage = currentId();
+
+    switch (currentPage)
+    {
+    case Intro_Page:
+        return (checkPg->getAmountOfTasks() != 0 ? Check_Page : Finish_Page);
+
+    case Check_Page:
+        return (repairPg->getAmountOfTasks() != 0 && checkPg->isAnyErrorsInTasks() ? Repair_Page
+                                                                                   : Finish_Page);
+
+    case Repair_Page:
+        return Finish_Page;
+
+    case Finish_Page:
+        return LAST_PAGE_INDEX;
+    }
+
+    return LAST_PAGE_INDEX;
 }
 
 void ADTWizard::cancelButtonPressed()
@@ -100,9 +123,6 @@ void ADTWizard::connectSlotInCurrentPage(int currentPageId)
 {
     switch (currentPageId)
     {
-    case ADTWizard::Intro_Page:
-        break;
-
     case ADTWizard::Check_Page:
 
         slotConnector->connectSignals(checks.get(),
@@ -114,7 +134,9 @@ void ADTWizard::connectSlotInCurrentPage(int currentPageId)
                                       static_cast<AbstractExecutablePage *>(repairPage.get()));
         break;
 
+    case ADTWizard::Intro_Page:
     case ADTWizard::FinishButton:
+    default:
         break;
     }
 }
@@ -123,9 +145,6 @@ void ADTWizard::disconnectSlotInPreviousPage()
 {
     switch (previousPage)
     {
-    case ADTWizard::Intro_Page:
-        break;
-
     case ADTWizard::Check_Page:
 
         slotConnector->disconnectSignals(checks.get(),
@@ -137,7 +156,9 @@ void ADTWizard::disconnectSlotInPreviousPage()
                                          static_cast<AbstractExecutablePage *>(repairPage.get()));
         break;
 
+    case ADTWizard::Intro_Page:
     case ADTWizard::FinishButton:
+    default:
         break;
     }
 }

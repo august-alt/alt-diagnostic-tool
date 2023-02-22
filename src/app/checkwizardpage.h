@@ -31,14 +31,14 @@ class CheckWizardPage : public AbstractExecutablePage
 public:
     CheckWizardPage(ADTExecutableRunner *run, QWidget *parent = nullptr);
 
-    virtual int nextId() const override;
+    bool isAnyErrorsInTasks() override;
 
 private:
     void showFinishRadiobuttons();
     void hideFinishRadiobuttons();
     void setRadiobuttonSizePolicy();
 
-private slots:
+public slots:
 
     void cancelButtonPressed(int currentPage);
 

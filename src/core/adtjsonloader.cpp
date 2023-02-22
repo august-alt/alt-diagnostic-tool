@@ -54,5 +54,7 @@ QJsonDocument ADTJsonLoader::loadDocument(QString file, QString jsonArrayName)
 
     qWarning() << "Can't find in " << file << " json array with name " << jsonArrayName;
 
-    return doc;
+    QJsonDocument emptyDoc;
+
+    return emptyDoc;
 }

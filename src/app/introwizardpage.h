@@ -39,7 +39,7 @@ public:
 private:
     Ui::IntroWizardPage *ui;
 
-private slots:
+public slots:
     void cancelButtonPressed(int currentPage);
 
 private:
