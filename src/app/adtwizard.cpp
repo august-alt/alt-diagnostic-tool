@@ -32,10 +32,15 @@
 
 const int LAST_PAGE_INDEX = -1;
 
-ADTWizard::ADTWizard(QJsonDocument checksData, QJsonDocument resolversData, QWidget *parent)
+ADTWizard::ADTWizard(QJsonDocument &checksData,
+                     QJsonDocument &resolversData,
+                     QString &serviceName,
+                     QString &path,
+                     QString &interfaceName,
+                     QWidget *parent)
     : QWizard(parent)
-    , checks(new ADTExecutableRunner(checksData))
-    , resolvers(new ADTExecutableRunner(resolversData))
+    , checks(new ADTExecutableRunner(checksData, serviceName, path, interfaceName))
+    , resolvers(new ADTExecutableRunner(resolversData, serviceName, path, interfaceName))
     , introPage(new IntroWizardPage())
     , checkPage(new CheckWizardPage(checks.get()))
     , repairPage(new RepairWizardPage(resolvers.get()))
