@@ -34,9 +34,9 @@ set(HEADERS
     adtwizardpage.h
     adtwizardpage.inl
 
-
     adtwizard.h
     slotconnector.h
+    adtwizardbuilder.h
 )
 
 set(SOURCES
@@ -50,6 +50,7 @@ set(SOURCES
     adtwizard.cpp
     slotconnector.cpp
     main.cpp
+    adtwizardbuilder.cpp
 )
 
 set(UI_FORMS

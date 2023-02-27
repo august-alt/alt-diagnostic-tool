@@ -19,13 +19,12 @@
 ***********************************************************************************************************************/
 
 #include "adtwizard.h"
+#include "adtwizardbuilder.h"
 
 #include <QApplication>
 #include <QFile>
 #include <QJsonDocument>
 #include <QMessageBox>
-
-#include "../core/adtjsonloader.h"
 
 int main(int argc, char **argv)
 {
@@ -38,31 +37,16 @@ int main(int argc, char **argv)
     app.setApplicationName("ALT Diagnostic tool");
     app.setApplicationVersion("0.1.0");
 
-    QJsonDocument checks    = ADTJsonLoader::loadDocument("data.json", "checks");
-    QJsonDocument resolvers = ADTJsonLoader::loadDocument("data.json", "resolvers");
+    auto wizardBulder = ADTWizardBuilder();
 
-    if (checks.isEmpty())
+    auto wizard = wizardBulder.build();
+
+    if (!wizard)
     {
-        QMessageBox checksMsgBox;
-        checksMsgBox.setText(
-            QObject::tr("Checks file is missing or corrupted. Cannot continue working!"));
-        checksMsgBox.setIcon(QMessageBox::Critical);
-        checksMsgBox.exec();
         exit(1);
     }
 
-    if (resolvers.isEmpty())
-    {
-        QMessageBox resolversMsgBox;
-        resolversMsgBox.setText(QObject::tr(
-            "The data file does not contain data about the resolvers, only checks are possible."));
-        resolversMsgBox.setIcon(QMessageBox::Warning);
-        resolversMsgBox.exec();
-    }
-
-    ADTWizard wizard(checks, resolvers);
-
-    wizard.show();
+    wizard->show();
 
     return app.exec();
 }

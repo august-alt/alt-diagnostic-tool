@@ -1,11 +1,3 @@
-#ifndef ADTEXECUTABLERUNNER_H
-#define ADTEXECUTABLERUNNER_H
-
-#include "adtexecutablerunnerprivate.h"
-
-#include <memory>
-#include <QtDBus/QDBusConnection>
-#include <QtDBus/QDBusConnectionInterface>
 /***********************************************************************************************************************
 **
 ** Copyright (C) 2023 BaseALT Ltd. <org@basealt.ru>
@@ -25,6 +17,14 @@
 ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 **
 ***********************************************************************************************************************/
+#ifndef ADTEXECUTABLERUNNER_H
+#define ADTEXECUTABLERUNNER_H
+
+#include "adtexecutablerunnerprivate.h"
+
+#include <memory>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusConnectionInterface>
 #include <QtDBus/QDBusInterface>
 
 class ADTExecutableRunner : public QObject
@@ -33,7 +33,10 @@ public:
     Q_OBJECT
 
 public:
-    ADTExecutableRunner(QJsonDocument QJsonDocument);
+    ADTExecutableRunner(QJsonDocument QJsonDocument,
+                        QString &serviceName,
+                        QString &path,
+                        QString &interfaceName);
 
     int getAmountOfTasks();
 

@@ -23,14 +23,14 @@
 #include <QThread>
 #include <QtWidgets/QApplication>
 
-ADTExecutableRunner::ADTExecutableRunner(QJsonDocument document)
+ADTExecutableRunner::ADTExecutableRunner(QJsonDocument document,
+                                         QString &serviceName,
+                                         QString &path,
+                                         QString &interfaceName)
     : d(std::make_unique<ADTExecutableRunnerPrivate>(document))
     , stopFlag(false)
     , dbus(std::make_unique<QDBusConnection>(QDBusConnection::systemBus()))
-    , dbusInterface(std::make_unique<QDBusInterface>("ru.basealt.alterator",
-                                                     "/ru/basealt/alterator/executor",
-                                                     "ru.basealt.alterator.executor",
-                                                     *dbus.get()))
+    , dbusInterface(std::make_unique<QDBusInterface>(serviceName, path, interfaceName, *dbus.get()))
 {}
 
 void ADTExecutableRunner::runTasks()
