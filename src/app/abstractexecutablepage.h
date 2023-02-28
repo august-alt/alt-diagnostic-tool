@@ -57,6 +57,8 @@ public slots:
 
     virtual void messageChanged(QString message);
 
+    virtual void currentDBusServiceUnregistered();
+
 public:
     ADTWizardPage<Ui::CheckWizardPage> ui;
 
