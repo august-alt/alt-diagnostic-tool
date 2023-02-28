@@ -29,12 +29,12 @@ public:
     ADTWizardBuilder()  = default;
     ~ADTWizardBuilder() = default;
 
-    ADTWizardBuilder &withFile(QString &filename);
-    ADTWizardBuilder &withChecksSection(QString &checksSectionName);
-    ADTWizardBuilder &withResolversSections(QString &resolversSectionName);
-    ADTWizardBuilder &withService(QString &serviceName);
-    ADTWizardBuilder &withPath(QString &path);
-    ADTWizardBuilder &withInterface(QString &interfaceName);
+    ADTWizardBuilder &withFile(const QString &filename);
+    ADTWizardBuilder &withChecksSection(const QString &checksSectionName);
+    ADTWizardBuilder &withResolversSections(const QString &resolversSectionName);
+    ADTWizardBuilder &withService(const QString &serviceName);
+    ADTWizardBuilder &withPath(const QString &path);
+    ADTWizardBuilder &withInterface(const QString &interfaceName);
 
     std::unique_ptr<ADTWizard> build();
 

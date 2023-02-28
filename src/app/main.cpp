@@ -20,11 +20,16 @@
 
 #include "adtwizard.h"
 #include "adtwizardbuilder.h"
+#include "dbuschecker.h"
 
 #include <QApplication>
 #include <QFile>
 #include <QJsonDocument>
 #include <QMessageBox>
+
+const QString DBUS_SERVICE_NAME   = "ru.basealt.alterator";
+const QString PATH_TO_DBUS_OBJECT = "/ru/basealt/alterator/executor";
+const QString DBUS_INTERFACE_NAME = "ru.basealt.alterator.executor";
 
 int main(int argc, char **argv)
 {
@@ -37,9 +42,25 @@ int main(int argc, char **argv)
     app.setApplicationName("ALT Diagnostic tool");
     app.setApplicationVersion("0.1.0");
 
+    if (!DBusChecker::checkDBusServiceOnSystemBus(DBUS_SERVICE_NAME,
+                                                  PATH_TO_DBUS_OBJECT,
+                                                  DBUS_INTERFACE_NAME))
+    {
+        QMessageBox errorMsgBox;
+        errorMsgBox.setText(
+            QObject::tr("Cannot connect to service. Restart the service and run ADT again."));
+        errorMsgBox.setIcon(QMessageBox::Critical);
+        errorMsgBox.exec();
+
+        exit(1);
+    }
+
     auto wizardBulder = ADTWizardBuilder();
 
-    auto wizard = wizardBulder.build();
+    auto wizard = wizardBulder.withService(DBUS_SERVICE_NAME)
+                      .withPath(PATH_TO_DBUS_OBJECT)
+                      .withInterface(DBUS_INTERFACE_NAME)
+                      .build();
 
     if (!wizard)
     {
