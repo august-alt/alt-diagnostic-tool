@@ -40,6 +40,8 @@ void SlotConnector::connectSignals(ADTExecutableRunner *runner, AbstractExecutab
             SIGNAL(finishTask(ADTExecutable *)),
             page,
             SLOT(finishCurrentTask(ADTExecutable *)));
+
+    connect(runner, SIGNAL(currentDBusServiceUnregistered()), page, SLOT(currentDBusServiceUnregistered()));
 }
 
 void SlotConnector::disconnectSignals(ADTExecutableRunner *runner, AbstractExecutablePage *page)
@@ -60,4 +62,5 @@ void SlotConnector::disconnectSignals(ADTExecutableRunner *runner, AbstractExecu
                SIGNAL(finishTask(ADTExecutable *)),
                page,
                SLOT(finishCurrentTask(ADTExecutable *)));
+    disconnect(runner, SIGNAL(currentDBusServiceUnregistered()), page, SLOT(currentDBusServiceUnregistered()));
 }

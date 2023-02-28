@@ -23,37 +23,37 @@
 
 #include <QMessageBox>
 
-ADTWizardBuilder &ADTWizardBuilder::withFile(QString &filename)
+ADTWizardBuilder &ADTWizardBuilder::withFile(const QString &filename)
 {
     m_dataFile = filename;
     return *this;
 }
 
-ADTWizardBuilder &ADTWizardBuilder::withChecksSection(QString &checksSectionName)
+ADTWizardBuilder &ADTWizardBuilder::withChecksSection(const QString &checksSectionName)
 {
     m_checksSection = checksSectionName;
     return *this;
 }
 
-ADTWizardBuilder &ADTWizardBuilder::withResolversSections(QString &resolversSectionName)
+ADTWizardBuilder &ADTWizardBuilder::withResolversSections(const QString &resolversSectionName)
 {
     m_resolversSection = resolversSectionName;
     return *this;
 }
 
-ADTWizardBuilder &ADTWizardBuilder::withService(QString &serviceName)
+ADTWizardBuilder &ADTWizardBuilder::withService(const QString &serviceName)
 {
     m_serviceName = serviceName;
     return *this;
 }
 
-ADTWizardBuilder &ADTWizardBuilder::withPath(QString &path)
+ADTWizardBuilder &ADTWizardBuilder::withPath(const QString &path)
 {
     m_path = path;
     return *this;
 }
 
-ADTWizardBuilder &ADTWizardBuilder::withInterface(QString &interfaceName)
+ADTWizardBuilder &ADTWizardBuilder::withInterface(const QString &interfaceName)
 {
     m_interfaceName = interfaceName;
     return *this;

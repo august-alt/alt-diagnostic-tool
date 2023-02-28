@@ -37,6 +37,7 @@ set(HEADERS
     adtwizard.h
     slotconnector.h
     adtwizardbuilder.h
+    dbuschecker.h
 )
 
 set(SOURCES
@@ -51,6 +52,7 @@ set(SOURCES
     slotconnector.cpp
     main.cpp
     adtwizardbuilder.cpp
+    dbuschecker.cpp
 )
 
 set(UI_FORMS

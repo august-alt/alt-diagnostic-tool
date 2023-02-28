@@ -20,6 +20,7 @@
 
 #include "abstractexecutablepage.h"
 
+#include <QMessageBox>
 #include <QPushButton>
 #include <QStyle>
 #include <QThread>
@@ -154,6 +155,26 @@ void AbstractExecutablePage::onProgressUpdate(int progress)
 void AbstractExecutablePage::messageChanged(QString message)
 {
     ui->currentStatusLabel->setText(tr("Running task number: ") + message);
+}
+
+void AbstractExecutablePage::currentDBusServiceUnregistered()
+{
+    runner->cancelTasks();
+
+    QMessageBox errorMsgBox;
+    errorMsgBox.setText(
+        tr("The service in use has been unregistered. It is not possible to continue operation."));
+    errorMsgBox.setIcon(QMessageBox::Critical);
+    errorMsgBox.exec();
+
+    if (!isCompleteTasks)
+    {
+        workingThread->wait();
+
+        enableButtonsAfterChecks();
+    }
+
+    ui->stackedWidget->setCurrentIndex(0);
 }
 
 void AbstractExecutablePage::enableButtonsAfterChecks()
