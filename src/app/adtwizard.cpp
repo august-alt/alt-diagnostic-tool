@@ -46,6 +46,9 @@ ADTWizard::ADTWizard(QJsonDocument &checksData,
     , repairPage(new RepairWizardPage(resolvers.get()))
     , finishPage(new FinishWizardPage())
     , slotConnector(new SlotConnector())
+    , serviceWatcher(new QDBusServiceWatcher(serviceName,
+                                             QDBusConnection::systemBus(),
+                                             QDBusServiceWatcher::WatchForOwnerChange))
     , previousPage(0)
 {
     setPage(Intro_Page, introPage.data());
@@ -69,6 +72,16 @@ ADTWizard::ADTWizard(QJsonDocument &checksData,
             &RepairWizardPage::cancelButtonPressed);
 
     connect(this, &QWizard::currentIdChanged, this, &ADTWizard::currentIdChanged);
+
+    connect(serviceWatcher.get(),
+            &QDBusServiceWatcher::serviceUnregistered,
+            this,
+            &ADTWizard::dBusServiceUnregistered);
+
+    connect(serviceWatcher.get(),
+            &QDBusServiceWatcher::serviceRegistered,
+            this,
+            &ADTWizard::dBusServiceRegistered);
 }
 
 int ADTWizard::nextId() const
@@ -97,6 +110,11 @@ int ADTWizard::nextId() const
     return LAST_PAGE_INDEX;
 }
 
+bool ADTWizard::isServiceActive()
+{
+    return isServiceRegistered;
+}
+
 void ADTWizard::cancelButtonPressed()
 {
     emit cancelPressed(currentId());
@@ -122,6 +140,26 @@ void ADTWizard::currentIdChanged(int currentPageId)
     default:
         break;
     }
+}
+
+void ADTWizard::dBusServiceUnregistered()
+{
+    isServiceRegistered = false;
+
+    switch (currentId())
+    {
+    case Check_Page:
+        checkPage->currentDBusServiceUnregistered();
+        break;
+    case Repair_Page:
+        checkPage->currentDBusServiceUnregistered();
+        break;
+    }
+}
+
+void ADTWizard::dBusServiceRegistered()
+{
+    isServiceRegistered = true;
 }
 
 void ADTWizard::connectSlotInCurrentPage(int currentPageId)

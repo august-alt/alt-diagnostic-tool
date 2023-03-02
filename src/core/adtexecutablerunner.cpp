@@ -31,15 +31,8 @@ ADTExecutableRunner::ADTExecutableRunner(QJsonDocument document,
     , stopFlag(false)
     , dbus(std::make_unique<QDBusConnection>(QDBusConnection::systemBus()))
     , dbusInterface(std::make_unique<QDBusInterface>(serviceName, path, interfaceName, *dbus.get()))
-    , watcher(std::make_unique<QDBusServiceWatcher>(serviceName,
-                                                    *dbus.get(),
-                                                    QDBusServiceWatcher::WatchForOwnerChange))
-{
-    connect(watcher.get(),
-            &QDBusServiceWatcher::serviceUnregistered,
-            this,
-            &ADTExecutableRunner::dBusServiceUnregistered);
-}
+
+{}
 
 void ADTExecutableRunner::runTasks()
 {
@@ -90,11 +83,6 @@ void ADTExecutableRunner::runTasks()
     emit finish();
 
     QThread::currentThread()->quit();
-}
-
-void ADTExecutableRunner::dBusServiceUnregistered()
-{
-    emit currentDBusServiceUnregistered();
 }
 
 ADTExecutable *ADTExecutableRunner::getTask(int id)
