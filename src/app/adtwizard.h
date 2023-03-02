@@ -57,10 +57,15 @@ public:
 
     virtual int nextId() const override;
 
+    bool isServiceActive();
+
 private slots:
     void cancelButtonPressed();
 
     void currentIdChanged(int currentPageId);
+
+    void dBusServiceUnregistered();
+    void dBusServiceRegistered();
 
 signals:
     void cancelPressed(int currentPage);
@@ -76,7 +81,11 @@ private:
 
     QScopedPointer<SlotConnector> slotConnector;
 
+    std::unique_ptr<QDBusServiceWatcher> serviceWatcher;
+
     int previousPage;
+
+    bool isServiceRegistered = true;
 
 private:
     void connectSlotInCurrentPage(int currentPageId);

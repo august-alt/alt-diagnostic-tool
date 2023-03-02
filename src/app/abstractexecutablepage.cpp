@@ -19,6 +19,7 @@
 ***********************************************************************************************************************/
 
 #include "abstractexecutablepage.h"
+#include "adtwizard.h"
 
 #include <QMessageBox>
 #include <QPushButton>
@@ -36,7 +37,7 @@ AbstractExecutablePage::AbstractExecutablePage(ADTExecutableRunner *run, QWidget
     , ui()
     , runner(run)
     , isCompleteTasks(false)
-    , workingThread(nullptr)
+    , workerThread(nullptr)
     , currentCheckWidget(nullptr)
     , summaryLayout(nullptr)
     , detailsLayout(nullptr)
@@ -52,10 +53,7 @@ AbstractExecutablePage::AbstractExecutablePage(ADTExecutableRunner *run, QWidget
     backToSummaryLogsButton = new QPushButton();
     backToSummaryLogsButton->setText(tr("Back"));
 
-    connect(backToSummaryLogsButton,
-            SIGNAL(clicked()),
-            this,
-            SLOT(toggleWidgetsInStackedWidget()));
+    connect(backToSummaryLogsButton, SIGNAL(clicked()), this, SLOT(toggleWidgetsInStackedWidget()));
 
     QHBoxLayout *detailsHButtonLayout = new QHBoxLayout();
     detailsHButtonLayout->addStretch();
@@ -77,19 +75,30 @@ AbstractExecutablePage::~AbstractExecutablePage() {}
 
 void AbstractExecutablePage::runTasks()
 {
-    cleanUpUi();
+    if (isServiceActive())
+    {
+        cleanUpUi();
 
-    runner->resetStopFlag();
+        runner->resetStopFlag();
 
-    workingThread = new QThread();
+        workerThread = new QThread();
 
-    connect(workingThread, SIGNAL(started()), runner, SLOT(runTasks()));
+        connect(workerThread, SIGNAL(started()), runner, SLOT(runTasks()));
 
-    connect(workingThread, SIGNAL(finished()), workingThread, SLOT(deleteLater()));
+        connect(workerThread, SIGNAL(finished()), workerThread, SLOT(deleteLater()));
 
-    runner->moveToThread(workingThread);
+        runner->moveToThread(workerThread);
 
-    workingThread->start();
+        workerThread->start();
+    }
+    else
+    {
+        QMessageBox errorMsgBox;
+        errorMsgBox.setText(tr(
+            "The service in use has been unregistered. It is not possible to continue operation."));
+        errorMsgBox.setIcon(QMessageBox::Critical);
+        errorMsgBox.exec();
+    }
 }
 
 bool AbstractExecutablePage::isComplete() const
@@ -114,7 +123,7 @@ void AbstractExecutablePage::beginAllTasks()
 
 void AbstractExecutablePage::finishAllTasks()
 {
-    QObject::disconnect(workingThread, SIGNAL(started()), runner, SLOT(runTasks()));
+    QObject::disconnect(workerThread, SIGNAL(started()), runner, SLOT(runTasks()));
 
     enableButtonsAfterChecks();
 }
@@ -159,17 +168,17 @@ void AbstractExecutablePage::messageChanged(QString message)
 
 void AbstractExecutablePage::currentDBusServiceUnregistered()
 {
-    runner->cancelTasks();
-
-    QMessageBox errorMsgBox;
-    errorMsgBox.setText(
-        tr("The service in use has been unregistered. It is not possible to continue operation."));
-    errorMsgBox.setIcon(QMessageBox::Critical);
-    errorMsgBox.exec();
-
     if (!isCompleteTasks)
     {
-        workingThread->wait();
+        runner->cancelTasks();
+
+        QMessageBox errorMsgBox;
+        errorMsgBox.setText(tr(
+            "The service in use has been unregistered. It is not possible to continue operation."));
+        errorMsgBox.setIcon(QMessageBox::Critical);
+        errorMsgBox.exec();
+
+        workerThread->wait();
 
         enableButtonsAfterChecks();
     }
@@ -217,6 +226,12 @@ void AbstractExecutablePage::cleanUpUi()
     ui->summaryScrollAreaWidgetContents->setLayout(summaryLayout);
 
     ui->stackedWidget->setCurrentIndex(0);
+}
+
+bool AbstractExecutablePage::isServiceActive()
+{
+    ADTWizard *wiz = static_cast<ADTWizard *>(wizard());
+    return wiz->isServiceActive();
 }
 
 void AbstractExecutablePage::currentTaskDetailsButton_clicked(int id)

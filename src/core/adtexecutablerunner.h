@@ -51,7 +51,6 @@ public:
 
 public slots:
     void runTasks();
-    void dBusServiceUnregistered();
 
 private:
     void executeTask(std::unique_ptr<ADTExecutable> &task);
@@ -63,7 +62,6 @@ private:
 
     std::unique_ptr<QDBusConnection> dbus;
     std::unique_ptr<QDBusInterface> dbusInterface;
-    std::unique_ptr<QDBusServiceWatcher> watcher;
 
 private:
     void connectExecutableSignals(std::unique_ptr<ADTExecutable> &task);
@@ -79,8 +77,6 @@ signals:
 
     void begin();
     void finish();
-
-    void currentDBusServiceUnregistered();
 };
 
 #endif //ADTEXECUTABLERUNNER_H
