@@ -38,7 +38,7 @@ void RepairWizardPage::cancelButtonPressed(int currentPage)
 
         if (!isCompleteTasks)
         {
-            workingThread->wait();
+            workerThread->wait();
 
             enableButtonsAfterChecks();
         }

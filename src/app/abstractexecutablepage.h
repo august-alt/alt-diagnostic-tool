@@ -69,7 +69,7 @@ protected:
 
     bool isCompleteTasks;
 
-    QThread *workingThread;
+    QThread *workerThread;
 
     ExecutableStatusWidget *currentCheckWidget;
     QVBoxLayout *summaryLayout;
@@ -83,6 +83,8 @@ protected:
     virtual void disableButtonsBeforeChecks();
 
     virtual void cleanUpUi();
+
+    virtual bool isServiceActive();
 
 private slots:
     virtual void currentTaskDetailsButton_clicked(int id);

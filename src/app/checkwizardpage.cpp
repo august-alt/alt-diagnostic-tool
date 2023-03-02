@@ -78,7 +78,7 @@ void CheckWizardPage::cancelButtonPressed(int currentPage)
 
         if (!isCompleteTasks)
         {
-            workingThread->wait();
+            workerThread->wait();
 
             enableButtonsAfterChecks();
 

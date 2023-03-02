@@ -152,7 +152,7 @@ void ADTWizard::dBusServiceUnregistered()
         checkPage->currentDBusServiceUnregistered();
         break;
     case Repair_Page:
-        checkPage->currentDBusServiceUnregistered();
+        repairPage->currentDBusServiceUnregistered();
         break;
     }
 }
