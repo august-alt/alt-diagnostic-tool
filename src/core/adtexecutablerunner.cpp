@@ -31,6 +31,11 @@ ADTExecutableRunner::ADTExecutableRunner(QJsonDocument document,
     , stopFlag(false)
     , dbus(std::make_unique<QDBusConnection>(QDBusConnection::systemBus()))
     , dbusInterface(std::make_unique<QDBusInterface>(serviceName, path, interfaceName, *dbus.get()))
+    , dbusServiceName(serviceName)
+    , dbusPath(path)
+    , dbusInterfaceName(interfaceName)
+    , dbusStdOutSignalName("executor_stdout")
+    , dbusStdErrSignalName("executor_stderr")
 
 {}
 
@@ -145,33 +150,33 @@ bool ADTExecutableRunner::isAnyErrorsInTask()
 
 void ADTExecutableRunner::connectExecutableSignals(std::unique_ptr<ADTExecutable> &task)
 {
-    dbusInterface->connection().connect(QLatin1String("ru.basealt.alterator"),
-                                        QLatin1String("/ru/basealt/alterator/executor"),
-                                        QLatin1String("ru.basealt.alterator.executor"),
-                                        QLatin1String("executor_stdout"),
+    dbusInterface->connection().connect(dbusServiceName,
+                                        dbusPath,
+                                        dbusInterfaceName,
+                                        dbusStdOutSignalName,
                                         task.get(),
                                         SLOT(getStdout(QString)));
-    dbusInterface->connection().connect("ru.basealt.alterator",
-                                        "/ru/basealt/alterator/executor",
-                                        "ru.basealt.alterator.executor",
-                                        "executor_stderr",
+    dbusInterface->connection().connect(dbusServiceName,
+                                        dbusPath,
+                                        dbusInterfaceName,
+                                        dbusStdErrSignalName,
                                         task.get(),
                                         SLOT(getStderr(QString)));
 }
 
 void ADTExecutableRunner::disconnectExecutableSignals(std::unique_ptr<ADTExecutable> &task)
 {
-    dbusInterface->connection().disconnect("ru.basealt.alterator",
-                                           "/ru/basealt/alterator/executor",
-                                           "ru.basealt.alterator.executor",
-                                           "executor_stdout",
+    dbusInterface->connection().disconnect(dbusServiceName,
+                                           dbusPath,
+                                           dbusInterfaceName,
+                                           dbusStdOutSignalName,
                                            task.get(),
                                            SLOT(getStdout(QString)));
 
-    dbusInterface->connection().disconnect("ru.basealt.alterator",
-                                           "/ru/basealt/alterator/executor",
-                                           "ru.basealt.alterator.executor",
-                                           "executor_stderr",
+    dbusInterface->connection().disconnect(dbusServiceName,
+                                           dbusPath,
+                                           dbusInterfaceName,
+                                           dbusStdErrSignalName,
                                            task.get(),
                                            SLOT(getStderr(QString)));
 }
