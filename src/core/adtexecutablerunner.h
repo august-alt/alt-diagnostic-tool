@@ -63,6 +63,12 @@ private:
     std::unique_ptr<QDBusConnection> dbus;
     std::unique_ptr<QDBusInterface> dbusInterface;
 
+    QString dbusServiceName;
+    QString dbusPath;
+    QString dbusInterfaceName;
+    QString dbusStdOutSignalName;
+    QString dbusStdErrSignalName;
+
 private:
     void connectExecutableSignals(std::unique_ptr<ADTExecutable> &task);
     void disconnectExecutableSignals(std::unique_ptr<ADTExecutable> &task);
