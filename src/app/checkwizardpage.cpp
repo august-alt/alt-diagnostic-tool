@@ -70,21 +70,18 @@ void CheckWizardPage::setRadiobuttonSizePolicy()
     ui->runRepairRadioButton->setSizePolicy(runRepairRadioButtonpolicy);
 }
 
-void CheckWizardPage::cancelButtonPressed(int currentPage)
+void CheckWizardPage::cancelButtonPressed()
 {
-    if (currentPage == ADTWizard::Check_Page)
+    runner->cancelTasks();
+
+    if (!isCompleteTasks)
     {
-        runner->cancelTasks();
+        workerThread->wait();
 
-        if (!isCompleteTasks)
-        {
-            workerThread->wait();
+        enableButtonsAfterChecks();
 
-            enableButtonsAfterChecks();
-
-            showFinishRadiobuttons();
-        }
-
-        ui->stackedWidget->setCurrentIndex(0);
+        showFinishRadiobuttons();
     }
+
+    ui->stackedWidget->setCurrentIndex(0);
 }

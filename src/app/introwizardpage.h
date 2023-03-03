@@ -39,8 +39,8 @@ public:
 private:
     Ui::IntroWizardPage *ui;
 
-public slots:
-    void cancelButtonPressed(int currentPage);
+public:
+    void cancelButtonPressed();
 
 private:
     IntroWizardPage(const IntroWizardPage &) = delete;

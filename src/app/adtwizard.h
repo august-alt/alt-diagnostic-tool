@@ -67,9 +67,6 @@ private slots:
     void dBusServiceUnregistered();
     void dBusServiceRegistered();
 
-signals:
-    void cancelPressed(int currentPage);
-
 private:
     std::unique_ptr<ADTExecutableRunner> checks;
     std::unique_ptr<ADTExecutableRunner> resolvers;

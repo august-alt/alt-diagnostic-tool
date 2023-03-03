@@ -30,19 +30,16 @@ RepairWizardPage::RepairWizardPage(ADTExecutableRunner *run, QWidget *parent)
     ui->runRepairRadioButton->setVisible(false);
 }
 
-void RepairWizardPage::cancelButtonPressed(int currentPage)
+void RepairWizardPage::cancelButtonPressed()
 {
-    if (currentPage == ADTWizard::Repair_Page)
+    runner->cancelTasks();
+
+    if (!isCompleteTasks)
     {
-        runner->cancelTasks();
+        workerThread->wait();
 
-        if (!isCompleteTasks)
-        {
-            workerThread->wait();
-
-            enableButtonsAfterChecks();
-        }
-
-        ui->stackedWidget->setCurrentIndex(0);
+        enableButtonsAfterChecks();
     }
+
+    ui->stackedWidget->setCurrentIndex(0);
 }

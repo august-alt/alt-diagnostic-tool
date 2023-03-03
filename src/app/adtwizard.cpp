@@ -64,13 +64,6 @@ ADTWizard::ADTWizard(QJsonDocument &checksData,
             this,
             &ADTWizard::cancelButtonPressed);
 
-    connect(this, &ADTWizard::cancelPressed, introPage.get(), &IntroWizardPage::cancelButtonPressed);
-    connect(this, &ADTWizard::cancelPressed, checkPage.get(), &CheckWizardPage::cancelButtonPressed);
-    connect(this,
-            &ADTWizard::cancelPressed,
-            repairPage.get(),
-            &RepairWizardPage::cancelButtonPressed);
-
     connect(this, &QWizard::currentIdChanged, this, &ADTWizard::currentIdChanged);
 
     connect(serviceWatcher.get(),
@@ -86,8 +79,8 @@ ADTWizard::ADTWizard(QJsonDocument &checksData,
 
 int ADTWizard::nextId() const
 {
-    auto repairPg = static_cast<CheckWizardPage *>(page(ADTWizard::Repair_Page));
-    auto checkPg  = static_cast<RepairWizardPage *>(page(ADTWizard::Check_Page));
+    auto repairPg = static_cast<RepairWizardPage *>(page(ADTWizard::Repair_Page));
+    auto checkPg  = static_cast<CheckWizardPage *>(page(ADTWizard::Check_Page));
 
     int currentPage = currentId();
 
@@ -117,7 +110,24 @@ bool ADTWizard::isServiceActive()
 
 void ADTWizard::cancelButtonPressed()
 {
-    emit cancelPressed(currentId());
+    auto introPg  = static_cast<IntroWizardPage *>(page(ADTWizard::Intro_Page));
+    auto checkPg  = static_cast<CheckWizardPage *>(page(ADTWizard::Check_Page));
+    auto repairPg = static_cast<RepairWizardPage *>(page(ADTWizard::Repair_Page));
+
+    switch (currentId())
+    {
+    case Intro_Page:
+        introPg->cancelButtonPressed();
+        break;
+
+    case Check_Page:
+        checkPg->cancelButtonPressed();
+        break;
+
+    case Repair_Page:
+        repairPg->cancelButtonPressed();
+        break;
+    }
 }
 
 void ADTWizard::currentIdChanged(int currentPageId)
