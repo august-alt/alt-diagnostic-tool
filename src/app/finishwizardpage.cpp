@@ -40,3 +40,8 @@ void FinishWizardPage::initializePage()
 {
     wizard()->button(QWizard::CancelButton)->setEnabled(false);
 }
+
+void FinishWizardPage::cancelButtonPressed()
+{
+
+}

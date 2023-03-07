@@ -110,23 +110,11 @@ bool ADTWizard::isServiceActive()
 
 void ADTWizard::cancelButtonPressed()
 {
-    auto introPg  = static_cast<IntroWizardPage *>(page(ADTWizard::Intro_Page));
-    auto checkPg  = static_cast<CheckWizardPage *>(page(ADTWizard::Check_Page));
-    auto repairPg = static_cast<RepairWizardPage *>(page(ADTWizard::Repair_Page));
+    ICancelButtonHandler *handler = dynamic_cast<ICancelButtonHandler *>(currentPage());
 
-    switch (currentId())
+    if (handler)
     {
-    case Intro_Page:
-        introPg->cancelButtonPressed();
-        break;
-
-    case Check_Page:
-        checkPg->cancelButtonPressed();
-        break;
-
-    case Repair_Page:
-        repairPg->cancelButtonPressed();
-        break;
+        handler->cancelButtonPressed();
     }
 }
 
@@ -188,7 +176,7 @@ void ADTWizard::connectSlotInCurrentPage(int currentPageId)
         break;
 
     case ADTWizard::Intro_Page:
-    case ADTWizard::FinishButton:
+    case ADTWizard::Finish_Page:
     default:
         break;
     }
