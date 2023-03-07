@@ -33,6 +33,7 @@ set(HEADERS
     abstractexecutablepage.h
     adtwizardpage.h
     adtwizardpage.inl
+    icancelbuttinhandler.h
 
     adtwizard.h
     slotconnector.h

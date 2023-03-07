@@ -116,6 +116,22 @@ bool AbstractExecutablePage::isAnyErrorsInTasks()
     return runner->isAnyErrorsInTask();
 }
 
+void AbstractExecutablePage::cancelButtonPressed()
+{
+    runner->cancelTasks();
+
+    if (!isCompleteTasks)
+    {
+        workerThread->wait();
+
+        enableButtonsAfterChecks();
+
+        emit enableUiElements();
+    }
+
+    ui->stackedWidget->setCurrentIndex(0);
+}
+
 void AbstractExecutablePage::beginAllTasks()
 {
     disableButtonsBeforeChecks();

@@ -34,10 +34,7 @@ IntroWizardPage::~IntroWizardPage()
     delete ui;
 }
 
-void IntroWizardPage::cancelButtonPressed(int currentPage)
+void IntroWizardPage::cancelButtonPressed()
 {
-    if (currentPage == ADTWizard::Intro_Page)
-    {
-        wizard()->reject();
-    }
+    wizard()->reject();
 }

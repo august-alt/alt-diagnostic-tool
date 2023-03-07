@@ -30,6 +30,11 @@ CheckWizardPage::CheckWizardPage(ADTExecutableRunner *run, QWidget *parent)
     ui->finishRadioButton->setChecked(true);
     setRadiobuttonSizePolicy();
     hideFinishRadiobuttons();
+
+    connect(this,
+            &AbstractExecutablePage::enableUiElements,
+            this,
+            &CheckWizardPage::onEnableUiElements);
 }
 
 bool CheckWizardPage::isAnyErrorsInTasks()
@@ -70,21 +75,7 @@ void CheckWizardPage::setRadiobuttonSizePolicy()
     ui->runRepairRadioButton->setSizePolicy(runRepairRadioButtonpolicy);
 }
 
-void CheckWizardPage::cancelButtonPressed(int currentPage)
+void CheckWizardPage::onEnableUiElements()
 {
-    if (currentPage == ADTWizard::Check_Page)
-    {
-        runner->cancelTasks();
-
-        if (!isCompleteTasks)
-        {
-            workerThread->wait();
-
-            enableButtonsAfterChecks();
-
-            showFinishRadiobuttons();
-        }
-
-        ui->stackedWidget->setCurrentIndex(0);
-    }
+    showFinishRadiobuttons();
 }

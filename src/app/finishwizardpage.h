@@ -21,6 +21,8 @@
 #ifndef FINISHWIZARDPAGE_H
 #define FINISHWIZARDPAGE_H
 
+#include "icancelbuttinhandler.h"
+
 #include <QWizardPage>
 
 namespace Ui
@@ -28,7 +30,7 @@ namespace Ui
 class FinishWizardPage;
 }
 
-class FinishWizardPage : public QWizardPage
+class FinishWizardPage : public QWizardPage, public ICancelButtonHandler
 {
     Q_OBJECT
 
@@ -37,6 +39,8 @@ public:
     ~FinishWizardPage();
 
     void initializePage() override;
+
+    virtual void cancelButtonPressed() override;
 
 private:
     Ui::FinishWizardPage *ui;

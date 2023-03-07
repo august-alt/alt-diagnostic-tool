@@ -38,9 +38,8 @@ private:
     void hideFinishRadiobuttons();
     void setRadiobuttonSizePolicy();
 
-public slots:
-
-    void cancelButtonPressed(int currentPage);
+private slots:
+    void onEnableUiElements();
 
 private:
     CheckWizardPage(const CheckWizardPage &) = delete;

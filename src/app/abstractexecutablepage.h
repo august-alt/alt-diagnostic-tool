@@ -26,12 +26,13 @@
 #include "executablestatuswidget.h"
 
 #include "adtwizardpage.h"
+#include "icancelbuttinhandler.h"
 #include "ui_checkwizardpage.h"
 
 #include <QPlainTextEdit>
 #include <QWizard>
 
-class AbstractExecutablePage : public QWizardPage
+class AbstractExecutablePage : public QWizardPage, public ICancelButtonHandler
 {
     Q_OBJECT
 public:
@@ -45,6 +46,8 @@ public:
     int getAmountOfTasks();
 
     virtual bool isAnyErrorsInTasks();
+
+    virtual void cancelButtonPressed() override;
 
 public slots:
     virtual void beginAllTasks();
@@ -61,6 +64,9 @@ public slots:
 
 public:
     ADTWizardPage<Ui::CheckWizardPage> ui;
+
+signals:
+    void enableUiElements();
 
 protected:
     ADTExecutableRunner *runner;

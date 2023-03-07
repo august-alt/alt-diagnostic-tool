@@ -36,10 +36,6 @@ class RepairWizardPage : public AbstractExecutablePage
 public:
     RepairWizardPage(ADTExecutableRunner *run, QWidget *parent = nullptr);
 
-public slots:
-
-    void cancelButtonPressed(int currentPage);
-
 private:
     RepairWizardPage(const RepairWizardPage &) = delete;
     RepairWizardPage(RepairWizardPage &&)      = delete;

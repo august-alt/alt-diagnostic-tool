@@ -21,6 +21,8 @@
 #ifndef INTROWIZARDPAGE_H
 #define INTROWIZARDPAGE_H
 
+#include "icancelbuttinhandler.h"
+
 #include <QWizardPage>
 
 namespace Ui
@@ -28,7 +30,7 @@ namespace Ui
 class IntroWizardPage;
 }
 
-class IntroWizardPage : public QWizardPage
+class IntroWizardPage : public QWizardPage, public ICancelButtonHandler
 {
     Q_OBJECT
 
@@ -39,8 +41,8 @@ public:
 private:
     Ui::IntroWizardPage *ui;
 
-public slots:
-    void cancelButtonPressed(int currentPage);
+public:
+    virtual void cancelButtonPressed() override;
 
 private:
     IntroWizardPage(const IntroWizardPage &) = delete;
